@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Football — Premier Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --black:#080808;
+  --white:#f2f0eb;
+  --gray:#888;
+  --light-gray:#e8e6e0;
+  --dim:rgba(255,255,255,0.45);
+  --sport-color: #f2f0eb;
+}
+html{scroll-behavior:smooth;}
+body{background:var(--black);color:var(--white);font-family:'DM Sans',sans-serif;overflow-x:hidden;cursor:none;}
+
+/* CURSOR */
+.cursor{position:fixed;width:8px;height:8px;background:var(--white);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width 0.2s,height 0.2s;mix-blend-mode:difference;}
+.cursor.grow{width:36px;height:36px;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;justify-content:space-between;align-items:center;padding:2rem 3rem;transition:padding 0.3s;background:linear-gradient(to bottom,rgba(8,8,8,0.85) 0%,transparent 100%);}
+nav.scrolled{padding:1.2rem 3rem;background:rgba(8,8,8,0.92);backdrop-filter:blur(12px);}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:0.25em;color:var(--white);text-decoration:none;}
+.nav-links{display:flex;gap:2.5rem;list-style:none;align-items:center;}
+.nav-links a{color:var(--white);text-decoration:none;font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;opacity:0.6;transition:opacity 0.2s;}
+.nav-links a:hover{opacity:1;}
+.nav-book{border:1px solid rgba(255,255,255,0.4);padding:0.55rem 1.5rem;font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--white);text-decoration:none;transition:background 0.3s;opacity:1 !important;}
+.nav-book:hover{background:rgba(255,255,255,0.12);}
+.nav-back{display:flex;align-items:center;gap:0.5rem;font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--dim);text-decoration:none;transition:color 0.2s;}
+.nav-back:hover{color:var(--white);}
+.nav-back::before{content:'←';}
+
+/* HAMBURGER */
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;z-index:300;}
+.hamburger span{display:block;width:24px;height:1.5px;background:var(--white);transition:transform 0.3s,opacity 0.3s;}
+.hamburger.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg);}
+.hamburger.open span:nth-child(2){opacity:0;}
+.hamburger.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg);}
+.mobile-menu{display:none;position:fixed;inset:0;background:var(--black);z-index:250;flex-direction:column;align-items:center;justify-content:center;gap:2.5rem;opacity:0;transition:opacity 0.3s;pointer-events:none;}
+.mobile-menu.open{opacity:1;pointer-events:all;}
+.mobile-menu a{font-family:'Cormorant Garamond',serif;font-size:2.8rem;font-weight:300;color:var(--white);text-decoration:none;letter-spacing:0.05em;}
+.mobile-menu a.book-link{font-family:'DM Sans',sans-serif;font-size:0.8rem;letter-spacing:0.25em;text-transform:uppercase;border:1px solid rgba(255,255,255,0.3);padding:0.9rem 2.5rem;margin-top:1rem;}
+
+/* PAGE HERO */
+.page-hero{height:44vh;min-height:340px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:4rem 4rem 4.5rem;position:relative;overflow:hidden;text-align:center;}
+.page-hero-bg{display:none;}
+.page-hero-line{display:none;}
+.page-hero-tag{font-size:0.62rem;letter-spacing:0.35em;text-transform:uppercase;color:var(--gray);margin-bottom:0.8rem;position:relative;z-index:1;}
+.page-hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(3rem,7vw,6.5rem);font-weight:300;line-height:1.05;position:relative;z-index:1;color:var(--white);font-style:italic;}
+.page-hero-title em{font-style:italic;display:block;}
+
+/* GALLERY SECTION */
+.gallery-section{padding:5rem 4rem 8rem;}
+
+/* TILT GRID */
+.tilt-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:20px;
+}
+
+/* Individual tilt card */
+.tilt-card{
+  position:relative;
+  border-radius:10px;
+  overflow:hidden;
+  cursor:pointer;
+  transform-style:preserve-3d;
+  transition:box-shadow 0.4s ease;
+  background:#111;
+  will-change:transform;
+}
+.tilt-card{aspect-ratio:4/5;}
+.tilt-card:hover{box-shadow:0 30px 80px rgba(0,0,0,0.7),0 0 0 1px rgba(255,255,255,0.06);}
+
+.tilt-card img{
+  width:100%;height:100%;
+  object-fit:cover;
+  display:block;
+  filter:grayscale(15%) brightness(0.88) contrast(1.05);
+  transition:filter 0.5s ease, transform 0.1s ease;
+  transform:scale(1.02);
+  will-change:transform;
+}
+.tilt-card:hover img{filter:grayscale(0%) brightness(1) contrast(1.05);}
+
+/* Overlay label */
+.tilt-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(0,0,0,0.65) 0%,transparent 50%);
+  opacity:0;
+  transition:opacity 0.4s ease;
+  display:flex;align-items:flex-end;
+  padding:1.5rem;
+  pointer-events:none;
+}
+.tilt-card:hover .tilt-overlay{opacity:1;}
+.tilt-label{transform:translateY(6px);transition:transform 0.35s ease;}
+.tilt-card:hover .tilt-label{transform:translateY(0);}
+.tilt-label h3{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:400;color:var(--white);}
+.tilt-label span{font-size:0.6rem;letter-spacing:0.22em;text-transform:uppercase;color:rgba(255,255,255,0.5);}
+
+/* Shine layer */
+.tilt-shine{
+  position:absolute;inset:0;
+  border-radius:10px;
+  pointer-events:none;
+  background:radial-gradient(circle at 50% 50%,rgba(255,255,255,0.08) 0%,transparent 70%);
+  opacity:0;
+  transition:opacity 0.3s;
+  mix-blend-mode:screen;
+}
+.tilt-card:hover .tilt-shine{opacity:1;}
+
+/* LIGHTBOX */
+.lightbox{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.4s ease,background 0.4s ease;}
+.lightbox.open{opacity:1;pointer-events:all;background:rgba(0,0,0,0.92);}
+.lb-img-wrap{position:relative;max-width:90vw;max-height:88vh;transform:scale(0.94);transition:transform 0.4s cubic-bezier(0.34,1.2,0.64,1);}
+.lightbox.open .lb-img-wrap{transform:scale(1);}
+.lb-img-wrap img{display:block;max-width:90vw;max-height:88vh;object-fit:contain;border-radius:4px;}
+.lb-close{position:absolute;top:-3rem;right:0;font-size:0.65rem;letter-spacing:0.28em;text-transform:uppercase;color:rgba(255,255,255,0.5);cursor:pointer;transition:color 0.2s;}
+.lb-close:hover{color:var(--white);}
+.lb-arrow{position:fixed;top:50%;transform:translateY(-50%);background:none;border:1px solid rgba(255,255,255,0.15);color:var(--white);font-size:1rem;padding:1rem 1.2rem;cursor:pointer;transition:background 0.2s,border-color 0.2s;z-index:1001;}
+.lb-arrow:hover{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.35);}
+.lb-prev{left:2rem;}
+.lb-next{right:2rem;}
+.lb-counter{position:fixed;bottom:2.5rem;left:50%;transform:translateX(-50%);font-size:0.62rem;letter-spacing:0.28em;text-transform:uppercase;color:rgba(255,255,255,0.35);}
+
+
+/* FOOTER */
+footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);padding:2.5rem 4rem;display:flex;justify-content:space-between;align-items:center;}
+.footer-logo{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:0.22em;}
+.footer-links{display:flex;gap:2rem;}
+.footer-links a{font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--gray);text-decoration:none;transition:color 0.2s;}
+.footer-links a:hover{color:var(--white);}
+.footer-copy{font-size:0.68rem;color:rgba(255,255,255,0.25);}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  nav{padding:1.4rem 2rem;}
+  .page-hero{padding:4rem 2rem;}
+  .gallery-section{padding:3rem 2rem 6rem;}
+  .tilt-grid{grid-template-columns:repeat(2,1fr);gap:14px;}
+  
+  footer{flex-direction:column;gap:1.5rem;text-align:center;padding:2rem;}
+  .footer-links{justify-content:center;}
+}
+@media(max-width:600px){
+  .cursor{display:none;}
+  body{cursor:auto;}
+  nav{padding:1.2rem 1.5rem;background:rgba(8,8,8,0.9);}
+  .nav-links{display:none;}
+  .hamburger{display:flex;}
+  .mobile-menu{display:flex;}
+  .page-hero{padding:3rem 1.5rem;height:44vh;min-height:300px;}
+  .page-hero-title{font-size:clamp(3rem,16vw,5rem);}
+  .gallery-section{padding:2.5rem 1.5rem 5rem;}
+  .tilt-grid{grid-template-columns:1fr 1fr;gap:10px;}
+  .tilt-card{aspect-ratio:1/1;}
+  .lb-prev{left:0.8rem;}
+  .lb-next{right:0.8rem;}
+  footer{flex-direction:column;gap:1.2rem;text-align:center;padding:2rem 1.5rem;}
+  .footer-links{flex-wrap:wrap;justify-content:center;gap:1.2rem;}
+  .footer-copy{font-size:0.6rem;}
+}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<nav id="nav">
+  <a href="index.html" class="logo">Premier Studio</a>
+  <ul class="nav-links">
+    <li><a href="index.html#portfolio">Work</a></li>
+    <li><a href="index.html#about">About</a></li>
+    <li><a href="index.html#services">Services</a></li>
+    <li><a href="index.html#contact" class="nav-book">Book Now</a></li>
+  </ul>
+  <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html#portfolio" class="mobile-nav-link">Work</a>
+  <a href="index.html#about" class="mobile-nav-link">About</a>
+  <a href="index.html#services" class="mobile-nav-link">Services</a>
+  <a href="index.html#contact" class="mobile-nav-link book-link">Book Now</a>
+</div>
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <div class="page-hero-bg"></div>
+  <span class="page-hero-tag">Portfolio Gallery</span>
+  <h1 class="page-hero-title">Football</h1>
+  <div class="page-hero-line"></div>
+</div>
+
+<!-- TILT GALLERY -->
+<section class="gallery-section">
+  <div class="tilt-grid" id="tiltGrid">
+
+    <!--
+      ── HOW TO ADD PHOTOS ──────────────────────────────────────
+      Copy any .tilt-card block below and update:
+        • img src="images/work/football/football-X.jpg"
+        • h3 text = match/event name
+        • span text = year
+      Photos are automatically staggered in a cascading layout.
+      ──────────────────────────────────────────────────────────
+    -->
+
+    <div class="tilt-card" data-index="0">
+      <img src="images/work/football/football-1.jpg" alt="Friday Night Lights">
+      <div class="tilt-shine"></div>
+      <div class="tilt-overlay"><div class="tilt-label"><h3>Friday Night Lights</h3><span>Football · 2024</span></div></div>
+    </div>
+
+    <div class="tilt-card" data-index="1">
+      <img src="images/work/football/football-2.jpg" alt="Playoff Series">
+      <div class="tilt-shine"></div>
+      <div class="tilt-overlay"><div class="tilt-label"><h3>Playoff Series</h3><span>Football · 2024</span></div></div>
+    </div>
+
+    <div class="tilt-card" data-index="2">
+      <img src="images/work/football/football-3.jpg" alt="Championship Game">
+      <div class="tilt-shine"></div>
+      <div class="tilt-overlay"><div class="tilt-label"><h3>Championship Game</h3><span>Football · 2023</span></div></div>
+    </div>
+
+    <div class="tilt-card" data-index="3">
+      <img src="images/work/football/football-4.jpg" alt="Homecoming Classic">
+      <div class="tilt-shine"></div>
+      <div class="tilt-overlay"><div class="tilt-label"><h3>Homecoming Classic</h3><span>Football · 2024</span></div></div>
+    </div>
+
+    <div class="tilt-card" data-index="4">
+      <img src="images/work/football/football-5.jpg" alt="Varsity Showdown">
+      <div class="tilt-shine"></div>
+      <div class="tilt-overlay"><div class="tilt-label"><h3>Varsity Showdown</h3><span>Football · 2024</span></div></div>
+    </div>
+
+    <div class="tilt-card" data-index="5">
+      <img src="images/work/football/football-6.jpg" alt="All-Star Night">
+      <div class="tilt-shine"></div>
+      <div class="tilt-overlay"><div class="tilt-label"><h3>All-Star Night</h3><span>Football · 2023</span></div></div>
+    </div>
+
+    <div class="tilt-card" data-index="6">
+      <img src="images/work/football/football-7.jpg" alt="Senior Night">
+      <div class="tilt-shine"></div>
+      <div class="tilt-overlay"><div class="tilt-label"><h3>Senior Night</h3><span>Football · 2024</span></div></div>
+    </div>
+
+    <div class="tilt-card" data-index="7">
+      <img src="images/work/football/football-8.jpg" alt="Bowl Week">
+      <div class="tilt-shine"></div>
+      <div class="tilt-overlay"><div class="tilt-label"><h3>Bowl Week</h3><span>Football · 2023</span></div></div>
+    </div>
+
+    <div class="tilt-card" data-index="8">
+      <img src="images/work/football/football-9.jpg" alt="End of Season">
+      <div class="tilt-shine"></div>
+      <div class="tilt-overlay"><div class="tilt-label"><h3>End of Season</h3><span>Football · 2024</span></div></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <button class="lb-arrow lb-prev" id="lbPrev">&#8592;</button>
+  <div class="lb-img-wrap">
+    <div class="lb-close" id="lbClose">Close ✕</div>
+    <img src="" alt="" id="lbImg">
+  </div>
+  <button class="lb-arrow lb-next" id="lbNext">&#8594;</button>
+  <div class="lb-counter" id="lbCounter"></div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Premier Studio</div>
+  <div class="footer-links">
+    <a href="index.html#portfolio">Work</a>
+    <a href="index.html#about">About</a>
+    <a href="index.html#services">Services</a>
+    <a href="index.html#contact">Contact</a>
+  </div>
+  <div class="footer-copy">© 2026 Premier Studio. All rights reserved.</div>
+</footer>
+
+<script>
+// Hamburger
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobileMenu');
+hamburger.addEventListener('click', () => {
+  hamburger.classList.toggle('open');
+  mobileMenu.classList.toggle('open');
+  document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : '';
+});
+document.querySelectorAll('.mobile-nav-link').forEach(link => {
+  link.addEventListener('click', () => {
+    hamburger.classList.remove('open');
+    mobileMenu.classList.remove('open');
+    document.body.style.overflow = '';
+  });
+});
+
+// Custom cursor
+const cursor = document.getElementById('cursor');
+document.addEventListener('mousemove', e => {
+  cursor.style.left = e.clientX + 'px';
+  cursor.style.top = e.clientY + 'px';
+});
+document.querySelectorAll('a, button, .tilt-card').forEach(el => {
+  el.addEventListener('mouseenter', () => cursor.classList.add('grow'));
+  el.addEventListener('mouseleave', () => cursor.classList.remove('grow'));
+});
+
+// Nav scroll
+window.addEventListener('scroll', () => {
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 60);
+});
+
+// ── 3D TILT EFFECT ──────────────────────────────────────────────
+const cards = document.querySelectorAll('.tilt-card');
+const MAX_TILT = 5; // degrees
+
+cards.forEach(card => {
+  const shine = card.querySelector('.tilt-shine');
+  const img   = card.querySelector('img');
+
+  card.addEventListener('mousemove', e => {
+    const rect   = card.getBoundingClientRect();
+    const x      = e.clientX - rect.left;
+    const y      = e.clientY - rect.top;
+    const cx     = rect.width  / 2;
+    const cy     = rect.height / 2;
+    const rotX   = ((y - cy) / cy) * -MAX_TILT;
+    const rotY   = ((x - cx) / cx) *  MAX_TILT;
+
+    card.style.transform = `perspective(900px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale3d(1.015,1.015,1.015)`;
+
+    // Parallax on the image itself
+    const pX = (x - cx) / cx * 3;
+    const pY = (y - cy) / cy * 3;
+    img.style.transform = `scale(1.08) translate(${pX}px,${pY}px)`;
+
+    // Move shine to cursor position
+    const pctX = (x / rect.width)  * 100;
+    const pctY = (y / rect.height) * 100;
+    shine.style.background = `radial-gradient(circle at ${pctX}% ${pctY}%,rgba(255,255,255,0.12) 0%,transparent 65%)`;
+    shine.style.opacity = '1';
+  });
+
+  card.addEventListener('mouseleave', () => {
+    card.style.transform = 'perspective(900px) rotateX(0deg) rotateY(0deg) scale3d(1,1,1)';
+    img.style.transform  = 'scale(1.02) translate(0,0)';
+    shine.style.opacity  = '0';
+    card.style.transition = 'transform 0.6s cubic-bezier(0.23,1,0.32,1), box-shadow 0.4s ease';
+    img.style.transition  = 'transform 0.6s cubic-bezier(0.23,1,0.32,1), filter 0.5s ease';
+    setTimeout(() => {
+      card.style.transition = '';
+      img.style.transition  = '';
+    }, 600);
+  });
+});
+
+// ── LIGHTBOX ─────────────────────────────────────────────────────
+const lightbox  = document.getElementById('lightbox');
+const lbImg     = document.getElementById('lbImg');
+const lbCounter = document.getElementById('lbCounter');
+const allCards  = Array.from(document.querySelectorAll('.tilt-card'));
+let currentIdx  = 0;
+
+function openLightbox(idx) {
+  currentIdx = idx;
+  const img = allCards[idx].querySelector('img');
+  lbImg.src = img.src;
+  lbImg.alt = img.alt;
+  lbCounter.textContent = `${idx + 1} / ${allCards.length}`;
+  lightbox.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+  lightbox.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function navigate(dir) {
+  currentIdx = (currentIdx + dir + allCards.length) % allCards.length;
+  const img = allCards[currentIdx].querySelector('img');
+  lbImg.style.opacity = '0';
+  setTimeout(() => {
+    lbImg.src = img.src;
+    lbImg.alt = img.alt;
+    lbImg.style.opacity = '1';
+    lbCounter.textContent = `${currentIdx + 1} / ${allCards.length}`;
+  }, 180);
+}
+lbImg.style.transition = 'opacity 0.18s ease';
+
+allCards.forEach((card, i) => {
+  card.addEventListener('click', () => openLightbox(i));
+});
+document.getElementById('lbClose').addEventListener('click', closeLightbox);
+document.getElementById('lbPrev').addEventListener('click', () => navigate(-1));
+document.getElementById('lbNext').addEventListener('click', () => navigate(1));
+lightbox.addEventListener('click', e => { if(e.target === lightbox) closeLightbox(); });
+document.addEventListener('keydown', e => {
+  if (!lightbox.classList.contains('open')) return;
+  if (e.key === 'Escape')      closeLightbox();
+  if (e.key === 'ArrowLeft')  navigate(-1);
+  if (e.key === 'ArrowRight') navigate(1);
+});
+</script>
+</body>
+</html>

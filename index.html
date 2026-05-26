@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Premier Studio — Sports Photography</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --black:#080808;
+  --white:#f2f0eb;
+  --gray:#888;
+  --light-gray:#e8e6e0;
+  --dim:rgba(255,255,255,0.45);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--black);color:var(--white);font-family:'DM Sans',sans-serif;overflow-x:hidden;cursor:none;}
+.cursor{position:fixed;width:8px;height:8px;background:var(--white);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width 0.2s,height 0.2s;mix-blend-mode:difference;}
+.cursor.grow{width:36px;height:36px;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;justify-content:space-between;align-items:center;padding:2rem 3rem;transition:padding 0.3s;}
+nav.scrolled{padding:1.2rem 3rem;}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:0.25em;color:var(--white);text-decoration:none;}
+.nav-links{display:flex;gap:2.5rem;list-style:none;align-items:center;}
+.nav-links a{color:var(--white);text-decoration:none;font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;opacity:0.6;transition:opacity 0.2s;}
+.nav-links a:hover{opacity:1;}
+.nav-book{border:1px solid rgba(255,255,255,0.4);padding:0.55rem 1.5rem;font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--white);text-decoration:none;transition:background 0.3s;opacity:1 !important;}
+.nav-book:hover{background:rgba(255,255,255,0.12);}
+
+/* HERO — fullscreen slideshow */
+#hero{position:relative;width:100%;height:100vh;overflow:hidden;}
+.hero-slide{position:absolute;inset:0;opacity:0;transition:opacity 1.8s ease-in-out;z-index:1;}
+.hero-slide.active{opacity:1;z-index:2;}
+.hero-slide img{width:100%;height:100%;object-fit:cover;filter:brightness(0.9);transform:scale(1.08);animation:none;}
+.hero-slide.active img{animation:heroZoom 8s ease-out forwards;}
+@keyframes heroZoom{from{transform:scale(1.08);}to{transform:scale(1.0);}}
+.hero-tint{position:absolute;inset:0;background:rgba(0,0,0,0.10);z-index:3;pointer-events:none;}
+
+.hero-center{position:absolute;z-index:10;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;}
+.hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(3.5rem,6vw,7rem);font-weight:300;line-height:0.92;color:var(--white);text-shadow:0 4px 60px rgba(0,0,0,0.7);}
+.hero-title em{font-style:italic;display:block;}
+.hero-sub{font-size:0.68rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--dim);margin-top:1.2rem;}
+
+.hero-bl{position:absolute;z-index:10;bottom:3rem;left:3rem;pointer-events:none;}
+.hero-bl-brand{font-family:'Bebas Neue',sans-serif;font-size:0.82rem;letter-spacing:0.35em;color:var(--dim);}
+.hero-bl-loc{font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.28);margin-top:0.35rem;}
+
+.hero-br{position:absolute;z-index:10;bottom:3rem;right:3rem;text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:1rem;}
+.hero-scroll-line{display:flex;align-items:center;gap:0.8rem;font-size:0.62rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--dim);}
+.hero-scroll-line::after{content:'';width:28px;height:1px;background:var(--dim);}
+.hero-cta{display:inline-block;padding:0.75rem 2rem;border:1px solid rgba(255,255,255,0.35);font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--white);text-decoration:none;transition:background 0.3s;pointer-events:all;}
+.hero-cta:hover{background:rgba(255,255,255,0.1);}
+
+.hero-dots{position:absolute;bottom:3rem;left:50%;transform:translateX(-50%);z-index:10;display:flex;gap:8px;}
+.hdot{width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,0.3);transition:background 0.3s,transform 0.3s;cursor:pointer;}
+.hdot.active{background:var(--white);transform:scale(1.6);}
+
+/* INSTAGRAM — simple CTA */
+.instagram{padding:6rem 4rem;background:var(--black);border-top:1px solid rgba(255,255,255,0.05);text-align:center;}
+.ig-follow-label{font-size:0.65rem;letter-spacing:0.32em;text-transform:uppercase;color:var(--gray);display:block;margin-bottom:1rem;}
+.ig-handle-large{font-family:'Cormorant Garamond',serif;font-size:clamp(2.5rem,5vw,5rem);font-weight:300;color:var(--white);text-decoration:none;display:inline-block;transition:opacity 0.3s;}
+.ig-handle-large:hover{opacity:0.6;}
+
+/* STATS */
+.stats{background:var(--white);color:var(--black);display:flex;justify-content:center;}
+.stat{padding:2.2rem 4rem;text-align:center;border-right:1px solid var(--light-gray);}
+.stat:last-child{border-right:none;}
+.stat-num{font-family:'Bebas Neue',sans-serif;font-size:2.8rem;letter-spacing:0.05em;display:block;line-height:1;}
+.stat-label{font-size:0.65rem;letter-spacing:0.22em;text-transform:uppercase;color:#666;margin-top:0.3rem;display:block;}
+
+/* PORTFOLIO */
+.portfolio{padding:7rem 4rem;background:var(--black);}
+.sec-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:4rem;}
+.sec-tag{font-size:0.65rem;letter-spacing:0.32em;text-transform:uppercase;color:var(--gray);display:block;margin-bottom:0.7rem;}
+.sec-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2.5rem,4.5vw,4rem);font-weight:300;line-height:1.05;}
+.sec-title em{font-style:italic;}
+.gallery{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+.g-item{position:relative;overflow:hidden;background:#111;aspect-ratio:4/5;display:block;text-decoration:none;border-radius:8px;}
+.g-item img{width:100%;height:100%;object-fit:cover;filter:grayscale(30%) contrast(1.1) brightness(0.85);transition:filter 0.6s,transform 0.7s;display:block;}
+.g-item:hover img{filter:grayscale(0%) contrast(1.05) brightness(0.95);transform:scale(1.05);}
+.g-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.72) 0%,rgba(0,0,0,0.08) 55%);display:flex;flex-direction:column;justify-content:flex-end;padding:1.8rem 1.6rem;}
+.g-sport-label{font-family:'Cormorant Garamond',serif;font-size:clamp(1.6rem,2.8vw,2.4rem);font-weight:300;color:var(--white);line-height:1;margin-bottom:0.5rem;transition:letter-spacing 0.4s;}
+.g-item:hover .g-sport-label{letter-spacing:0.04em;}
+.g-view{font-size:0.62rem;letter-spacing:0.28em;text-transform:uppercase;color:rgba(255,255,255,0.55);display:flex;align-items:center;gap:0.6rem;transition:color 0.3s,gap 0.3s;}
+.g-view::after{content:'→';transition:transform 0.3s;}
+.g-item:hover .g-view{color:rgba(255,255,255,0.9);gap:0.9rem;}
+
+/* ABOUT */
+.about{display:grid;grid-template-columns:1fr 1fr;min-height:100vh;}
+.about-visual{position:relative;overflow:hidden;min-height:600px;background:#111;}
+.about-visual img{width:100%;height:100%;object-fit:cover;filter:grayscale(0%) contrast(1.15);display:block;position:absolute;inset:0;}
+.about-tag-fixed{position:absolute;bottom:2.5rem;left:2.5rem;font-size:0.6rem;letter-spacing:0.3em;text-transform:uppercase;color:rgba(255,255,255,0.4);z-index:2;}
+.about-content{padding:7rem 5rem;display:flex;flex-direction:column;justify-content:center;background:var(--white);color:var(--black);}
+.about-content .sec-tag{color:#999;}
+.about-content .sec-title{color:var(--black);}
+.about-body{margin-top:2rem;font-size:0.97rem;line-height:1.85;color:#444;max-width:420px;}
+.about-body p+p{margin-top:1.2rem;}
+.about-sig{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-style:italic;font-weight:300;margin-top:3rem;color:var(--black);}
+.btn-solid{display:inline-block;margin-top:2.5rem;padding:1rem 2.5rem;background:var(--black);color:var(--white);font-family:'DM Sans',sans-serif;font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;text-decoration:none;transition:background 0.3s;}
+.btn-solid:hover{background:#222;}
+
+/* SERVICES */
+.services{padding:7rem 4rem;background:#0d0d0d;}
+.svc-grid{display:grid;grid-template-columns:repeat(3,1fr);margin-top:4rem;border:1px solid rgba(255,255,255,0.05);}
+.svc-card{padding:3rem 2.5rem;border-right:1px solid rgba(255,255,255,0.05);transition:background 0.3s;}
+.svc-card:last-child{border-right:none;}
+.svc-card:hover{background:rgba(255,255,255,0.025);}
+.svc-num{font-family:'Bebas Neue',sans-serif;font-size:4.5rem;color:rgba(255,255,255,0.04);line-height:1;margin-bottom:1.5rem;}
+.svc-name{font-family:'Cormorant Garamond',serif;font-size:1.85rem;font-weight:300;margin-bottom:1rem;}
+.svc-desc{font-size:0.83rem;color:var(--gray);line-height:1.75;margin-bottom:2rem;}
+.svc-price{font-family:'Bebas Neue',sans-serif;font-size:1.9rem;letter-spacing:0.04em;}
+.svc-price small{font-family:'DM Sans',sans-serif;font-size:0.7rem;letter-spacing:0.12em;color:var(--gray);text-transform:uppercase;margin-left:0.4rem;}
+.svc-badge{display:inline-block;margin-top:1.5rem;font-size:0.6rem;letter-spacing:0.28em;text-transform:uppercase;border:1px solid rgba(255,255,255,0.12);padding:0.4rem 1rem;color:var(--gray);}
+
+/* CONTACT */
+.contact{display:grid;grid-template-columns:1fr 1fr;min-height:100vh;}
+.contact-info{background:var(--white);color:var(--black);padding:7rem 5rem;display:flex;flex-direction:column;justify-content:center;}
+.contact-info .sec-tag{color:#999;}
+.contact-info .sec-title{color:var(--black);}
+.contact-body{margin-top:1.8rem;color:#555;line-height:1.8;max-width:360px;font-size:0.95rem;}
+.c-details{margin-top:3rem;display:flex;flex-direction:column;gap:1.8rem;}
+.c-detail-label{font-size:0.62rem;letter-spacing:0.22em;text-transform:uppercase;color:#aaa;display:block;margin-bottom:0.3rem;}
+.c-detail-val{font-family:'Cormorant Garamond',serif;font-size:1.25rem;color:var(--black);}
+.contact-form{background:var(--black);padding:7rem 5rem;display:flex;flex-direction:column;justify-content:center;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;}
+.form-group{margin-bottom:1.8rem;}
+.form-group label{display:block;font-size:0.62rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--gray);margin-bottom:0.8rem;}
+.form-group input,
+.form-group textarea,
+.form-group select{width:100%;background:transparent;border:none;border-bottom:1px solid rgba(255,255,255,0.12);padding:0.7rem 0;color:var(--white);font-family:'DM Sans',sans-serif;font-size:0.95rem;outline:none;transition:border-color 0.3s;-webkit-appearance:none;}
+.form-group input::placeholder,
+.form-group textarea::placeholder{color:rgba(255,255,255,0.18);}
+.form-group input:focus,
+.form-group textarea:focus{border-bottom-color:rgba(255,255,255,0.5);}
+.form-group select{color:rgba(255,255,255,0.35);}
+.form-group textarea{resize:none;height:90px;}
+.form-submit{margin-top:0.5rem;padding:1.1rem 3rem;background:var(--white);color:var(--black);border:none;font-family:'DM Sans',sans-serif;font-size:0.7rem;letter-spacing:0.22em;text-transform:uppercase;cursor:pointer;transition:opacity 0.3s;}
+.form-submit:hover{opacity:0.85;}
+
+/* FOOTER */
+footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);padding:2.5rem 4rem;display:flex;justify-content:space-between;align-items:center;}
+.footer-logo{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:0.22em;}
+.footer-links{display:flex;gap:2rem;}
+.footer-links a{font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--gray);text-decoration:none;transition:color 0.2s;}
+.footer-links a:hover{color:var(--white);}
+.footer-copy{font-size:0.68rem;color:rgba(255,255,255,0.25);}
+
+/* ── HAMBURGER (hidden on desktop) ── */
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;z-index:300;}
+.hamburger span{display:block;width:24px;height:1.5px;background:var(--white);transition:transform 0.3s,opacity 0.3s;}
+.hamburger.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg);}
+.hamburger.open span:nth-child(2){opacity:0;}
+.hamburger.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg);}
+
+/* ── MOBILE MENU DRAWER ── */
+.mobile-menu{display:none;position:fixed;inset:0;background:var(--black);z-index:250;flex-direction:column;align-items:center;justify-content:center;gap:2.5rem;opacity:0;transition:opacity 0.3s;pointer-events:none;}
+.mobile-menu.open{opacity:1;pointer-events:all;}
+.mobile-menu a{font-family:'Cormorant Garamond',serif;font-size:2.8rem;font-weight:300;color:var(--white);text-decoration:none;letter-spacing:0.05em;}
+.mobile-menu a.book-link{font-family:'DM Sans',sans-serif;font-size:0.8rem;letter-spacing:0.25em;text-transform:uppercase;border:1px solid rgba(255,255,255,0.3);padding:0.9rem 2.5rem;margin-top:1rem;}
+
+/* ════════════════════════════════
+   TABLET  (≤ 900px)
+════════════════════════════════ */
+@media (max-width: 900px) {
+  .hero-bl{left:1.5rem;bottom:2rem;}
+  .hero-br{right:1.5rem;bottom:2rem;}
+
+  /* Stats: wrap to 2x2 */
+  .stats{flex-wrap:wrap;}
+  .stat{flex:1 1 50%;border-right:none;border-bottom:1px solid var(--light-gray);padding:1.8rem 2rem;}
+  .stat:nth-child(2){border-right:1px solid var(--light-gray);}
+  .stat:nth-child(3),.stat:nth-child(4){border-bottom:none;}
+
+  /* Portfolio */
+  .portfolio{padding:5rem 2rem;}
+  .sec-head{flex-direction:column;align-items:flex-start;gap:1.5rem;}
+  .gallery{grid-template-columns:1fr 1fr 1fr;gap:2px;}
+
+  /* Instagram */
+  .instagram{padding:4rem 2rem;}
+
+  /* About */
+  .about{grid-template-columns:1fr;}
+  .about-visual{min-height:50vw;}
+  .about-content{padding:4rem 2.5rem;}
+
+  /* Services */
+  .services{padding:5rem 2rem;}
+  .svc-grid{grid-template-columns:1fr;}
+  .svc-card{border-right:none;border-bottom:1px solid rgba(255,255,255,0.05);}
+  .svc-card:last-child{border-bottom:none;}
+
+  /* Contact */
+  .contact{grid-template-columns:1fr;}
+  .contact-info{padding:5rem 2.5rem;}
+  .contact-form{padding:4rem 2.5rem;}
+
+  /* Footer */
+  footer{flex-direction:column;gap:1.5rem;text-align:center;padding:2rem;}
+  .footer-links{justify-content:center;}
+}
+
+/* Mobile  (≤ 600px) */
+@media (max-width: 600px) {
+  /* Hide custom cursor on touch */
+  .cursor{display:none;}
+  body{cursor:auto;}
+
+  /* Nav: show hamburger, hide links */
+  nav{padding:1.4rem 1.5rem;background:rgba(8,8,8,0.85);backdrop-filter:blur(10px);}
+  .nav-links{display:none;}
+  .hamburger{display:flex;}
+
+  /* Mobile menu visible */
+  .mobile-menu{display:flex;}
+
+  /* Hero mobile */
+  #hero{height:100svh;}
+  .hero-center{top:0;left:0;right:0;bottom:0;transform:none;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+  .hero-title{font-size:clamp(3rem,14vw,5rem);text-align:center;}
+  .hero-bl{display:none;}
+  .hero-br{right:0;left:0;transform:none;bottom:4.5rem;align-items:center;}
+  .hero-scroll-line{display:none;}
+  .hero-cta{font-size:0.7rem;padding:0.85rem 2rem;}
+  .hero-dots{bottom:2.5rem;}
+
+  /* Stats: single column */
+  .stats{flex-direction:column;}
+  .stat{border-right:none !important;border-bottom:1px solid var(--light-gray);padding:1.4rem 2rem;}
+  .stat:last-child{border-bottom:none;}
+
+  /* Portfolio */
+  .portfolio{padding:4rem 1.25rem;}
+  .sec-head{flex-direction:column;align-items:flex-start;gap:1.2rem;margin-bottom:2rem;}
+  .gallery{grid-template-columns:1fr;gap:2px;}
+  .g-item{aspect-ratio:3/2 !important;}
+  .g-sport-label{font-size:2rem;}
+  .g-overlay{background:linear-gradient(to top,rgba(0,0,0,0.75) 0%,rgba(0,0,0,0.1) 55%);}
+  .g-view{color:rgba(255,255,255,0.75);}
+
+  /* Instagram */
+  .instagram{padding:3rem 1.25rem;}
+
+  /* About */
+  .about{grid-template-columns:1fr;}
+  .about-visual{min-height:70vw;}
+  .about-content{padding:3rem 1.5rem;}
+  .about-body{max-width:100%;}
+  .about-sig{font-size:1.8rem;}
+
+  /* Services */
+  .services{padding:4rem 1.25rem;}
+  .svc-grid{grid-template-columns:1fr;border:none;}
+  .svc-card{border:1px solid rgba(255,255,255,0.05);margin-bottom:2px;padding:2rem 1.5rem;}
+  .svc-card:last-child{border-bottom:1px solid rgba(255,255,255,0.05);}
+  .svc-num{font-size:3rem;}
+
+  /* Contact */
+  .contact{grid-template-columns:1fr;}
+  .contact-info{padding:4rem 1.5rem;}
+  .contact-form{padding:3rem 1.5rem;}
+  .form-row{grid-template-columns:1fr;}
+
+  /* Footer */
+  footer{flex-direction:column;gap:1.2rem;text-align:center;padding:2rem 1.5rem;}
+  .footer-links{flex-wrap:wrap;justify-content:center;gap:1.2rem;}
+  .footer-copy{font-size:0.6rem;}
+}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<nav id="nav">
+  <a href="#hero" class="logo">Premier Studio</a>
+  <ul class="nav-links">
+    <li><a href="#portfolio">Work</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#contact" class="nav-book">Book Now</a></li>
+  </ul>
+  <div class="hamburger" id="hamburger">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- Mobile full-screen menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#portfolio" class="mobile-nav-link">Work</a>
+  <a href="#about" class="mobile-nav-link">About</a>
+  <a href="#services" class="mobile-nav-link">Services</a>
+  <a href="#contact" class="mobile-nav-link book-link">Book Now</a>
+</div>
+
+<!-- ============================================================
+     HERO — FULLSCREEN SLIDESHOW
+     Replace src paths with your own banner photos.
+     JS below randomises order on every visit and rotates every 6s.
+     ============================================================ -->
+<section id="hero">
+
+  <div class="hero-slide" data-index="0">
+    <img src="images/banner/banner-1.jpg" alt="Banner 1">
+  </div>
+  <div class="hero-slide" data-index="1">
+    <img src="images/banner/banner-2.jpg" alt="Banner 2">
+  </div>
+  <div class="hero-slide" data-index="2">
+    <img src="images/banner/banner-3.jpg" alt="Banner 3">
+  </div>
+  <div class="hero-slide" data-index="3">
+    <img src="images/banner/banner-4.jpg" alt="Banner 4">
+  </div>
+  <div class="hero-slide" data-index="4">
+    <img src="images/banner/banner-5.jpg" alt="Banner 5">
+  </div>
+
+  <div class="hero-tint"></div>
+
+  <div class="hero-center">
+    <div class="hero-title">The Decisive<em>Moment.</em></div>
+    <div class="hero-sub">Premier Studio &nbsp;·&nbsp; Est. 2018</div>
+  </div>
+  <div class="hero-bl">
+    <div class="hero-bl-brand">Sports Photography</div>
+    <div class="hero-bl-loc">Florida, USA &nbsp;·&nbsp; Available Nationwide</div>
+  </div>
+  <div class="hero-br">
+    <div class="hero-scroll-line">Scroll to explore</div>
+    <a href="#portfolio" class="hero-cta">View Portfolio</a>
+  </div>
+  <div class="hero-dots" id="heroDots">
+    <div class="hdot active"></div>
+    <div class="hdot"></div>
+    <div class="hdot"></div>
+    <div class="hdot"></div>
+    <div class="hdot"></div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     GALLERY — FILTERABLE BY SPORT
+     Each .g-item has a data-category attribute.
+     To add a photo to a sport, copy a .g-item block and set:
+       data-category="soccer"   → shows under Soccer filter
+       data-category="football" → shows under Football filter
+       data-category="lacrosse" → shows under Lacrosse filter
+     Leave data-category="all"  → always visible
+
+     IMAGE PATHS:
+       images/work/soccer/soccer-1.jpg  etc.
+       images/work/football/football-1.jpg  etc.
+       images/work/lacrosse/lacrosse-1.jpg  etc.
+     ============================================================ -->
+<section class="portfolio" id="portfolio">
+  <div class="sec-head">
+    <div>
+      <span class="sec-tag">Selected Work</span>
+      <h2 class="sec-title">The <em>Portfolio</em></h2>
+    </div>
+  </div>
+  <div class="gallery" id="gallery">
+
+    <!-- ── SOCCER ── link href to your soccer gallery page ── -->
+    <a class="g-item" href="soccer.html">
+      <img src="images/work/soccer/soccer-1.jpg" alt="Soccer">
+      <div class="g-overlay">
+        <div class="g-sport-label">Soccer</div>
+        <div class="g-view">View Gallery</div>
+      </div>
+    </a>
+
+    <!-- ── FOOTBALL ── link href to your football gallery page ── -->
+    <a class="g-item" href="football.html">
+      <img src="images/work/football/football-1.jpg" alt="Football">
+      <div class="g-overlay">
+        <div class="g-sport-label">Football</div>
+        <div class="g-view">View Gallery</div>
+      </div>
+    </a>
+
+    <!-- ── LACROSSE ── link href to your lacrosse gallery page ── -->
+    <a class="g-item" href="lacrosse.html">
+      <img src="images/work/lacrosse/lacrosse-1.jpg" alt="Lacrosse">
+      <div class="g-overlay">
+        <div class="g-sport-label">Lacrosse</div>
+        <div class="g-view">View Gallery</div>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+<!-- ============================================================
+     ABOUT
+     → Replace src="images/about/about.jpg" with your photo
+     → Best: tall portrait of you or an athlete (800×1100px+)
+     ============================================================ -->
+<section class="about" id="about">
+  <div class="about-visual">
+    <img src="images/about/nate.jpg" alt="Athlete portrait">
+    <span class="about-tag-fixed">Premier Studio · Sports Photography</span>
+  </div>
+  <div class="about-content">
+    <span class="sec-tag">The Photographer</span>
+    <h2 class="sec-title">Telling <em>Stories</em><br>Through Sport</h2>
+    <div class="about-body">
+      <p>I believe every athlete carries a story — in the flex of a muscle, the grit of a final lap, the silent moment before the whistle. My job is to find that story and make it undeniable.</p>
+      <p>Based in Florida, I work with professional teams, collegiate programs, and individual athletes across the country. My images have appeared in Sports Illustrated, ESPN Magazine, and dozens of regional publications.</p>
+      <p>Whether it's sideline coverage of a championship game or an intimate portrait session, I bring the same obsessive attention to light, timing, and emotion to every assignment.</p>
+    </div>
+    <div class="about-sig">Premier Studio</div>
+    <a href="#contact" class="btn-solid">Work Together</a>
+  </div>
+</section>
+
+<section class="services" id="services">
+  <div class="sec-head">
+    <div>
+      <span class="sec-tag">What I Offer</span>
+      <h2 class="sec-title">Services &amp; <em>Pricing</em></h2>
+    </div>
+  </div>
+  <div class="svc-grid">
+    <div class="svc-card">
+      <div class="svc-num">01</div>
+      <h3 class="svc-name">Game Day Coverage</h3>
+      <p class="svc-desc">Full event documentation — warmups through final whistle. High-volume delivery, same-day selects available.</p>
+      <div class="svc-price">$1,200 <small>/ event</small></div>
+      <div class="svc-badge">Most Popular</div>
+    </div>
+    <div class="svc-card">
+      <div class="svc-num">02</div>
+      <h3 class="svc-name">Athlete Portraits</h3>
+      <p class="svc-desc">Studio or location portrait sessions. Built for press kits, social media, and sponsorship decks. 2–3 hour sessions.</p>
+      <div class="svc-price">$650 <small>/ session</small></div>
+      <div class="svc-badge">Individual &amp; Team</div>
+    </div>
+    <div class="svc-card">
+      <div class="svc-num">03</div>
+      <h3 class="svc-name">Season Package</h3>
+      <p class="svc-desc">Ongoing coverage for your full season — all home games, end-of-season portfolio, and unlimited licensing.</p>
+      <div class="svc-price">$4,800 <small>/ season</small></div>
+      <div class="svc-badge">Best Value</div>
+    </div>
+  </div>
+</section>
+
+<section class="contact" id="contact">
+  <div class="contact-info">
+    <span class="sec-tag">Get In Touch</span>
+    <h2 class="sec-title">Let's Make<br><em>Something</em></h2>
+    <p class="contact-body">Ready to document your season, your athletes, or your story? Let's talk about what you need.</p>
+    <div class="c-details">
+      <div><span class="c-detail-label">Email</span><div class="c-detail-val">hello@premierstudio.co</div></div>
+      <div><span class="c-detail-label">Instagram</span><div class="c-detail-val">@premierstudio.co</div></div>
+      <div><span class="c-detail-label">Location</span><div class="c-detail-val">Florida, USA — Available Nationwide</div></div>
+      <div><span class="c-detail-label">Response Time</span><div class="c-detail-val">Within 24 hours</div></div>
+    </div>
+  </div>
+  <div class="contact-form">
+    <div class="form-row">
+      <div class="form-group"><label>First Name</label><input type="text" placeholder="Alex"></div>
+      <div class="form-group"><label>Last Name</label><input type="text" placeholder="Johnson"></div>
+    </div>
+    <div class="form-group"><label>Email</label><input type="email" placeholder="alex@example.com"></div>
+    <div class="form-group">
+      <label>Service</label>
+      <select>
+        <option value="" disabled selected>Select a service</option>
+        <option>Game Day Coverage</option>
+        <option>Athlete Portraits</option>
+        <option>Season Package</option>
+        <option>Other / Custom</option>
+      </select>
+    </div>
+    <div class="form-group"><label>Message</label><textarea placeholder="Tell me about your project…"></textarea></div>
+    <button class="form-submit" id="submitBtn">Send Message →</button>
+  </div>
+</section>
+
+<!-- INSTAGRAM CTA -->
+<section class="instagram">
+  <span class="ig-follow-label">Follow Us</span>
+  <a href="https://instagram.com/premierstudio.co" target="_blank" rel="noopener" class="ig-handle-large">@premierstudio.co</a>
+</section>
+
+<footer>
+  <div class="footer-logo">Premier Studio</div>
+  <div class="footer-links">
+    <a href="#portfolio">Work</a>
+    <a href="#about">About</a>
+    <a href="#services">Services</a>
+    <a href="#contact">Contact</a>
+  </div>
+  <div class="footer-copy">© 2026 Premier Studio. All rights reserved.</div>
+</footer>
+
+<script>
+// Hamburger menu
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobileMenu');
+hamburger.addEventListener('click', () => {
+  hamburger.classList.toggle('open');
+  mobileMenu.classList.toggle('open');
+  document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : '';
+});
+document.querySelectorAll('.mobile-nav-link').forEach(link => {
+  link.addEventListener('click', () => {
+    hamburger.classList.remove('open');
+    mobileMenu.classList.remove('open');
+    document.body.style.overflow = '';
+  });
+});
+
+// Custom cursor
+const cursor = document.getElementById('cursor');
+document.addEventListener('mousemove', e => {
+  cursor.style.left = e.clientX + 'px';
+  cursor.style.top = e.clientY + 'px';
+});
+document.querySelectorAll('a, button, .g-item, .svc-card, .ig-item').forEach(el => {
+  el.addEventListener('mouseenter', () => cursor.classList.add('grow'));
+  el.addEventListener('mouseleave', () => cursor.classList.remove('grow'));
+});
+
+// Nav shrink on scroll
+window.addEventListener('scroll', () => {
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 60);
+});
+
+// ── HERO SLIDESHOW ──────────────────────────────────────────────
+// Seed-based shuffle: same random order within a single calendar day,
+// different order on a new day.
+(function() {
+  const slides = Array.from(document.querySelectorAll('.hero-slide'));
+  const dots   = Array.from(document.querySelectorAll('.hdot'));
+  const INTERVAL = 6000; // ms between slides
+
+  // Fisher-Yates shuffle — fully random on every page load
+  const order = slides.map((_, i) => i);
+  for (let i = order.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [order[i], order[j]] = [order[j], order[i]];
+  }
+
+  let current = 0;
+
+  function showSlide(pos) {
+    const idx = order[pos];
+    slides.forEach((s, i) => {
+      s.classList.remove('active');
+      // reset animation by cloning the img
+      if (i === idx) {
+        const img = s.querySelector('img');
+        const clone = img.cloneNode(true);
+        img.replaceWith(clone);
+        s.classList.add('active');
+      }
+    });
+    dots.forEach((d, i) => d.classList.toggle('active', i === pos));
+  }
+
+  // Show first slide immediately
+  showSlide(0);
+
+  // Auto-advance
+  let timer = setInterval(() => {
+    current = (current + 1) % slides.length;
+    showSlide(current);
+  }, INTERVAL);
+
+  // Dot click navigation
+  dots.forEach((dot, i) => {
+    dot.addEventListener('click', () => {
+      clearInterval(timer);
+      current = i;
+      showSlide(current);
+      timer = setInterval(() => {
+        current = (current + 1) % slides.length;
+        showSlide(current);
+      }, INTERVAL);
+    });
+  });
+})();
+
+// Submit button feedback
+document.getElementById('submitBtn').addEventListener('click', function() {
+  const orig = this.textContent;
+  this.textContent = 'Sent ✓';
+  this.style.cssText = 'background:#1a1a1a;color:var(--white);border:1px solid rgba(255,255,255,0.2);';
+  setTimeout(() => { this.textContent = orig; this.style.cssText = ''; }, 3000);
+});
+
+// Smooth scroll for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const t = document.querySelector(a.getAttribute('href'));
+    if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' }); }
+  });
+});
+</script>
+</body>
+</html>
