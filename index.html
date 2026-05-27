@@ -32,11 +32,11 @@ nav.scrolled{padding:1.2rem 3rem;}
 
 /* HERO — fullscreen slideshow */
 #hero{position:relative;width:100%;height:100vh;overflow:hidden;}
-.hero-slide{position:absolute;inset:0;opacity:0;transition:opacity 2.8s ease-in-out;z-index:1;}
+.hero-slide{position:absolute;inset:0;opacity:0;transition:opacity 2.0s ease-in-out;z-index:1;}
 .hero-slide.active{opacity:1;z-index:2;}
-.hero-slide img{width:100%;height:100%;object-fit:cover;filter:brightness(0.9);transform:scale(1.0);animation:none;}
-.hero-slide.active img{animation:heroZoom 10s ease-out forwards;}
-@keyframes heroZoom{from{transform:scale(1.0);}to{transform:scale(1.06);}}
+.hero-slide img{width:100%;height:100%;object-fit:cover;filter:brightness(0.9);transform:scale(1.0);}
+
+
 .hero-tint{position:absolute;inset:0;background:rgba(0,0,0,0.10);z-index:3;pointer-events:none;}
 
 .hero-center{position:absolute;z-index:10;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;}
@@ -149,11 +149,15 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
 .footer-copy{font-size:0.68rem;color:rgba(255,255,255,0.25);}
 
 /* ── HAMBURGER (hidden on desktop) ── */
-.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;z-index:300;position:relative;font-size:0;line-height:0}
-.hamburger span{display:block;width:24px;height:1.5px;background:var(--white);transition:transform 0.3s,opacity 0.3s;}
-.hamburger.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg);}
-.hamburger.open span:nth-child(2){opacity:0;}
-.hamburger.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg);}
+.hamburger{display:none;background:none;border:none;cursor:pointer;padding:4px;z-index:300;position:relative;line-height:0;}
+.hamburger svg{display:block;width:24px;height:18px;overflow:visible;}
+.hamburger .bar{stroke:var(--white);stroke-width:1.5;stroke-linecap:round;transition:transform 0.35s ease,opacity 0.25s ease;transform-origin:center;}
+.hamburger .bar1{transform:translateY(0);}
+.hamburger .bar2{opacity:1;}
+.hamburger .bar3{transform:translateY(0);}
+.hamburger.open .bar1{transform:translateY(7px) rotate(45deg);}
+.hamburger.open .bar2{opacity:0;}
+.hamburger.open .bar3{transform:translateY(-7px) rotate(-45deg);}
 
 /* ── MOBILE MENU DRAWER ── */
 .mobile-menu{display:none;position:fixed;inset:0;background:var(--black);z-index:250;flex-direction:column;align-items:center;justify-content:center;gap:2.5rem;opacity:0;transition:opacity 0.3s;pointer-events:none;}
@@ -283,7 +287,13 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
     <li><a href="#services">Services</a></li>
     <li><a href="#contact" class="nav-book">Book Now</a></li>
   </ul>
-  <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+  <button class="hamburger" id="hamburger" aria-label="Menu">
+    <svg viewBox="0 0 24 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <line class="bar bar1" x1="0" y1="1"  x2="24" y2="1"/>
+      <line class="bar bar2" x1="0" y1="9"  x2="24" y2="9"/>
+      <line class="bar bar3" x1="0" y1="17" x2="24" y2="17"/>
+    </svg>
+  </button>
 </nav>
 
 <!-- Mobile full-screen menu -->
@@ -548,42 +558,25 @@ window.addEventListener('scroll', () => {
   }
 
   let current = 0;
-  let locked = false;
 
   function showSlide(pos) {
-    if (locked) return;
-    locked = true;
-
-    const nextIdx = order[pos];
-    const currActive = slides.find(s => s.classList.contains('active'));
-    const nextSlide  = slides[nextIdx];
-
+    const idx = order[pos];
+    // Fade out all, fade in target
+    slides.forEach(s => s.classList.remove('active'));
+    slides[idx].classList.add('active');
     dots.forEach((d, i) => d.classList.toggle('active', i === pos));
-
-    // Reset the zoom animation on the incoming slide by forcing a reflow
-    nextSlide.classList.remove('active');
-    const img = nextSlide.querySelector('img');
-    img.style.animation = 'none';
-    void img.offsetWidth; // reflow
-    img.style.animation  = '';
-
-    // Fade out current, then crossfade in next
-    if (currActive && currActive !== nextSlide) {
-      currActive.classList.remove('active');
-    }
-
-    // Small delay so the outgoing fade has a moment to start before incoming appears
-    setTimeout(() => {
-      nextSlide.classList.add('active');
-      setTimeout(() => { locked = false; }, 3000);
-    }, 120);
   }
 
-  // Init: show first slide with no transition
+  // Show first slide immediately (no transition flash)
   slides[order[0]].style.transition = 'none';
   slides[order[0]].classList.add('active');
   dots[0] && dots[0].classList.add('active');
-  setTimeout(() => { slides[order[0]].style.transition = ''; }, 50);
+  // Re-enable transition after first paint
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      slides[order[0]].style.transition = '';
+    });
+  });
 
   // Auto-advance
   let timer = setInterval(() => {
@@ -594,7 +587,6 @@ window.addEventListener('scroll', () => {
   // Dot click navigation
   dots.forEach((dot, i) => {
     dot.addEventListener('click', () => {
-      if (locked) return;
       clearInterval(timer);
       current = i;
       showSlide(current);

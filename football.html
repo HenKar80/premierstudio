@@ -37,7 +37,7 @@ nav.scrolled{padding:1.2rem 3rem;background:rgba(8,8,8,0.92);backdrop-filter:blu
 .nav-back::before{content:'←';}
 
 /* HAMBURGER */
-.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;z-index:300;;font-size:0;line-height:0}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;z-index:300;}
 .hamburger span{display:block;width:24px;height:1.5px;background:var(--white);transition:transform 0.3s,opacity 0.3s;}
 .hamburger.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg);}
 .hamburger.open span:nth-child(2){opacity:0;}
@@ -144,7 +144,7 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
 /* RESPONSIVE */
 @media(max-width:900px){
   nav{padding:1.4rem 2rem;}
-  .page-hero{padding:4rem 2rem;}
+  .page-hero{padding:7rem 2rem 4rem;height:auto;min-height:0;}
   .gallery-section{padding:3rem 2rem 6rem;}
   .tilt-grid{grid-template-columns:repeat(2,1fr);gap:14px;}
   
@@ -158,7 +158,7 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
   .nav-links{display:none;}
   .hamburger{display:flex;}
   .mobile-menu{display:flex;}
-  .page-hero{padding:3rem 1.5rem;height:44vh;min-height:300px;}
+  .page-hero{padding:7rem 1.5rem 4rem;height:auto;min-height:0;}
   .page-hero-title{font-size:clamp(3rem,16vw,5rem);}
   .gallery-section{padding:2.5rem 1.5rem 5rem;}
   .tilt-grid{grid-template-columns:1fr 1fr;gap:10px;}
@@ -183,7 +183,13 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
     <li><a href="index.html#services">Services</a></li>
     <li><a href="index.html#contact" class="nav-book">Book Now</a></li>
   </ul>
-  <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+  <button class="hamburger" id="hamburger" aria-label="Menu">
+    <svg viewBox="0 0 24 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <line class="bar bar1" x1="0" y1="1"  x2="24" y2="1"/>
+      <line class="bar bar2" x1="0" y1="9"  x2="24" y2="9"/>
+      <line class="bar bar3" x1="0" y1="17" x2="24" y2="17"/>
+    </svg>
+  </button>
 </nav>
 
 <div class="mobile-menu" id="mobileMenu">
