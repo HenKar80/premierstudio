@@ -32,12 +32,12 @@ nav.scrolled{padding:1.2rem 3rem;}
 
 /* HERO — fullscreen slideshow */
 #hero{position:relative;width:100%;height:100vh;overflow:hidden;}
-.hero-slide{position:absolute;inset:0;opacity:0;transition:opacity 1.8s ease-in-out;z-index:1;}
+.hero-slide{position:absolute;inset:0;opacity:0;transition:opacity 2.5s ease-in-out;z-index:1;}
 .hero-slide.active{opacity:1;z-index:2;}
 .hero-slide img{width:100%;height:100%;object-fit:cover;filter:brightness(0.9);transform:scale(1.08);animation:none;}
-.hero-slide.active img{animation:heroZoom 8s ease-out forwards;}
+.hero-slide.active img{animation:heroZoom 9s ease-out forwards;}
 @keyframes heroZoom{from{transform:scale(1.08);}to{transform:scale(1.0);}}
-.hero-tint{position:absolute;inset:0;background:rgba(0,0,0,0.10);z-index:3;pointer-events:none;}
+.hero-tint{position:absolute;inset:0;background:rgba(0,0,0,0.18);z-index:3;pointer-events:none;}
 
 .hero-center{position:absolute;z-index:10;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;}
 .hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(3.5rem,6vw,7rem);font-weight:300;line-height:0.92;color:var(--white);text-shadow:0 4px 60px rgba(0,0,0,0.7);}
@@ -81,7 +81,7 @@ nav.scrolled{padding:1.2rem 3rem;}
 .g-item{position:relative;overflow:hidden;background:#111;aspect-ratio:4/5;display:block;text-decoration:none;border-radius:8px;}
 .g-item img{width:100%;height:100%;object-fit:cover;filter:none;transition:transform 0.7s;display:block;}
 .g-item:hover img{transform:scale(1.05);}
-.g-overlay{position:absolute;inset:0;background:none;display:flex;flex-direction:column;justify-content:flex-end;padding:1.8rem 1.6rem;}
+.g-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.55) 0%,rgba(0,0,0,0.10) 100%);display:flex;flex-direction:column;justify-content:flex-end;padding:1.8rem 1.6rem;}
 .g-sport-label{font-family:'Cormorant Garamond',serif;font-size:clamp(1.6rem,2.8vw,2.4rem);font-weight:300;color:var(--white);line-height:1;margin-bottom:0.5rem;transition:letter-spacing 0.4s;}
 .g-item:hover .g-sport-label{letter-spacing:0.04em;}
 .g-view{font-size:0.62rem;letter-spacing:0.28em;text-transform:uppercase;color:rgba(255,255,255,0.55);display:flex;align-items:center;gap:0.6rem;transition:color 0.3s,gap 0.3s;}
@@ -149,7 +149,7 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
 .footer-copy{font-size:0.68rem;color:rgba(255,255,255,0.25);}
 
 /* ── HAMBURGER (hidden on desktop) ── */
-.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;z-index:300;position:relative;font-size:0;line-height:0;overflow:hidden;}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;z-index:300;position:relative;}
 .hamburger span{display:block;width:24px;height:1.5px;background:var(--white);transition:transform 0.3s,opacity 0.3s;}
 .hamburger.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg);}
 .hamburger.open span:nth-child(2){opacity:0;}
@@ -549,24 +549,40 @@ window.addEventListener('scroll', () => {
   }
 
   let current = 0;
+  let busy = false;
 
   function showSlide(pos) {
+    if (busy) return;
+    busy = true;
     const idx = order[pos];
-    slides.forEach((s, i) => {
-      s.classList.remove('active');
-      // reset animation by cloning the img
-      if (i === idx) {
-        const img = s.querySelector('img');
-        const clone = img.cloneNode(true);
-        img.replaceWith(clone);
-        s.classList.add('active');
-      }
-    });
     dots.forEach((d, i) => d.classList.toggle('active', i === pos));
+
+    // Prepare the incoming slide behind the scenes (reset zoom animation)
+    const incoming = slides[idx];
+    const oldImg = incoming.querySelector('img');
+    const freshImg = oldImg.cloneNode(true);
+    // keep it invisible until we're ready
+    freshImg.style.opacity = '0';
+    oldImg.replaceWith(freshImg);
+
+    // Step 1: fade OUT the current active slide
+    slides.forEach(s => { if (s.classList.contains('active')) s.classList.remove('active'); });
+
+    // Step 2: after the CSS fade-out transition has had time to begin,
+    // make the incoming slide fully ready and fade it IN
+    setTimeout(() => {
+      freshImg.style.opacity = '';   // let CSS control opacity
+      incoming.classList.add('active');
+      setTimeout(() => { busy = false; }, 2600);
+    }, 100);
   }
 
-  // Show first slide immediately
-  showSlide(0);
+  // Show first slide immediately (no crossfade needed on load)
+  (function initFirst() {
+    const idx = order[0];
+    slides[idx].classList.add('active');
+    dots[0] && dots[0].classList.add('active');
+  })();
 
   // Auto-advance
   let timer = setInterval(() => {
@@ -577,6 +593,7 @@ window.addEventListener('scroll', () => {
   // Dot click navigation
   dots.forEach((dot, i) => {
     dot.addEventListener('click', () => {
+      if (busy) return;
       clearInterval(timer);
       current = i;
       showSlide(current);
