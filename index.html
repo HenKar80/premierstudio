@@ -134,6 +134,9 @@ nav.scrolled{padding:1.2rem 3rem;}
 .svc-price{font-family:'Bebas Neue',sans-serif;font-size:1.9rem;letter-spacing:0.04em;}
 .svc-price small{font-family:'Plus Jakarta Sans',sans-serif;font-size:0.7rem;letter-spacing:0.12em;color:var(--gray);text-transform:uppercase;margin-left:0.4rem;}
 .svc-badge{display:inline-block;margin-top:1.5rem;font-size:0.6rem;letter-spacing:0.28em;text-transform:uppercase;border:1px solid rgba(255,255,255,0.12);padding:0.4rem 1rem;color:var(--gray);}
+.svc-list{list-style:none;margin:0 0 2rem;display:flex;flex-direction:column;gap:0.6rem;}
+.svc-list li{font-size:0.8rem;color:var(--gray);padding-left:1rem;position:relative;line-height:1.5;}
+.svc-list li::before{content:'—';position:absolute;left:0;color:rgba(255,255,255,0.2);}
 
 /* CONTACT */
 .contact{display:grid;grid-template-columns:1fr 1fr;min-height:100vh;}
@@ -277,8 +280,8 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
 
   /* Services */
   .services{padding:4rem 1.25rem;}
-  .svc-grid{grid-template-columns:1fr;border:none;gap:14px;}
-  .svc-card{border:1px solid rgba(255,255,255,0.05);border-radius:8px;margin-bottom:0;padding:2rem 1.5rem;}
+  .svc-grid{grid-template-columns:1fr;border:none;}
+  .svc-card{border:1px solid rgba(255,255,255,0.05);margin-bottom:2px;padding:2rem 1.5rem;}
   .svc-card:last-child{border-bottom:1px solid rgba(255,255,255,0.05);}
   .svc-num{font-size:3rem;}
 
@@ -459,23 +462,37 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
   <div class="svc-grid">
     <div class="svc-card">
       <div class="svc-num">01</div>
-      <h3 class="svc-name">Game Day Coverage</h3>
-      <p class="svc-desc">Full event documentation — warmups through final whistle. High-volume delivery, same-day selects available.</p>
-      <div class="svc-price">$1,200 <small>/ event</small></div>
-      <div class="svc-badge">Most Popular</div>
+      <h3 class="svc-name">Individual</h3>
+      <p class="svc-desc">A focused solo session built around you — your sport, your story. 30+ professionally edited photos delivered and ready to share.</p>
+      <ul class="svc-list">
+        <li>30+ edited photos</li>
+        <li>Turnaround: 1–3 days</li>
+        <li>Digital delivery</li>
+      </ul>
+      <div class="svc-price">$60 <small>/ session</small></div>
     </div>
     <div class="svc-card">
       <div class="svc-num">02</div>
-      <h3 class="svc-name">Athlete Portraits</h3>
-      <p class="svc-desc">Studio or location portrait sessions. Built for press kits, social media, and sponsorship decks. 2–3 hour sessions.</p>
-      <div class="svc-price">$650 <small>/ session</small></div>
-      <div class="svc-badge">Individual &amp; Team</div>
+      <h3 class="svc-name">Group</h3>
+      <p class="svc-desc">Perfect for small groups, pairs, or friend sessions. Everyone gets their own edited photos — minimum 3 people.</p>
+      <ul class="svc-list">
+        <li>15+ edited photos per person</li>
+        <li>Turnaround: 1–3 days</li>
+        <li>Digital delivery</li>
+      </ul>
+      <div class="svc-price">$25 <small>/ person</small></div>
+      <div class="svc-badge">Min. 3 people</div>
     </div>
     <div class="svc-card">
       <div class="svc-num">03</div>
-      <h3 class="svc-name">Season Package</h3>
-      <p class="svc-desc">Ongoing coverage for your full season — all home games, end-of-season portfolio, and unlimited licensing.</p>
-      <div class="svc-price">$4,800 <small>/ season</small></div>
+      <h3 class="svc-name">Team / Game</h3>
+      <p class="svc-desc">Full team or game day coverage — from warmups to final play. Every player gets memorable shots to keep.</p>
+      <ul class="svc-list">
+        <li>10+ edited photos per player</li>
+        <li>Turnaround: 2–5 days</li>
+        <li>Digital delivery</li>
+      </ul>
+      <div class="svc-price">$300 <small>/ team</small></div>
       <div class="svc-badge">Best Value</div>
     </div>
   </div>
@@ -502,10 +519,10 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
     <div class="form-group">
       <label>Service</label>
       <select>
-        <option value="" disabled selected>Select a service</option>
-        <option>Game Day Coverage</option>
-        <option>Athlete Portraits</option>
-        <option>Season Package</option>
+        <option value="" disabled selected>Select a package</option>
+        <option>Individual — $60</option>
+        <option>Group — $25/person (min. 3)</option>
+        <option>Team / Game — $300</option>
         <option>Other / Custom</option>
       </select>
     </div>
