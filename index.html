@@ -160,7 +160,7 @@ nav.scrolled{padding:1.2rem 3rem;}
 .form-group textarea:focus{border-bottom-color:rgba(255,255,255,0.5);}
 .form-group select{color:rgba(255,255,255,0.35);}
 .form-group textarea{resize:none;height:90px;}
-.form-submit{margin-top:0.5rem;padding:1.1rem 3rem;background:var(--white);color:var(--black);border:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.7rem;letter-spacing:0.22em;text-transform:uppercase;cursor:pointer;transition:opacity 0.3s;}
+.form-submit{margin-top:0.5rem;padding:1.1rem 3rem;background:var(--white);color:var(--black);border:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.7rem;letter-spacing:0.22em;text-transform:uppercase;cursor:pointer;transition:opacity 0.3s;width:auto;display:inline-block;align-self:flex-start;}
 .form-submit:hover{opacity:0.85;}
 
 /* FOOTER */
@@ -506,23 +506,29 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
     </div>
   </div>
   <div class="contact-form">
-    <div class="form-row">
-      <div class="form-group"><label>First Name</label><input type="text" placeholder="Alex"></div>
-      <div class="form-group"><label>Last Name</label><input type="text" placeholder="Johnson"></div>
+    <form id="contactForm" action="https://formspree.io/f/xzdqezkq" method="POST">
+      <div class="form-row">
+        <div class="form-group"><label>First Name</label><input type="text" name="first_name" placeholder="Alex" required></div>
+        <div class="form-group"><label>Last Name</label><input type="text" name="last_name" placeholder="Johnson" required></div>
+      </div>
+      <div class="form-group"><label>Email</label><input type="email" name="email" placeholder="alex@example.com" required></div>
+      <div class="form-group">
+        <label>Service</label>
+        <select name="package" required>
+          <option value="" disabled selected>Select a package</option>
+          <option>Individual — $60</option>
+          <option>Group — $25/person (min. 3)</option>
+          <option>Team / Game — $300</option>
+          <option>Other / Custom</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Message</label><textarea name="message" placeholder="Tell me about your project…" required></textarea></div>
+      <button type="submit" class="form-submit" id="submitBtn">Send Message →</button>
+    </form>
+    <div id="formSuccess" style="display:none;padding:2rem 0;">
+      <div style="font-size:0.65rem;letter-spacing:0.32em;text-transform:uppercase;color:var(--gray);margin-bottom:0.8rem;">Message Sent</div>
+      <div style="font-size:1.4rem;font-weight:500;color:var(--white);margin-bottom:0.5rem;">Thank you — I'll be in touch within 24 hours.</div>
     </div>
-    <div class="form-group"><label>Email</label><input type="email" placeholder="alex@example.com"></div>
-    <div class="form-group">
-      <label>Service</label>
-      <select>
-        <option value="" disabled selected>Select a package</option>
-        <option>Individual — $60</option>
-        <option>Group — $25/person (min. 3)</option>
-        <option>Team / Game — $300</option>
-        <option>Other / Custom</option>
-      </select>
-    </div>
-    <div class="form-group"><label>Message</label><textarea placeholder="Tell me about your project…"></textarea></div>
-    <button class="form-submit" id="submitBtn">Send Message →</button>
   </div>
 </section>
 
@@ -763,13 +769,34 @@ window.addEventListener('scroll', () => {
   }, { passive: true });
 })();
 
-// Submit button feedback
-document.getElementById('submitBtn').addEventListener('click', function() {
-  const orig = this.textContent;
-  this.textContent = 'Sent ✓';
-  this.style.cssText = 'background:#1a1a1a;color:var(--white);border:1px solid rgba(255,255,255,0.2);';
-  setTimeout(() => { this.textContent = orig; this.style.cssText = ''; }, 3000);
-});
+// Contact form — Formspree AJAX
+const contactForm = document.getElementById('contactForm');
+const formSuccess = document.getElementById('formSuccess');
+if (contactForm) {
+  contactForm.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const btn = document.getElementById('submitBtn');
+    btn.textContent = 'Sending…';
+    btn.disabled = true;
+    try {
+      const res = await fetch(contactForm.action, {
+        method: 'POST',
+        body: new FormData(contactForm),
+        headers: { 'Accept': 'application/json' }
+      });
+      if (res.ok) {
+        contactForm.style.display = 'none';
+        formSuccess.style.display = 'block';
+      } else {
+        btn.textContent = 'Error — try again';
+        btn.disabled = false;
+      }
+    } catch(err) {
+      btn.textContent = 'Error — try again';
+      btn.disabled = false;
+    }
+  });
+}
 
 // Smooth scroll for anchor links
 document.querySelectorAll('a[href^="#"]').forEach(a => {
