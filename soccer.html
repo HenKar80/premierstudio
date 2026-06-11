@@ -58,7 +58,6 @@ nav.scrolled{padding:1.2rem 3rem;}
 .page-hero-tag{font-size:0.62rem;letter-spacing:0.35em;text-transform:uppercase;color:var(--gray);margin-bottom:0.8rem;position:relative;z-index:1;}
 .page-hero-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(2.5rem,6vw,5.5rem);font-weight:500;line-height:1.05;position:relative;z-index:1;color:var(--white);letter-spacing:-0.02em;}
 .page-hero-title em{font-style:normal;display:block;}
-.hero-content{position:relative;z-index:1;will-change:transform;}
 
 /* GALLERY SECTION */
 .gallery-section{padding:5rem 4rem 8rem;}
@@ -202,10 +201,8 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
 <!-- PAGE HERO -->
 <div class="page-hero">
   <div class="page-hero-bg"></div>
-  <div class="hero-content">
-    <span class="page-hero-tag">Portfolio Gallery</span>
-    <h1 class="page-hero-title">Soccer</h1>
-  </div>
+  <span class="page-hero-tag">Portfolio Gallery</span>
+  <h1 class="page-hero-title">Soccer</h1>
   <div class="page-hero-line"></div>
 </div>
 
@@ -481,31 +478,6 @@ document.addEventListener('keydown', e => {
   if (e.key === 'ArrowLeft')  navigate(-1);
   if (e.key === 'ArrowRight') navigate(1);
 });
-// ── HERO MICRO-PARALLAX ─────────────────────────────────────────
-// Skipped on mobile (< 768px). Drives .hero-content upward at 0.25×
-// scroll speed, capped at 50px, via a rAF loop — no libraries.
-(function() {
-  
-  const el = document.querySelector('.hero-content');
-  if (!el) return;
-  const MAX = 50;
-  const SPEED = 0.25;
-  let ticking = false;
-
-  function update() {
-    const offset = Math.min(window.scrollY * SPEED, MAX);
-    el.style.transform = `translateY(-${offset}px)`;
-    ticking = false;
-  }
-
-  window.addEventListener('scroll', () => {
-    if (!ticking) {
-      requestAnimationFrame(update);
-      ticking = true;
-    }
-  }, { passive: true });
-})();
-
 // ── Lightbox touch swipe ──────────────────────────────────────────
 let lbTouchStartX = 0;
 let lbTouchStartY = 0;

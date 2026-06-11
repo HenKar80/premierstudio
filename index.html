@@ -59,7 +59,7 @@ nav.scrolled{padding:1.2rem 3rem;}
 
 .hero-tint{position:absolute;inset:0;background:rgba(0,0,0,0.18);z-index:3;pointer-events:none;}
 
-.hero-center{position:absolute;z-index:10;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;will-change:transform;}
+.hero-center{position:absolute;z-index:10;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;}
 .hero-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(2.8rem,5vw,5.5rem);font-weight:500;line-height:1;letter-spacing:-0.02em;color:var(--white);text-shadow:0 4px 60px rgba(0,0,0,0.7);}
 .hero-title em{font-style:normal;display:block;}
 .hero-sub{font-size:0.68rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--dim);margin-top:1.2rem;}
@@ -805,32 +805,6 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
     if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' }); }
   });
 });
-
-// ── HERO MICRO-PARALLAX ─────────────────────────────────────────
-// Skipped on mobile (< 768px). Drives .hero-center upward at 0.25×
-// scroll speed, capped at 50px, via a rAF loop — no libraries.
-(function() {
-  
-  const el = document.querySelector('.hero-center');
-  if (!el) return;
-  const MAX = 50;
-  const SPEED = 0.25;
-  let ticking = false;
-
-  function update() {
-    const offset = Math.min(window.scrollY * SPEED, MAX);
-    // Preserve the existing centering translate, add parallax on top
-    el.style.transform = `translate(-50%, calc(-50% - ${offset}px))`;
-    ticking = false;
-  }
-
-  window.addEventListener('scroll', () => {
-    if (!ticking) {
-      requestAnimationFrame(update);
-      ticking = true;
-    }
-  }, { passive: true });
-})();
 </script>
 </body>
 </html>
