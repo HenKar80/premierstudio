@@ -421,7 +421,7 @@ document.addEventListener('keydown', e => {
 // Skipped on mobile (< 768px). Drives .hero-content upward at 0.25×
 // scroll speed, capped at 50px, via a rAF loop — no libraries.
 (function() {
-  if (window.innerWidth < 768) return;
+  
   const el = document.querySelector('.hero-content');
   if (!el) return;
   const MAX = 50;

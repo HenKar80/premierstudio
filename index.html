@@ -810,7 +810,7 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
 // Skipped on mobile (< 768px). Drives .hero-center upward at 0.25×
 // scroll speed, capped at 50px, via a rAF loop — no libraries.
 (function() {
-  if (window.innerWidth < 768) return;
+  
   const el = document.querySelector('.hero-center');
   if (!el) return;
   const MAX = 50;
