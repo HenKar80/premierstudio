@@ -190,6 +190,13 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
 .mobile-menu a{font-family:'Plus Jakarta Sans',sans-serif;font-size:2.4rem;font-weight:500;color:var(--white);text-decoration:none;letter-spacing:0.05em;}
 .mobile-menu a.book-link{font-family:'Plus Jakarta Sans',sans-serif;font-size:0.8rem;letter-spacing:0.25em;text-transform:uppercase;border:1px solid rgba(255,255,255,0.3);padding:0.9rem 2.5rem;margin-top:1rem;}
 
+/* ── SCROLL REVEAL ── */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity 0.7s ease,transform 0.7s ease;}
+.reveal.in-view{opacity:1;transform:translateY(0);}
+.reveal-delay-1{transition-delay:0.1s;}
+.reveal-delay-2{transition-delay:0.2s;}
+.reveal-delay-3{transition-delay:0.3s;}
+
 /* ════════════════════════════════
    TABLET  (≤ 900px)
 ════════════════════════════════ */
@@ -388,13 +395,13 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
        images/work/lacrosse/lacrosse-1.jpg  etc.
      ============================================================ -->
 <section class="portfolio" id="portfolio">
-  <div class="sec-head">
+  <div class="sec-head reveal">
     <div>
       <span class="sec-tag">Selected Work</span>
       <h2 class="sec-title">The <em>Portfolio</em></h2>
     </div>
   </div>
-  <div class="gallery" id="gallery">
+  <div class="gallery reveal" id="gallery">
 
     <!-- ── SOCCER ── link href to your soccer gallery page ── -->
     <a class="g-item" href="soccer.html">
@@ -432,11 +439,11 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
      → Best: tall portrait of you or an athlete (800×1100px+)
      ============================================================ -->
 <section class="about" id="about">
-  <div class="about-visual">
+  <div class="about-visual reveal">
     <img src="images/about/nate.jpg" alt="Athlete portrait">
     <span class="about-tag-fixed">Premier Studio · Sports Photography</span>
   </div>
-  <div class="about-content">
+  <div class="about-content reveal reveal-delay-1">
     <span class="sec-tag">About</span>
     <h2 class="sec-title">Telling Stories<br>with Visuals</h2>
     <div class="about-body">
@@ -450,14 +457,14 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
 </section>
 
 <section class="services" id="services">
-  <div class="sec-head">
+  <div class="sec-head reveal">
     <div>
       <span class="sec-tag">What We Offer</span>
       <h2 class="sec-title">Services &amp; <em>Pricing</em></h2>
     </div>
   </div>
   <div class="svc-grid">
-    <div class="svc-card">
+    <div class="svc-card reveal">
       <div class="svc-num">01</div>
       <h3 class="svc-name">Individual</h3>
       <p class="svc-desc">A focused solo session built around you — your sport, your story. 30+ professionally edited photos delivered and ready to share.</p>
@@ -468,7 +475,7 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
       </ul>
       <div class="svc-price">$60 <small>/ session</small></div>
     </div>
-    <div class="svc-card">
+    <div class="svc-card reveal reveal-delay-1">
       <div class="svc-num">02</div>
       <h3 class="svc-name">Group</h3>
       <p class="svc-desc">Perfect for small groups, pairs, or friend sessions. Everyone gets their own edited photos — minimum 3 people.</p>
@@ -480,7 +487,7 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
       <div class="svc-price">$25 <small>/ person</small></div>
       <div class="svc-badge">Min. 3 people</div>
     </div>
-    <div class="svc-card">
+    <div class="svc-card reveal reveal-delay-2">
       <div class="svc-num">03</div>
       <h3 class="svc-name">Team / Game</h3>
       <p class="svc-desc">Full team or game day coverage — from warmups to final play. Every player gets memorable shots to keep.</p>
@@ -497,17 +504,17 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
 
 <section class="contact" id="contact">
   <div class="contact-info">
-    <span class="sec-tag">Get In Touch</span>
-    <h2 class="sec-title">Let's Make<br><em>Something</em></h2>
-    <p class="contact-body">Ready to document your season, your athletes, or your story? Let's talk about what you need.</p>
-    <div class="c-details">
+    <span class="sec-tag reveal">Get In Touch</span>
+    <h2 class="sec-title reveal">Let's Make<br><em>Something</em></h2>
+    <p class="contact-body reveal reveal-delay-1">Ready to document your season, your athletes, or your story? Let's talk about what you need.</p>
+    <div class="c-details reveal reveal-delay-2">
       <div><span class="c-detail-label">Email</span><div class="c-detail-val"><a href="mailto:premierstudiofl@gmail.com">premierstudiofl@gmail.com</a></div></div>
       <div><span class="c-detail-label">Instagram</span><div class="c-detail-val"><a href="https://www.instagram.com/premierstudiofl" target="_blank" rel="noopener">@premierstudiofl</a></div></div>
       <div><span class="c-detail-label">Location</span><div class="c-detail-val">Lakewood Ranch, FL — Available Nationwide</div></div>
       <div><span class="c-detail-label">Response Time</span><div class="c-detail-val">Within 24 hours</div></div>
     </div>
   </div>
-  <div class="contact-form">
+  <div class="contact-form reveal reveal-delay-2">
     <form id="contactForm" action="https://formspree.io/f/xzdqezkq" method="POST">
       <div class="form-row">
         <div class="form-group"><label>First Name</label><input type="text" name="first_name" placeholder="Alex" required></div>
@@ -536,8 +543,8 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
 
 <!-- INSTAGRAM CTA -->
 <section class="instagram">
-  <span class="ig-follow-label">Follow Us</span>
-  <div style="display:flex;justify-content:center;">
+  <span class="ig-follow-label reveal">Follow Us</span>
+  <div class="reveal reveal-delay-1" style="display:flex;justify-content:center;">
     <a href="https://www.instagram.com/premierstudiofl" target="_blank" rel="noopener" class="ig-icon-link">
       <svg viewBox="0 0 100 100" width="52" height="52" xmlns="http://www.w3.org/2000/svg">
         <circle cx="50" cy="50" r="50" fill="#0a0a0a"/>
@@ -594,6 +601,13 @@ document.querySelectorAll('a, button, .g-item, .svc-card, .ig-item').forEach(el 
 window.addEventListener('scroll', () => {
   document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 60);
 });
+
+// ── SCROLL REVEAL ──
+const revealEls = document.querySelectorAll('.reveal');
+const revealObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in-view'); revealObserver.unobserve(e.target); } });
+}, { threshold: 0.12 });
+revealEls.forEach(el => revealObserver.observe(el));
 
 // ── HERO SLIDESHOW — slide transition with live touch drag ─────────
 (function() {
