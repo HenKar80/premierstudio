@@ -87,11 +87,11 @@ nav.scrolled{padding:1.2rem 3rem;}
   object-fit:cover;
   display:block;
   filter:none;
-  transition:filter 0.5s ease, transform 0.1s ease;
+  transition:filter 0.5s ease, transform 0.6s cubic-bezier(0.23,1,0.32,1);
   transform:scale(1.02);
   will-change:transform;
 }
-.tilt-card:hover img{filter:none;}
+.tilt-card:hover img{filter:none;transform:scale(1.08);}
 
 /* Overlay label */
 .tilt-overlay{
@@ -113,7 +113,6 @@ nav.scrolled{padding:1.2rem 3rem;}
   transition:opacity 0.3s;
   mix-blend-mode:screen;
 }
-.tilt-card:hover .tilt-shine{opacity:1;}
 
 /* LIGHTBOX */
 .lightbox{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.4s ease,background 0.4s ease;}
@@ -380,52 +379,6 @@ window.addEventListener('scroll', () => {
     }
   }
 })();
-
-// ── 3D TILT EFFECT ──────────────────────────────────────────────
-const cards = document.querySelectorAll('.tilt-card');
-const MAX_TILT = 5; // degrees
-
-cards.forEach(card => {
-  const shine = card.querySelector('.tilt-shine');
-  const img   = card.querySelector('img');
-
-  card.addEventListener('mousemove', e => {
-    const rect   = card.getBoundingClientRect();
-    const x      = e.clientX - rect.left;
-    const y      = e.clientY - rect.top;
-    const cx     = rect.width  / 2;
-    const cy     = rect.height / 2;
-    const rotX   = ((y - cy) / cy) * -MAX_TILT;
-    const rotY   = ((x - cx) / cx) *  MAX_TILT;
-
-    card.style.transformStyle = 'preserve-3d';
-    card.style.transform = `perspective(900px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale3d(1.015,1.015,1.015)`;
-
-    // Parallax on the image itself
-    const pX = (x - cx) / cx * 3;
-    const pY = (y - cy) / cy * 3;
-    img.style.transform = `scale(1.08) translate(${pX}px,${pY}px)`;
-
-    // Move shine to cursor position
-    const pctX = (x / rect.width)  * 100;
-    const pctY = (y / rect.height) * 100;
-    shine.style.background = `radial-gradient(circle at ${pctX}% ${pctY}%,rgba(255,255,255,0.12) 0%,transparent 65%)`;
-    shine.style.opacity = '1';
-  });
-
-  card.addEventListener('mouseleave', () => {
-    card.style.transformStyle = 'flat';
-    card.style.transform = 'perspective(900px) rotateX(0deg) rotateY(0deg) scale3d(1,1,1)';
-    img.style.transform  = 'scale(1.02) translate(0,0)';
-    shine.style.opacity  = '0';
-    card.style.transition = 'transform 0.6s cubic-bezier(0.23,1,0.32,1), box-shadow 0.4s ease';
-    img.style.transition  = 'transform 0.6s cubic-bezier(0.23,1,0.32,1), filter 0.5s ease';
-    setTimeout(() => {
-      card.style.transition = '';
-      img.style.transition  = '';
-    }, 600);
-  });
-});
 
 // ── LIGHTBOX ─────────────────────────────────────────────────────
 const lightbox  = document.getElementById('lightbox');
