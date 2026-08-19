@@ -267,6 +267,36 @@ Elite. Individual training built for players who want more.</p>
         <div class="photo-tile reveal">
           <img src="images/work/clients/palmar-elite-soccer/photos/img19.jpg" alt="Palmar Elite Soccer game action">
         </div>
+        <div class="photo-tile reveal">
+          <img src="images/work/clients/palmar-elite-soccer/photos/img20.jpg" alt="Palmar Elite Soccer game action">
+        </div>
+        <div class="photo-tile reveal reveal-delay-1">
+          <img src="images/work/clients/palmar-elite-soccer/photos/img21.jpg" alt="Palmar Elite Soccer game action">
+        </div>
+        <div class="photo-tile reveal reveal-delay-2">
+          <img src="images/work/clients/palmar-elite-soccer/photos/img22.jpg" alt="Palmar Elite Soccer game action">
+        </div>
+        <div class="photo-tile reveal">
+          <img src="images/work/clients/palmar-elite-soccer/photos/img23.jpg" alt="Palmar Elite Soccer game action">
+        </div>
+        <div class="photo-tile reveal reveal-delay-1">
+          <img src="images/work/clients/palmar-elite-soccer/photos/img24.jpg" alt="Palmar Elite Soccer game action">
+        </div>
+        <div class="photo-tile reveal reveal-delay-2">
+          <img src="images/work/clients/palmar-elite-soccer/photos/img25.jpg" alt="Palmar Elite Soccer game action">
+        </div>
+        <div class="photo-tile reveal">
+          <img src="images/work/clients/palmar-elite-soccer/photos/img26.jpg" alt="Palmar Elite Soccer game action">
+        </div>
+        <div class="photo-tile reveal reveal-delay-1">
+          <img src="images/work/clients/palmar-elite-soccer/photos/img27.jpg" alt="Palmar Elite Soccer game action">
+        </div>
+        <div class="photo-tile reveal reveal-delay-2">
+          <img src="images/work/clients/palmar-elite-soccer/photos/img28.jpg" alt="Palmar Elite Soccer game action">
+        </div>
+        <div class="photo-tile reveal">
+          <img src="images/work/clients/palmar-elite-soccer/photos/img29.jpg" alt="Palmar Elite Soccer game action">
+        </div>
       </div>
     </div>
 
@@ -407,6 +437,22 @@ window.addEventListener('scroll', () => {
 backToTop.addEventListener('click', () => {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 });
+
+// ── RANDOM PHOTO ORDER — same shuffle used on soccer.html ──────────
+(function() {
+  const grid  = document.getElementById('photoGrid');
+  const cards = Array.from(grid.querySelectorAll('.photo-tile'));
+  for (let i = cards.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    if (j !== i) {
+      const nodeI = cards[i], nodeJ = cards[j];
+      const afterI = nodeI.nextSibling;
+      grid.insertBefore(nodeI, nodeJ);
+      grid.insertBefore(nodeJ, afterI);
+      [cards[i], cards[j]] = [cards[j], cards[i]];
+    }
+  }
+})();
 
 // ── PHOTO LIGHTBOX — click a tile to view it full-size, arrow keys or
 //    the on-screen arrows to move between photos, Esc or click outside
