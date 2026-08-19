@@ -172,7 +172,8 @@ nav.scrolled{padding:1.2rem 3rem;}
 .lw-preview img{width:100%;height:100%;object-fit:cover;display:block;}
 @media(max-width:640px){
   .lw-row-top{font-size:clamp(2.1rem,9.3vw,3.1rem);max-width:calc(100% - (clamp(96px,30vw,150px) / 2) - 16px);}
-  .lw-preview{top:14%;left:50%;transform:translate(-50%,0);width:58vw;}
+  .lw-preview{top:50%;left:auto;right:clamp(24px,6vw,64px);width:clamp(96px,30vw,150px);transform:translateY(-50%);transition:opacity 0.3s ease;}
+  .lw-preview::after{content:'';position:absolute;inset:0;background:rgba(0,0,0,0.38);}
 }
 
 /* ABOUT */
@@ -774,10 +775,41 @@ revealEls.forEach(el => revealObserver.observe(el));
     });
   } else {
     // Mobile/touch: whichever row is nearest the middle of the screen
-    // becomes "active" and its photo shows above the list.
+    // becomes "active" and its photo shows pinned to the right, fading
+    // out/in with a subtle tilt as it swaps between projects.
     lwPreview.classList.add('enabled');
     let currentSrc = '';
+    let swapTimer = null;
+    let tiltSign = 1;
     let ticking = false;
+
+    function showMobilePreview(link) {
+      const src = link.getAttribute('data-img');
+      if (!src) return;
+      setActive(link);
+      if (src === currentSrc) {
+        lwPreview.classList.add('visible');
+        return;
+      }
+      currentSrc = src;
+      lwPreview.classList.remove('visible');
+      clearTimeout(swapTimer);
+      swapTimer = setTimeout(() => {
+        lwPreviewImg.src = src;
+        tiltSign *= -1;
+        const tilt = tiltSign * (Math.random() * 3 + 1);
+        const shiftX = (Math.random() * 16 - 8);
+        const shiftY = (Math.random() * 20 - 10);
+        lwPreview.style.transform = `translate(${shiftX.toFixed(1)}px, calc(-50% + ${shiftY.toFixed(1)}px)) rotate(${tilt.toFixed(2)}deg)`;
+        lwPreview.classList.add('visible');
+      }, 300);
+    }
+    function hideMobilePreview() {
+      clearTimeout(swapTimer);
+      lwPreview.classList.remove('visible');
+      clearActive();
+      currentSrc = '';
+    }
 
     function updateOnScroll() {
       const vh = window.innerHeight;
@@ -788,16 +820,9 @@ revealEls.forEach(el => revealObserver.observe(el));
         if (dist < nearestDist) { nearestDist = dist; nearestLink = link; }
       });
       if (nearestLink && nearestDist < vh * 0.2) {
-        setActive(nearestLink);
-        const src = nearestLink.getAttribute('data-img');
-        if (src && src !== currentSrc) {
-          currentSrc = src;
-          lwPreviewImg.src = src;
-        }
-        lwPreview.classList.add('visible');
+        showMobilePreview(nearestLink);
       } else {
-        clearActive();
-        lwPreview.classList.remove('visible');
+        hideMobilePreview();
       }
       ticking = false;
     }
