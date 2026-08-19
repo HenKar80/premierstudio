@@ -78,18 +78,23 @@ nav.scrolled{padding:1.2rem 3rem;}
 .case-work{max-width:1680px;margin:0 auto;padding:clamp(32px,5vw,56px) clamp(24px,6vw,64px) clamp(120px,14vw,200px);}
 .view-panel{display:none;}
 .view-panel.active{display:block;}
-.photo-grid,.video-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(18px,2.6vw,32px);}
-.photo-tile{position:relative;aspect-ratio:4/5;overflow:hidden;background:#111;cursor:pointer;border-radius:6px;}
-.photo-tile img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.7s ease;}
-.photo-tile:hover img{transform:scale(1.05);}
+.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.video-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(18px,2.6vw,32px);}
+.photo-tile{position:relative;aspect-ratio:4/5;overflow:hidden;background:#111;cursor:pointer;border-radius:10px;transition:box-shadow 0.4s ease;}
+.photo-tile:hover{box-shadow:0 30px 80px rgba(0,0,0,0.7),0 0 0 1px rgba(255,255,255,0.06);}
+.photo-tile img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.6s cubic-bezier(0.23,1,0.32,1);}
+.photo-tile:hover img{transform:scale(1.08);}
 .video-tile{position:relative;aspect-ratio:16/9;overflow:hidden;background:#0a0a0a;cursor:pointer;border-radius:6px;}
 .video-poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.7s ease;}
 .video-tile:hover .video-poster{transform:scale(1.05);}
 .video-play-icon{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;transition:transform 0.3s ease;}
 .video-tile:hover .video-play-icon{transform:scale(1.08);}
 .video-play-icon svg{width:clamp(40px,5vw,56px);height:clamp(40px,5vw,56px);}
+@media(max-width:900px){
+  .photo-grid{grid-template-columns:1fr 1fr;gap:14px;}
+}
 @media(max-width:700px){
-  .photo-grid,.video-grid{grid-template-columns:1fr;}
+  .video-grid{grid-template-columns:1fr;}
 }
 
 /* FULLSCREEN VIDEO LIGHTBOX */
@@ -195,31 +200,41 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
   </section>
 
   <!-- ============================================================
-       PHOTO GRID
+       PHOTO GRID — 3 columns, same look as soccer.html's gallery.
        To add a photo: copy one .photo-tile block below and change
        the src to your image path (and update the alt text).
+       Path pattern: images/work/clients/[client-slug]/photos/imgN.jpg
        ============================================================ -->
   <section class="case-work" aria-label="Photo and video gallery">
 
     <div class="view-panel active" data-view="photos">
       <div class="photo-grid" id="photoGrid">
         <div class="photo-tile reveal">
-          <img src="images/work/palmarelitesoccer/photo-1.jpg" alt="Palmar Elite Soccer game action">
+          <img src="images/work/clients/palmar-elite-soccer/photos/img1.jpg" alt="Palmar Elite Soccer game action">
         </div>
         <div class="photo-tile reveal reveal-delay-1">
-          <img src="images/work/palmarelitesoccer/photo-2.jpg" alt="Palmar Elite Soccer game action">
+          <img src="images/work/clients/palmar-elite-soccer/photos/img2.jpg" alt="Palmar Elite Soccer game action">
         </div>
         <div class="photo-tile reveal reveal-delay-2">
-          <img src="images/work/palmarelitesoccer/photo-3.jpg" alt="Palmar Elite Soccer game action">
+          <img src="images/work/clients/palmar-elite-soccer/photos/img3.jpg" alt="Palmar Elite Soccer game action">
         </div>
         <div class="photo-tile reveal">
-          <img src="images/work/palmarelitesoccer/photo-4.jpg" alt="Palmar Elite Soccer game action">
+          <img src="images/work/clients/palmar-elite-soccer/photos/img4.jpg" alt="Palmar Elite Soccer game action">
         </div>
         <div class="photo-tile reveal reveal-delay-1">
-          <img src="images/work/palmarelitesoccer/photo-5.jpg" alt="Palmar Elite Soccer game action">
+          <img src="images/work/clients/palmar-elite-soccer/photos/img5.jpg" alt="Palmar Elite Soccer game action">
         </div>
         <div class="photo-tile reveal reveal-delay-2">
-          <img src="images/work/palmarelitesoccer/photo-6.jpg" alt="Palmar Elite Soccer game action">
+          <img src="images/work/clients/palmar-elite-soccer/photos/img6.jpg" alt="Palmar Elite Soccer game action">
+        </div>
+        <div class="photo-tile reveal">
+          <img src="images/work/clients/palmar-elite-soccer/photos/img7.jpg" alt="Palmar Elite Soccer game action">
+        </div>
+        <div class="photo-tile reveal reveal-delay-1">
+          <img src="images/work/clients/palmar-elite-soccer/photos/img8.jpg" alt="Palmar Elite Soccer game action">
+        </div>
+        <div class="photo-tile reveal reveal-delay-2">
+          <img src="images/work/clients/palmar-elite-soccer/photos/img9.jpg" alt="Palmar Elite Soccer game action">
         </div>
       </div>
     </div>
