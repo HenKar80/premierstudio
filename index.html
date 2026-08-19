@@ -152,6 +152,29 @@ nav.scrolled{padding:1.2rem 3rem;}
 .g-view::after{content:'→';transition:transform 0.3s;}
 .g-item:hover .g-view{color:rgba(255,255,255,0.9);gap:0.9rem;}
 
+/* LATEST WORK — sized and spaced to match henrikkarlsson.com's
+   "Selected Work" section exactly: same font-size scale, same
+   generous padding, no divider lines between rows. */
+.latest-work{padding:clamp(120px,14vw,200px) clamp(24px,6vw,64px);background:var(--black);position:relative;overflow:hidden;}
+.lw-eyebrow{display:block;font-size:14px;letter-spacing:0.18em;text-transform:uppercase;color:var(--gray);font-weight:500;margin-bottom:clamp(40px,6vw,88px);}
+.lw-list{max-width:1680px;margin:0 auto;}
+.lw-row{display:block;width:100%;}
+.lw-row a{display:flex;flex-direction:column;position:relative;z-index:70;padding:clamp(20px,3vw,36px) 0;color:var(--white);text-decoration:none;transition:color 0.5s ease,opacity 0.9s ease,transform 0.9s ease;}
+.lw-row-top{display:flex;align-items:baseline;justify-content:space-between;gap:24px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:500;font-size:clamp(2.5rem,6.5vw,6rem);letter-spacing:normal;}
+.lw-tag{display:block;margin-top:clamp(6px,1vw,10px);font-size:14px;letter-spacing:0.02em;color:var(--gray);font-weight:500;transition:color 0.5s ease;}
+.lw-row a.active .lw-tag{color:var(--white);}
+.lw-list.has-active .lw-row a:not(.active){color:rgba(242,240,235,0.22);}
+.lw-arrow{font-size:clamp(1.25rem,2vw,2rem);opacity:0;transform:translateX(-10px);transition:opacity 0.45s ease,transform 0.45s ease;flex-shrink:0;}
+.lw-row a.active .lw-arrow{opacity:1;transform:translateX(0);}
+.lw-preview{position:fixed;top:0;left:0;width:clamp(300px,26vw,420px);aspect-ratio:4/5;pointer-events:none;opacity:0;z-index:60;overflow:hidden;border-radius:6px;transition:opacity 0.5s ease;display:none;}
+.lw-preview.enabled{display:block;}
+.lw-preview.visible{opacity:1;}
+.lw-preview img{width:100%;height:100%;object-fit:cover;display:block;}
+@media(max-width:640px){
+  .lw-row-top{font-size:clamp(2.1rem,9.3vw,3.1rem);max-width:calc(100% - (clamp(96px,30vw,150px) / 2) - 16px);}
+  .lw-preview{top:14%;left:50%;transform:translate(-50%,0);width:58vw;}
+}
+
 /* ABOUT */
 .about{display:grid;grid-template-columns:1fr 1fr;min-height:100vh;}
 .about-visual{position:relative;overflow:hidden;min-height:600px;background:#111;}
@@ -477,6 +500,45 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
 </section>
 
 <!-- ============================================================
+     LATEST WORK — hover/scroll preview list
+     (style borrowed from henrikkarlsson.com's "Selected Work")
+
+     To add a row: copy one <li class="lw-row"> block below and
+     change 3 things —
+       1. href="soccer.html"        → the page it should link to
+       2. data-img="images/..."     → the image shown on hover
+       3. the text inside the two <span> tags
+     ============================================================ -->
+<section class="latest-work" id="latest-work">
+  <span class="lw-eyebrow reveal">Latest Work</span>
+  <ul class="lw-list" id="lwList">
+    <li class="lw-row">
+      <a class="reveal" href="latest-work-palmar-elite-soccer.html" data-img="images/work/soccer/soccer-cover.jpg">
+        <span class="lw-row-top">Palmar Elite Soccer <span class="lw-arrow" aria-hidden="true">→</span></span>
+        <span class="lw-tag">Game Day Coverage</span>
+      </a>
+    </li>
+    <li class="lw-row" style="display:none;"> <!-- hidden for now — remove this style attribute to bring it back -->
+      <a class="reveal reveal-delay-1" href="football.html" data-img="images/work/football/football-cover.jpg">
+        <span class="lw-row-top">Football <span class="lw-arrow" aria-hidden="true">→</span></span>
+        <span class="lw-tag">Sideline &amp; Action Shots</span>
+      </a>
+    </li>
+    <li class="lw-row" style="display:none;"> <!-- hidden for now — remove this style attribute to bring it back -->
+      <a class="reveal reveal-delay-2" href="lacrosse.html" data-img="images/work/lacrosse/lacrosse-1.jpg">
+        <span class="lw-row-top">Lacrosse <span class="lw-arrow" aria-hidden="true">→</span></span>
+        <span class="lw-tag">Tournament Highlights</span>
+      </a>
+    </li>
+  </ul>
+</section>
+
+<!-- Floating cursor-follow preview image for the Latest Work list -->
+<div class="lw-preview" id="lwPreview" aria-hidden="true">
+  <img id="lwPreviewImg" src="" alt="">
+</div>
+
+<!-- ============================================================
      ABOUT
      → Replace src="images/about/about.jpg" with your photo
      → Best: tall portrait of you or an athlete (800×1100px+)
@@ -515,7 +577,7 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
         <li>Turnaround: 1–3 days</li>
         <li>Digital delivery</li>
       </ul>
-      <div class="svc-price">$80 <small>/ session</small></div>
+      <div class="svc-price">$60 <small>/ session</small></div>
     </div>
     <div class="svc-card reveal reveal-delay-1">
       <div class="svc-num">02</div>
@@ -650,6 +712,90 @@ const revealObserver = new IntersectionObserver(entries => {
   entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in-view'); revealObserver.unobserve(e.target); } });
 }, { threshold: 0.12 });
 revealEls.forEach(el => revealObserver.observe(el));
+
+// ── LATEST WORK — hover preview on desktop, scroll preview on mobile ──
+(function() {
+  const lwList = document.getElementById('lwList');
+  if (!lwList) return;
+  const lwLinks = lwList.querySelectorAll('.lw-row a');
+  const lwPreview = document.getElementById('lwPreview');
+  const lwPreviewImg = document.getElementById('lwPreviewImg');
+
+  function setActive(link) {
+    lwList.classList.add('has-active');
+    lwLinks.forEach(a => a.classList.toggle('active', a === link));
+  }
+  function clearActive() {
+    lwList.classList.remove('has-active');
+    lwLinks.forEach(a => a.classList.remove('active'));
+  }
+
+  const hasHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (hasHover && !reduceMotion) {
+    // Desktop: image follows the cursor while hovering a row
+    lwPreview.classList.add('enabled');
+    let mouseX = 0, mouseY = 0, curX = 0, curY = 0, rot = 0, curRot = 0;
+
+    document.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
+
+    (function loop() {
+      curX += (mouseX - curX) * 0.12;
+      curY += (mouseY - curY) * 0.12;
+      curRot += (rot - curRot) * 0.12;
+      lwPreview.style.transform = `translate3d(${curX}px, ${curY}px, 0) translate(-50%, -50%) rotate(${curRot}deg)`;
+      requestAnimationFrame(loop);
+    })();
+
+    lwLinks.forEach(link => {
+      link.addEventListener('mouseenter', () => {
+        setActive(link);
+        const src = link.getAttribute('data-img');
+        if (src) lwPreviewImg.src = src;
+        rot = (Math.random() * 4 - 2) + (Math.random() < 0.5 ? -1 : 1) * 1.2;
+        lwPreview.classList.add('visible');
+      });
+      link.addEventListener('mouseleave', () => {
+        clearActive();
+        lwPreview.classList.remove('visible');
+      });
+    });
+  } else {
+    // Mobile/touch: whichever row is nearest the middle of the screen
+    // becomes "active" and its photo shows above the list.
+    lwPreview.classList.add('enabled');
+    let currentSrc = '';
+    let ticking = false;
+
+    function updateOnScroll() {
+      const vh = window.innerHeight;
+      let nearestLink = null, nearestDist = Infinity;
+      lwLinks.forEach(link => {
+        const rect = link.getBoundingClientRect();
+        const dist = Math.abs((rect.top + rect.height / 2) - vh / 2);
+        if (dist < nearestDist) { nearestDist = dist; nearestLink = link; }
+      });
+      if (nearestLink && nearestDist < vh * 0.2) {
+        setActive(nearestLink);
+        const src = nearestLink.getAttribute('data-img');
+        if (src && src !== currentSrc) {
+          currentSrc = src;
+          lwPreviewImg.src = src;
+        }
+        lwPreview.classList.add('visible');
+      } else {
+        clearActive();
+        lwPreview.classList.remove('visible');
+      }
+      ticking = false;
+    }
+    window.addEventListener('scroll', () => {
+      if (!ticking) { ticking = true; requestAnimationFrame(updateOnScroll); }
+    }, { passive: true });
+    updateOnScroll();
+  }
+})();
 
 // ── HERO SLIDESHOW — slide transition with live touch drag ─────────
 (function() {
