@@ -142,7 +142,7 @@ nav.scrolled{padding:1.2rem 3rem;}
 .sec-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(2rem,3.8vw,3.2rem);font-weight:500;line-height:1.05;letter-spacing:-0.02em;}
 .sec-title em{font-style:normal;}
 .gallery{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
-.g-item{position:relative;overflow:hidden;background:#111;aspect-ratio:4/5;display:block;text-decoration:none;border-radius:8px;}
+.g-item{position:relative;overflow:hidden;background:#111;aspect-ratio:4/5;display:block;text-decoration:none;border-radius:4px;}
 .g-item img{width:100%;height:100%;object-fit:cover;filter:none;transition:transform 0.7s;display:block;}
 .g-item:hover img{transform:scale(1.05);}
 .g-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.25) 0%,rgba(0,0,0,0.0) 55%);display:flex;flex-direction:column;justify-content:flex-end;padding:1.8rem 1.6rem;}
@@ -161,7 +161,7 @@ nav.scrolled{padding:1.2rem 3rem;}
 .lw-row{display:block;width:100%;}
 .lw-row a{display:flex;flex-direction:column;position:relative;z-index:70;padding:clamp(20px,3vw,36px) 0;color:var(--white);text-decoration:none;transition:color 0.5s ease,opacity 0.9s ease,transform 0.9s ease;}
 .lw-row-top{display:flex;align-items:baseline;justify-content:space-between;gap:24px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:500;font-size:clamp(2.5rem,6.5vw,6rem);letter-spacing:normal;line-height:0.98;}
-.lw-tag{display:block;margin-top:clamp(6px,1vw,10px);font-size:14px;letter-spacing:0.02em;color:var(--gray);font-weight:500;transition:color 0.5s ease;}
+.lw-tag{display:block;margin-top:clamp(16px,2.2vw,24px);font-size:14px;letter-spacing:0.02em;color:var(--gray);font-weight:500;transition:color 0.5s ease;}
 .lw-row a.active .lw-tag{color:var(--white);}
 .lw-list.has-active .lw-row a:not(.active){color:rgba(242,240,235,0.22);}
 .lw-arrow{font-size:clamp(1.25rem,2vw,2rem);opacity:0;transform:translateX(-10px);transition:opacity 0.45s ease,transform 0.45s ease;flex-shrink:0;}
@@ -517,7 +517,7 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
     <li class="lw-row">
       <a class="reveal" href="latest-work-palmar-elite-soccer.html" data-img="images/work/soccer/soccer-cover.jpg">
         <span class="lw-row-top">Palmar Elite Soccer <span class="lw-arrow" aria-hidden="true">→</span></span>
-        <span class="lw-tag">Behind the scenes with Palmar Soccer Elite.</span>
+        <span class="lw-tag">Behind the scenes with Palmar<br>Soccer Elite.</span>
       </a>
     </li>
     <li class="lw-row" style="display:none;"> <!-- hidden for now — remove this style attribute to bring it back -->
