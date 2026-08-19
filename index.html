@@ -162,6 +162,7 @@ nav.scrolled{padding:1.2rem 3rem;}
 .lw-row a{display:flex;flex-direction:column;position:relative;z-index:70;padding:clamp(20px,3vw,36px) 0;color:var(--white);text-decoration:none;transition:color 0.5s ease,opacity 0.9s ease,transform 0.9s ease;}
 .lw-row-top{display:flex;align-items:baseline;justify-content:space-between;gap:24px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:500;font-size:clamp(2.5rem,6.5vw,6rem);letter-spacing:normal;line-height:0.98;}
 .lw-tag{display:block;margin-top:clamp(16px,2.2vw,24px);font-size:14px;letter-spacing:0.02em;color:var(--gray);font-weight:500;transition:color 0.5s ease;}
+.lw-tag-break{display:none;}
 .lw-row a.active .lw-tag{color:var(--white);}
 .lw-list.has-active .lw-row a:not(.active){color:rgba(242,240,235,0.22);}
 .lw-arrow{font-size:clamp(1.25rem,2vw,2rem);opacity:0;transform:translateX(-10px);transition:opacity 0.45s ease,transform 0.45s ease;flex-shrink:0;}
@@ -171,8 +172,10 @@ nav.scrolled{padding:1.2rem 3rem;}
 .lw-preview.visible{opacity:1;}
 .lw-preview img{width:100%;height:100%;object-fit:cover;display:block;}
 @media(max-width:640px){
+  .latest-work{padding-top:clamp(80px,12vw,110px);padding-bottom:clamp(80px,12vw,110px);}
   .lw-row-top{font-size:clamp(2.1rem,9.3vw,3.1rem);max-width:calc(100% - (clamp(96px,30vw,150px) / 2) - 16px);line-height:0.9;}
   .lw-tag{max-width:calc(100% - (clamp(96px,30vw,150px) / 2) - 16px);}
+  .lw-tag-break{display:inline;}
   .lw-preview{top:50%;left:auto;right:clamp(24px,6vw,64px);width:clamp(80px,24vw,120px);transform:translateY(-50%);transition:opacity 0.3s ease;}
   .lw-preview::after{content:'';position:absolute;inset:0;background:rgba(0,0,0,0.38);}
 }
@@ -517,7 +520,7 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
     <li class="lw-row">
       <a class="reveal" href="latest-work-palmar-elite-soccer.html" data-img="images/work/soccer/soccer-cover.jpg">
         <span class="lw-row-top">Palmar Elite Soccer <span class="lw-arrow" aria-hidden="true">→</span></span>
-        <span class="lw-tag">Behind the scenes with Palmar<br>Soccer Elite.</span>
+        <span class="lw-tag">Behind the scenes with Palmar<br class="lw-tag-break">Soccer Elite.</span>
       </a>
     </li>
     <li class="lw-row" style="display:none;"> <!-- hidden for now — remove this style attribute to bring it back -->
