@@ -85,11 +85,24 @@ nav.scrolled{padding:1.2rem 3rem;}
 .photo-tile img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.6s cubic-bezier(0.23,1,0.32,1);}
 .photo-tile:hover img{transform:scale(1.08);}
 .video-tile{position:relative;aspect-ratio:16/9;overflow:hidden;background:#0a0a0a;cursor:pointer;border-radius:4px;}
-.video-poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.7s ease;}
-.video-tile:hover .video-poster{transform:scale(1.05);}
-.video-play-icon{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;transition:transform 0.3s ease;}
-.video-tile:hover .video-play-icon{transform:scale(1.08);}
+.video-poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;z-index:3;transition:opacity 0.4s ease;}
+.video-tile.playing .video-poster{opacity:0;}
+.video-frame{position:absolute;top:-54px;left:-2%;width:104%;height:calc(100% + 124px);border:0;z-index:1;opacity:0;transition:opacity 0.35s ease;pointer-events:none;}
+.video-tile.playing .video-frame{opacity:1;}
+.video-play-icon{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:1;z-index:4;transition:opacity 0.35s ease,transform 0.3s ease;}
+.video-tile.playing .video-play-icon{opacity:0;}
 .video-play-icon svg{width:clamp(40px,5vw,56px);height:clamp(40px,5vw,56px);}
+@media(hover:hover){
+  .video-tile:hover .video-play-icon{transform:scale(1.08);}
+}
+@media(max-width:640px){
+  /* Mobile plays inline in the tile (no lightbox) — iframe is preloaded
+     via the YouTube IFrame API and only becomes interactive once it is
+     actually playing, so the poster/play icon stay on top until then. */
+  .video-frame{opacity:1;pointer-events:none;}
+  .video-tile.playing .video-frame{pointer-events:auto;}
+  .video-tile.playing .video-poster{pointer-events:none;}
+}
 @media(max-width:900px){
   .photo-grid{grid-template-columns:1fr 1fr;gap:14px;}
 }
@@ -100,8 +113,12 @@ nav.scrolled{padding:1.2rem 3rem;}
 /* FULLSCREEN VIDEO LIGHTBOX */
 .video-lightbox{position:fixed;inset:0;background:#000;z-index:300;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.3s ease;}
 .video-lightbox.open{opacity:1;pointer-events:auto;}
-.video-lightbox-frame-wrap{position:relative;width:min(90vw,1200px);aspect-ratio:16/9;background:#000;}
-.video-lightbox-frame{position:absolute;inset:0;width:100%;height:100%;border:0;display:block;}
+.video-lightbox-frame-wrap{position:relative;width:min(90vw,1200px);aspect-ratio:16/9;overflow:hidden;background:#000;}
+.video-lightbox-frame{position:absolute;top:-60px;left:-1%;width:102%;height:calc(100% + 130px);border:0;display:block;opacity:0;transition:opacity 0.4s ease;}
+.video-lightbox.playing .video-lightbox-frame{opacity:1;}
+@media(max-width:640px){
+  .video-lightbox-frame-wrap{width:100vw;}
+}
 
 /* FULLSCREEN PHOTO LIGHTBOX */
 .photo-lightbox{position:fixed;inset:0;background:#000;z-index:300;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.3s ease;}
@@ -310,6 +327,7 @@ Elite. Individual training built for players who want more.</p>
       <div class="video-grid" id="videoGrid">
         <div class="video-tile" data-yid="5Z6YIAUW_Is">
           <img class="video-poster" src="https://img.youtube.com/vi/5Z6YIAUW_Is/hqdefault.jpg" alt="" loading="lazy">
+          <iframe class="video-frame" title="Palmar Elite Soccer video" allow="autoplay; encrypted-media" tabindex="-1"></iframe>
           <span class="video-play-icon" aria-hidden="true">
             <svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
               <circle cx="28" cy="28" r="27" stroke="white" stroke-opacity="0.9" stroke-width="1.4"/>
@@ -319,6 +337,7 @@ Elite. Individual training built for players who want more.</p>
         </div>
         <div class="video-tile" data-yid="REPLACE_WITH_YOUTUBE_ID_2" style="display:none;"> <!-- hidden for now — remove this style attribute to bring it back -->
           <img class="video-poster" src="https://img.youtube.com/vi/REPLACE_WITH_YOUTUBE_ID_2/hqdefault.jpg" alt="" loading="lazy">
+          <iframe class="video-frame" title="Palmar Elite Soccer video" allow="autoplay; encrypted-media" tabindex="-1"></iframe>
           <span class="video-play-icon" aria-hidden="true">
             <svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
               <circle cx="28" cy="28" r="27" stroke="white" stroke-opacity="0.9" stroke-width="1.4"/>
@@ -376,9 +395,11 @@ Elite. Individual training built for players who want more.</p>
       <path d="M6 6L18 18M18 6L6 18" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
     </svg>
   </button>
+  <button class="lightbox-nav lightbox-prev" aria-label="Previous video">&#8592;</button>
   <div class="video-lightbox-frame-wrap">
-    <iframe id="videoLightboxFrame" class="video-lightbox-frame" allow="autoplay; encrypted-media" allowfullscreen title="Palmar Elite Soccer video"></iframe>
+    <iframe class="video-lightbox-frame" id="videoLightboxFrame" title="Palmar Elite Soccer video" allow="autoplay; encrypted-media" allowfullscreen></iframe>
   </div>
+  <button class="lightbox-nav lightbox-next" aria-label="Next video">&#8594;</button>
 </div>
 
 <script>
@@ -551,34 +572,135 @@ backToTop.addEventListener('click', () => {
   });
 })();
 
-// ── VIDEO LIGHTBOX — click a tile to play it fullscreen ──
+// ── VIDEO — fullscreen lightbox on desktop, inline tap-to-play on mobile ──
 (function() {
-  const tiles = document.querySelectorAll('.video-tile');
-  const lightbox = document.getElementById('videoLightbox');
-  const frame = document.getElementById('videoLightboxFrame');
-  const closeBtn = lightbox.querySelector('.lightbox-close');
+  const videoTiles = document.querySelectorAll('.video-tile');
+  if (!videoTiles.length) return;
+  const videoIds = Array.prototype.map.call(videoTiles, t => t.getAttribute('data-yid'));
+  const isMobile = window.matchMedia('(max-width: 640px)').matches;
 
-  function openVideo(id) {
-    frame.src = 'https://www.youtube.com/embed/' + id + '?autoplay=1&rel=0&modestbranding=1&playsinline=1';
+  /* ── DESKTOP: fullscreen lightbox with prev/next ──────────────────
+     The frame is cropped (overflow hidden + oversized/offset iframe)
+     to push YouTube's top title bar out of view, and stays fully
+     transparent until playback has actually begun, so the red play
+     button never flashes on open or when switching videos. */
+  const lightbox = document.getElementById('videoLightbox');
+  const lightboxFrame = document.getElementById('videoLightboxFrame');
+  const lightboxClose = lightbox.querySelector('.lightbox-close');
+  const lightboxPrev = lightbox.querySelector('.lightbox-prev');
+  const lightboxNext = lightbox.querySelector('.lightbox-next');
+  let currentIndex = 0;
+  let revealTimer = null;
+
+  function lightboxSrc(id) {
+    return 'https://www.youtube.com/embed/' + id +
+      '?autoplay=1&mute=0&controls=0&modestbranding=1&rel=0&iv_load_policy=3&playsinline=1&disablekb=1';
+  }
+  function playIndex(index) {
+    currentIndex = (index + videoIds.length) % videoIds.length;
+    lightbox.classList.remove('playing');
+    clearTimeout(revealTimer);
+    lightboxFrame.src = lightboxSrc(videoIds[currentIndex]);
+    revealTimer = setTimeout(() => { lightbox.classList.add('playing'); }, 550);
+  }
+  function openLightbox(index) {
     lightbox.classList.add('open');
     lightbox.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
+    playIndex(index);
   }
-  function closeVideo() {
-    lightbox.classList.remove('open');
+  function closeLightbox() {
+    clearTimeout(revealTimer);
+    lightbox.classList.remove('open', 'playing');
     lightbox.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
-    frame.removeAttribute('src');
+    lightboxFrame.removeAttribute('src');
   }
-  tiles.forEach(tile => {
-    tile.addEventListener('click', () => openVideo(tile.getAttribute('data-yid')));
-  });
-  closeBtn.addEventListener('click', closeVideo);
-  lightbox.addEventListener('click', e => { if (e.target === lightbox) closeVideo(); });
+  lightboxClose.addEventListener('click', closeLightbox);
+  lightboxPrev.addEventListener('click', e => { e.stopPropagation(); playIndex(currentIndex - 1); });
+  lightboxNext.addEventListener('click', e => { e.stopPropagation(); playIndex(currentIndex + 1); });
+  lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
   document.addEventListener('keydown', e => {
     if (!lightbox.classList.contains('open')) return;
-    if (e.key === 'Escape') closeVideo();
+    if (e.key === 'Escape') closeLightbox();
+    else if (e.key === 'ArrowLeft') playIndex(currentIndex - 1);
+    else if (e.key === 'ArrowRight') playIndex(currentIndex + 1);
   });
+
+  /* ── MOBILE: inline per-tile playback, no lightbox ────────────────
+     Single tap starts the video right inside the tile via the
+     YouTube IFrame Player API, which avoids the iOS Safari
+     unmuted-autoplay-on-fresh-navigation problem that a plain src
+     reload runs into on mobile. */
+  let ytApiReady = false;
+  let ytApiQueue = [];
+  function whenYtReady(fn) { if (ytApiReady) fn(); else ytApiQueue.push(fn); }
+  window.onYouTubeIframeAPIReady = function() {
+    ytApiReady = true;
+    ytApiQueue.forEach(fn => fn());
+    ytApiQueue = [];
+  };
+  function loadYtApiScript() {
+    if (document.getElementById('yt-iframe-api')) return;
+    const tag = document.createElement('script');
+    tag.id = 'yt-iframe-api';
+    tag.src = 'https://www.youtube.com/iframe_api';
+    document.head.appendChild(tag);
+  }
+  function stopVideoTile(tile) {
+    tile.classList.remove('playing');
+    tile._playPending = false;
+    const player = tile._ytPlayer;
+    if (player && typeof player.pauseVideo === 'function') {
+      try { player.pauseVideo(); } catch (e) {}
+    }
+  }
+  function startVideoTile(tile) {
+    if (!tile._ytReady) { tile._playPending = true; return; }
+    const player = tile._ytPlayer;
+    videoTiles.forEach(t => { if (t !== tile) stopVideoTile(t); });
+    try {
+      player.unMute();
+      player.setVolume(100);
+      player.playVideo();
+    } catch (e) {}
+  }
+  function initVideoTilePlayer(tile, index) {
+    const id = tile.getAttribute('data-yid');
+    const frame = tile.querySelector('.video-frame');
+    frame.id = 'video-yt-' + index;
+    const params = [
+      'enablejsapi=1', 'playsinline=1', 'modestbranding=1',
+      'rel=0', 'iv_load_policy=3', 'disablekb=1', 'controls=0'
+    ].join('&');
+    frame.src = 'https://www.youtube.com/embed/' + id + '?' + params;
+    tile._ytPlayer = new YT.Player(frame.id, {
+      events: {
+        onReady: function() {
+          tile._ytReady = true;
+          if (tile._playPending) { tile._playPending = false; startVideoTile(tile); }
+        },
+        onStateChange: function(e) {
+          if (e.data === YT.PlayerState.PLAYING) tile.classList.add('playing');
+        }
+      }
+    });
+  }
+
+  if (isMobile) {
+    loadYtApiScript();
+    videoTiles.forEach((tile, i) => {
+      whenYtReady(() => initVideoTilePlayer(tile, i));
+      tile.addEventListener('click', () => {
+        if (tile.classList.contains('playing')) return;
+        startVideoTile(tile);
+      });
+    });
+  } else {
+    videoTiles.forEach((tile, i) => {
+      tile.addEventListener('click', () => openLightbox(i));
+    });
+  }
 })();
 </script>
 
