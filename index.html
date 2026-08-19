@@ -515,7 +515,7 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
     <li class="lw-row">
       <a class="reveal" href="latest-work-palmar-elite-soccer.html" data-img="images/work/soccer/soccer-cover.jpg">
         <span class="lw-row-top">Palmar Elite Soccer <span class="lw-arrow" aria-hidden="true">→</span></span>
-        <span class="lw-tag">Game Day Coverage</span>
+        <span class="lw-tag">Behind the scenes with Palmar Elite Soccer Elite.</span>
       </a>
     </li>
     <li class="lw-row" style="display:none;"> <!-- hidden for now — remove this style attribute to bring it back -->
@@ -720,6 +720,17 @@ revealEls.forEach(el => revealObserver.observe(el));
   const lwLinks = lwList.querySelectorAll('.lw-row a');
   const lwPreview = document.getElementById('lwPreview');
   const lwPreviewImg = document.getElementById('lwPreviewImg');
+
+  // Pick a random photo from the Palmar Elite Soccer gallery (img1–img30)
+  // every time the page loads, so the preview isn't always the same shot.
+  // To add more photos later, just bump this number to match how many
+  // are in images/work/clients/palmar-elite-soccer/photos/
+  const PALMAR_PHOTO_COUNT = 30;
+  const palmarLink = lwList.querySelector('a[href="latest-work-palmar-elite-soccer.html"]');
+  if (palmarLink) {
+    const randomNum = Math.floor(Math.random() * PALMAR_PHOTO_COUNT) + 1;
+    palmarLink.setAttribute('data-img', `images/work/clients/palmar-elite-soccer/photos/img${randomNum}.jpg`);
+  }
 
   function setActive(link) {
     lwList.classList.add('has-active');
