@@ -123,16 +123,16 @@ nav.scrolled{padding:1.2rem 3rem;}
 .hdot.active{background:var(--white);transform:scale(1.6);}
 
 /* MARQUEE — scrolling photo strip above Follow Us */
-.marquee{overflow:hidden;padding:3rem 0;background:var(--black);border-top:1px solid rgba(255,255,255,0.05);}
+.marquee{overflow:hidden;padding:3rem 0;background:var(--black);}
 .marquee-track{display:flex;gap:14px;width:max-content;opacity:0;will-change:transform;backface-visibility:hidden;}
 .marquee-track.ready{animation:marqueeScroll 70s linear infinite;opacity:1;transition:opacity 0.5s ease;}
-.marquee-item{position:relative;height:375px;width:300px;aspect-ratio:4/5;border-radius:4px;flex-shrink:0;background:#161616;overflow:hidden;}
+.marquee-item{position:relative;height:375px;width:300px;aspect-ratio:4/5;border-radius:4px;flex-shrink:0;background:#161616;overflow:hidden;transition:transform 0.6s cubic-bezier(0.25,0.1,0.25,1);}
 .marquee-item img{width:100%;height:100%;object-fit:cover;display:block;}
 .marquee-tint{position:absolute;inset:0;background:#000;opacity:0.3;pointer-events:none;transition:opacity 0.9s cubic-bezier(0.25,0.1,0.25,1);}
 @keyframes marqueeScroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
 
 /* INSTAGRAM — simple CTA */
-.instagram{padding:6rem 4rem;background:var(--black);border-top:1px solid rgba(255,255,255,0.05);text-align:center;}
+.instagram{padding:6rem 4rem;background:var(--black);text-align:center;}
 .ig-follow-label{font-size:0.65rem;letter-spacing:0.32em;text-transform:uppercase;color:var(--gray);display:block;margin-bottom:1rem;}
 .ig-handle-large{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(1.5rem,2.8vw,2.6rem);font-weight:400;letter-spacing:-0.01em;color:var(--white);text-decoration:none;display:inline-block;transition:opacity 0.3s;}
 .ig-handle-large:hover{opacity:0.6;}
@@ -929,11 +929,11 @@ revealEls.forEach(el => revealObserver.observe(el));
     requestAnimationFrame(() => track.classList.add('ready'));
 
     // ── Center spotlight ──
-    // The photo dead-center of the screen fades smoothly to full color,
-    // its two closest neighbors ease to a 20% tint, and everything
-    // further out sits at a 30% tint. Positions are all read first, then
-    // all the tint updates are written together, so this never fights
-    // with the browser's layout of the scrolling strip.
+    // The photo dead-center of the screen fades smoothly to full color
+    // and grows slightly larger; its two closest neighbors ease to a
+    // 20% tint, and everything further out sits at a 30% tint. Positions
+    // are all read first, then all the updates are written together, so
+    // this never fights with the browser's layout of the scrolling strip.
     function updateTints() {
       const centerX = window.innerWidth / 2;
       const updates = [];
@@ -941,13 +941,17 @@ revealEls.forEach(el => revealObserver.observe(el));
         const rect = el.getBoundingClientRect();
         const itemCenter = rect.left + rect.width / 2;
         const dist = Math.abs(itemCenter - centerX);
-        let opacity;
-        if (dist < rect.width / 2) opacity = '0';
-        else if (dist < rect.width * 1.5) opacity = '0.2';
-        else opacity = '0.3';
-        updates.push([tint, opacity]);
+        let opacity, scale, z;
+        if (dist < rect.width / 2) { opacity = '0'; scale = 1.08; z = 2; }
+        else if (dist < rect.width * 1.5) { opacity = '0.2'; scale = 1; z = 1; }
+        else { opacity = '0.3'; scale = 1; z = 1; }
+        updates.push([el, tint, opacity, scale, z]);
       }
-      updates.forEach(([tint, opacity]) => { tint.style.opacity = opacity; });
+      updates.forEach(([el, tint, opacity, scale, z]) => {
+        tint.style.opacity = opacity;
+        el.style.transform = `scale(${scale})`;
+        el.style.zIndex = z;
+      });
       requestAnimationFrame(updateTints);
     }
     requestAnimationFrame(updateTints);
