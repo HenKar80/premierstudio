@@ -124,7 +124,8 @@ nav.scrolled{padding:1.2rem 3rem;}
 
 /* MARQUEE — scrolling photo strip above Follow Us */
 .marquee{overflow:hidden;padding:3rem 0;background:var(--black);border-top:1px solid rgba(255,255,255,0.05);}
-.marquee-track{display:flex;gap:14px;width:max-content;animation:marqueeScroll 70s linear infinite;will-change:transform;transform:translateZ(0);backface-visibility:hidden;}
+.marquee-track{display:flex;gap:14px;width:max-content;opacity:0;will-change:transform;backface-visibility:hidden;}
+.marquee-track.ready{animation:marqueeScroll 70s linear infinite;opacity:1;transition:opacity 0.5s ease;}
 .marquee-item{position:relative;height:375px;width:300px;aspect-ratio:4/5;border-radius:4px;flex-shrink:0;background:#161616;overflow:hidden;}
 .marquee-item img{width:100%;height:100%;object-fit:cover;display:block;}
 .marquee-tint{position:absolute;inset:0;background:#000;opacity:0.3;pointer-events:none;transition:opacity 0.9s cubic-bezier(0.25,0.1,0.25,1);}
@@ -921,6 +922,11 @@ revealEls.forEach(el => revealObserver.observe(el));
       track.appendChild(item);
       items.push({ el: item, tint });
     });
+
+    // Only start the scrolling animation now that the row has its real,
+    // final width — starting it any earlier (while the row was still
+    // empty) is what caused it to freeze in place.
+    requestAnimationFrame(() => track.classList.add('ready'));
 
     // ── Center spotlight ──
     // The photo dead-center of the screen fades smoothly to full color,
