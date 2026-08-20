@@ -126,7 +126,7 @@ nav.scrolled{padding:1.2rem 3rem;}
 .marquee{overflow:hidden;padding:3rem 0;background:var(--black);}
 .marquee-track{display:flex;gap:14px;width:max-content;opacity:0;will-change:transform;backface-visibility:hidden;}
 .marquee-track.ready{animation:marqueeScroll 70s linear infinite;opacity:1;transition:opacity 0.5s ease;}
-.marquee-item{position:relative;height:375px;width:300px;aspect-ratio:4/5;border-radius:4px;flex-shrink:0;background:#161616;overflow:hidden;transition:transform 0.6s cubic-bezier(0.25,0.1,0.25,1);}
+.marquee-item{position:relative;height:375px;width:300px;aspect-ratio:4/5;border-radius:4px;flex-shrink:0;background:#161616;overflow:hidden;transition:transform 0.9s cubic-bezier(0.65,0,0.35,1);}
 .marquee-item img{width:100%;height:100%;object-fit:cover;display:block;}
 .marquee-tint{position:absolute;inset:0;background:#000;opacity:0.3;pointer-events:none;transition:opacity 0.9s cubic-bezier(0.25,0.1,0.25,1);}
 @keyframes marqueeScroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
@@ -359,7 +359,7 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
 
   /* Instagram */
   .instagram{padding:3rem 1.25rem;}
-  .marquee{padding:1.25rem 0;}
+  .marquee{padding:1.75rem 0;}
   .marquee-track{gap:10px;}
   .marquee-item{height:210px;width:168px;border-radius:3px;}
 
@@ -942,7 +942,7 @@ revealEls.forEach(el => revealObserver.observe(el));
         const itemCenter = rect.left + rect.width / 2;
         const dist = Math.abs(itemCenter - centerX);
         let opacity, scale, z;
-        if (dist < rect.width / 2) { opacity = '0'; scale = 1.08; z = 2; }
+        if (dist < rect.width / 2) { opacity = '0'; scale = 1.16; z = 2; }
         else if (dist < rect.width * 1.5) { opacity = '0.2'; scale = 1; z = 1; }
         else { opacity = '0.3'; scale = 1; z = 1; }
         updates.push([el, tint, opacity, scale, z]);
