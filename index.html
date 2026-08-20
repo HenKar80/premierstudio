@@ -935,30 +935,42 @@ revealEls.forEach(el => revealObserver.observe(el));
     // photo drifts toward center it eases up to full size and full
     // color and nudges its own space open a bit; as it drifts away it
     // eases smoothly back down to normal, matching the size of the rest.
-    const MAX_SCALE = 1.16;
+    const MAX_SCALE = 1.22;
     const MAX_TINT = 0.3;
+    const n = items.length;
+    // Reusing these arrays every frame (instead of building new ones)
+    // keeps the browser from doing extra cleanup work while it's trying
+    // to paint 60 times a second — one less thing that can cause a hitch.
+    const scales = new Float32Array(n);
+    const opacities = new Float32Array(n);
+    const margins = new Float32Array(n);
+    const zs = new Int16Array(n);
+
     function updateTints() {
       const centerX = window.innerWidth / 2;
-      const updates = [];
-      for (const { el, tint } of items) {
-        const rect = el.getBoundingClientRect();
+
+      // Pass 1 — read every position first
+      for (let i = 0; i < n; i++) {
+        const rect = items[i].el.getBoundingClientRect();
         const dist = Math.abs(rect.left + rect.width / 2 - centerX);
         const influence = rect.width * 1.6;
         const t = Math.max(0, 1 - dist / influence);
         // smoothstep easing — accelerates in, decelerates out
         const eased = t * t * (3 - 2 * t);
-        const scale = 1 + (MAX_SCALE - 1) * eased;
-        const opacity = MAX_TINT * (1 - eased);
-        const marginPx = rect.width * 0.09 * eased;
-        const z = Math.round(eased * 100);
-        updates.push([el, tint, scale, opacity, marginPx, z]);
+        scales[i] = 1 + (MAX_SCALE - 1) * eased;
+        opacities[i] = MAX_TINT * (1 - eased);
+        margins[i] = rect.width * 0.09 * eased;
+        zs[i] = Math.round(eased * 100);
       }
-      updates.forEach(([el, tint, scale, opacity, marginPx, z]) => {
-        el.style.transform = `scale(${scale})`;
-        el.style.margin = `0 ${marginPx}px`;
-        el.style.zIndex = z;
-        tint.style.opacity = opacity;
-      });
+
+      // Pass 2 — write everything together
+      for (let i = 0; i < n; i++) {
+        const { el, tint } = items[i];
+        el.style.transform = `scale(${scales[i]})`;
+        el.style.margin = `0 ${margins[i]}px`;
+        el.style.zIndex = zs[i];
+        tint.style.opacity = opacities[i];
+      }
 
       requestAnimationFrame(updateTints);
     }
