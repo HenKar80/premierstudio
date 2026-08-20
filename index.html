@@ -126,10 +126,9 @@ nav.scrolled{padding:1.2rem 3rem;}
 .marquee{overflow:hidden;padding:6rem 0 3rem;background:var(--black);}
 .marquee-track{display:flex;gap:14px;width:max-content;opacity:0;will-change:transform;backface-visibility:hidden;}
 .marquee-track.ready{animation:marqueeScroll 70s linear infinite;opacity:1;transition:opacity 0.5s ease;}
-.marquee-item{position:relative;height:375px;width:300px;aspect-ratio:4/5;border-radius:4px;flex-shrink:0;background:#161616;overflow:hidden;transition:transform 0.9s cubic-bezier(0.65,0,0.35,1);}
-.marquee-item.is-center{transform:scale(1.16);z-index:2;}
+.marquee-item{position:relative;height:375px;width:300px;aspect-ratio:4/5;border-radius:4px;flex-shrink:0;background:#161616;overflow:hidden;}
 .marquee-item img{width:100%;height:100%;object-fit:cover;display:block;}
-.marquee-tint{position:absolute;inset:0;background:#000;opacity:0.3;pointer-events:none;transition:opacity 0.9s cubic-bezier(0.25,0.1,0.25,1);}
+.marquee-tint{position:absolute;inset:0;background:#000;opacity:0.3;pointer-events:none;}
 @keyframes marqueeScroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
 
 /* INSTAGRAM — simple CTA */
@@ -930,39 +929,35 @@ revealEls.forEach(el => revealObserver.observe(el));
     requestAnimationFrame(() => track.classList.add('ready'));
 
     // ── Center spotlight ──
-    // The photo dead-center of the screen fades to full color and grows
-    // larger; its immediate left/right neighbors slide outward a bit
-    // (using a transform, not margin — margin would resize the whole
-    // strip and cause the stutter/pause you noticed) and fade to a 20%
-    // tint; everything else sits at a 30% tint. Which item is "center"
-    // is found first, then every item's look is set in one pass.
+    // Every photo continuously scales, tints, and pushes itself apart
+    // from its neighbors based on exactly how close it is to dead-center
+    // — no on/off states, so there's nothing to "snap" between. As a
+    // photo drifts toward center it eases up to full size and full
+    // color and nudges its own space open a bit; as it drifts away it
+    // eases smoothly back down to normal, matching the size of the rest.
+    const MAX_SCALE = 1.16;
+    const MAX_TINT = 0.3;
     function updateTints() {
       const centerX = window.innerWidth / 2;
-      let centerIdx = -1;
-      let minDist = Infinity;
-      const rects = items.map(({ el }) => {
+      const updates = [];
+      for (const { el, tint } of items) {
         const rect = el.getBoundingClientRect();
-        return rect;
-      });
-      rects.forEach((rect, i) => {
         const dist = Math.abs(rect.left + rect.width / 2 - centerX);
-        if (dist < minDist) { minDist = dist; centerIdx = i; }
-      });
-
-      items.forEach(({ el, tint }, i) => {
-        let opacity = '0.3';
-        let isCenter = false;
-        let push = 0;
-        if (i === centerIdx) {
-          opacity = '0'; isCenter = true;
-        } else if (i === centerIdx - 1) {
-          opacity = '0.2'; push = -1;
-        } else if (i === centerIdx + 1) {
-          opacity = '0.2'; push = 1;
-        }
+        const influence = rect.width * 1.6;
+        const t = Math.max(0, 1 - dist / influence);
+        // smoothstep easing — accelerates in, decelerates out
+        const eased = t * t * (3 - 2 * t);
+        const scale = 1 + (MAX_SCALE - 1) * eased;
+        const opacity = MAX_TINT * (1 - eased);
+        const marginPx = rect.width * 0.09 * eased;
+        const z = Math.round(eased * 100);
+        updates.push([el, tint, scale, opacity, marginPx, z]);
+      }
+      updates.forEach(([el, tint, scale, opacity, marginPx, z]) => {
+        el.style.transform = `scale(${scale})`;
+        el.style.margin = `0 ${marginPx}px`;
+        el.style.zIndex = z;
         tint.style.opacity = opacity;
-        el.classList.toggle('is-center', isCenter);
-        el.style.transform = push ? `translateX(${push * rects[i].width * 0.09}px)` : '';
       });
 
       requestAnimationFrame(updateTints);
