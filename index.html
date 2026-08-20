@@ -123,10 +123,11 @@ nav.scrolled{padding:1.2rem 3rem;}
 .hdot.active{background:var(--white);transform:scale(1.6);}
 
 /* MARQUEE — scrolling photo strip above Follow Us */
-.marquee{overflow:hidden;padding:2.5rem 0;background:var(--black);border-top:1px solid rgba(255,255,255,0.05);-webkit-mask-image:linear-gradient(to right,transparent 0,black 6%,black 94%,transparent 100%);mask-image:linear-gradient(to right,transparent 0,black 6%,black 94%,transparent 100%);}
+.marquee{overflow:hidden;padding:3rem 0;background:var(--black);border-top:1px solid rgba(255,255,255,0.05);}
 .marquee-track{display:flex;gap:14px;width:max-content;animation:marqueeScroll 55s linear infinite;}
-.marquee-item{height:290px;width:232px;aspect-ratio:4/5;border-radius:4px;flex-shrink:0;background:#161616;overflow:hidden;}
+.marquee-item{position:relative;height:375px;width:300px;aspect-ratio:4/5;border-radius:4px;flex-shrink:0;background:#161616;overflow:hidden;}
 .marquee-item img{width:100%;height:100%;object-fit:cover;display:block;}
+.marquee-tint{position:absolute;inset:0;background:#000;opacity:0.1;pointer-events:none;transition:opacity 0.35s ease;}
 @keyframes marqueeScroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
 
 /* INSTAGRAM — simple CTA */
@@ -294,7 +295,7 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
 
   /* Instagram */
   .instagram{padding:4rem 2rem;}
-  .marquee-item{height:220px;width:176px;}
+  .marquee-item{height:290px;width:232px;}
 
   /* About */
   .about{grid-template-columns:1fr;}
@@ -359,7 +360,7 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
   .instagram{padding:3rem 1.25rem;}
   .marquee{padding:1.25rem 0;}
   .marquee-track{gap:10px;}
-  .marquee-item{height:170px;width:136px;border-radius:3px;}
+  .marquee-item{height:210px;width:168px;border-radius:3px;}
 
   /* About */
   .about{grid-template-columns:1fr;}
@@ -907,8 +908,36 @@ revealEls.forEach(el => revealObserver.observe(el));
     img.loading = 'lazy';
     img.onerror = function () { this.style.display = 'none'; };
     item.appendChild(img);
+    const tint = document.createElement('div');
+    tint.className = 'marquee-tint';
+    item.appendChild(tint);
     track.appendChild(item);
   });
+
+  // ── Center spotlight ──
+  // The photo dead-center of the screen is full color, its two closest
+  // neighbors fade to a light 5% tint, and everything further out sits
+  // at a 10% tint. Runs continuously since the row is always scrolling.
+  const items = Array.from(track.querySelectorAll('.marquee-item'));
+  function updateTints() {
+    const centerX = window.innerWidth / 2;
+    items.forEach(item => {
+      const rect = item.getBoundingClientRect();
+      const itemCenter = rect.left + rect.width / 2;
+      const dist = Math.abs(itemCenter - centerX);
+      const tint = item.querySelector('.marquee-tint');
+      if (!tint) return;
+      if (dist < rect.width / 2) {
+        tint.style.opacity = '0';
+      } else if (dist < rect.width * 1.5) {
+        tint.style.opacity = '0.05';
+      } else {
+        tint.style.opacity = '0.1';
+      }
+    });
+    requestAnimationFrame(updateTints);
+  }
+  requestAnimationFrame(updateTints);
 })();
 
 // ── HERO SLIDESHOW — slide transition with live touch drag ─────────
