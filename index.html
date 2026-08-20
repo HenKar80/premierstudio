@@ -126,8 +126,8 @@ nav.scrolled{padding:1.2rem 3rem;}
 .marquee{overflow:hidden;padding:6rem 0 3rem;background:var(--black);}
 .marquee-track{display:flex;gap:14px;width:max-content;opacity:0;will-change:transform;backface-visibility:hidden;}
 .marquee-track.ready{animation:marqueeScroll 70s linear infinite;opacity:1;transition:opacity 0.5s ease;}
-.marquee-item{position:relative;height:375px;width:300px;aspect-ratio:4/5;border-radius:4px;flex-shrink:0;background:#161616;overflow:hidden;transition:transform 0.9s cubic-bezier(0.65,0,0.35,1),margin 0.9s cubic-bezier(0.65,0,0.35,1);}
-.marquee-item.is-center{transform:scale(1.16);z-index:2;margin:0 26px;}
+.marquee-item{position:relative;height:375px;width:300px;aspect-ratio:4/5;border-radius:4px;flex-shrink:0;background:#161616;overflow:hidden;transition:transform 0.9s cubic-bezier(0.65,0,0.35,1);}
+.marquee-item.is-center{transform:scale(1.16);z-index:2;}
 .marquee-item img{width:100%;height:100%;object-fit:cover;display:block;}
 .marquee-tint{position:absolute;inset:0;background:#000;opacity:0.3;pointer-events:none;transition:opacity 0.9s cubic-bezier(0.25,0.1,0.25,1);}
 @keyframes marqueeScroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
@@ -298,7 +298,6 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
   /* Instagram */
   .instagram{padding:4rem 2rem;}
   .marquee-item{height:290px;width:232px;}
-  .marquee-item.is-center{margin:0 20px;}
 
   /* About */
   .about{grid-template-columns:1fr;}
@@ -364,7 +363,6 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
   .marquee{padding:1.75rem 0;}
   .marquee-track{gap:10px;}
   .marquee-item{height:210px;width:168px;border-radius:3px;}
-  .marquee-item.is-center{margin:0 14px;}
 
   /* About */
   .about{grid-template-columns:1fr;}
@@ -932,30 +930,41 @@ revealEls.forEach(el => revealObserver.observe(el));
     requestAnimationFrame(() => track.classList.add('ready'));
 
     // ── Center spotlight ──
-    // The photo dead-center of the screen fades smoothly to full color,
-    // grows slightly larger, and pushes its two neighbors apart so the
-    // same black gap that separates every other photo in the row shows
-    // around it too. The two closest neighbors ease to a 20% tint, and
-    // everything further out sits at a 30% tint. Positions are all read
-    // first, then all the updates are written together, so this never
-    // fights with the browser's layout of the scrolling strip.
+    // The photo dead-center of the screen fades to full color and grows
+    // larger; its immediate left/right neighbors slide outward a bit
+    // (using a transform, not margin — margin would resize the whole
+    // strip and cause the stutter/pause you noticed) and fade to a 20%
+    // tint; everything else sits at a 30% tint. Which item is "center"
+    // is found first, then every item's look is set in one pass.
     function updateTints() {
       const centerX = window.innerWidth / 2;
-      const updates = [];
-      for (const { el, tint } of items) {
+      let centerIdx = -1;
+      let minDist = Infinity;
+      const rects = items.map(({ el }) => {
         const rect = el.getBoundingClientRect();
-        const itemCenter = rect.left + rect.width / 2;
-        const dist = Math.abs(itemCenter - centerX);
-        let opacity, isCenter;
-        if (dist < rect.width / 2) { opacity = '0'; isCenter = true; }
-        else if (dist < rect.width * 1.5) { opacity = '0.2'; isCenter = false; }
-        else { opacity = '0.3'; isCenter = false; }
-        updates.push([el, tint, opacity, isCenter]);
-      }
-      updates.forEach(([el, tint, opacity, isCenter]) => {
+        return rect;
+      });
+      rects.forEach((rect, i) => {
+        const dist = Math.abs(rect.left + rect.width / 2 - centerX);
+        if (dist < minDist) { minDist = dist; centerIdx = i; }
+      });
+
+      items.forEach(({ el, tint }, i) => {
+        let opacity = '0.3';
+        let isCenter = false;
+        let push = 0;
+        if (i === centerIdx) {
+          opacity = '0'; isCenter = true;
+        } else if (i === centerIdx - 1) {
+          opacity = '0.2'; push = -1;
+        } else if (i === centerIdx + 1) {
+          opacity = '0.2'; push = 1;
+        }
         tint.style.opacity = opacity;
         el.classList.toggle('is-center', isCenter);
+        el.style.transform = push ? `translateX(${push * rects[i].width * 0.09}px)` : '';
       });
+
       requestAnimationFrame(updateTints);
     }
     requestAnimationFrame(updateTints);
