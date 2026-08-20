@@ -124,10 +124,10 @@ nav.scrolled{padding:1.2rem 3rem;}
 
 /* MARQUEE — scrolling photo strip above Follow Us */
 .marquee{overflow:hidden;padding:3rem 0;background:var(--black);border-top:1px solid rgba(255,255,255,0.05);}
-.marquee-track{display:flex;gap:14px;width:max-content;animation:marqueeScroll 55s linear infinite;will-change:transform;}
+.marquee-track{display:flex;gap:14px;width:max-content;animation:marqueeScroll 70s linear infinite;will-change:transform;transform:translateZ(0);backface-visibility:hidden;}
 .marquee-item{position:relative;height:375px;width:300px;aspect-ratio:4/5;border-radius:4px;flex-shrink:0;background:#161616;overflow:hidden;}
 .marquee-item img{width:100%;height:100%;object-fit:cover;display:block;}
-.marquee-tint{position:absolute;inset:0;background:#000;opacity:0.3;pointer-events:none;transition:opacity 0.35s ease;}
+.marquee-tint{position:absolute;inset:0;background:#000;opacity:0.3;pointer-events:none;transition:opacity 0.9s cubic-bezier(0.25,0.1,0.25,1);}
 @keyframes marqueeScroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
 
 /* INSTAGRAM — simple CTA */
@@ -852,10 +852,11 @@ revealEls.forEach(el => revealObserver.observe(el));
 })();
 
 // ── MARQUEE — scrolling strip of soccer / football / lacrosse photos ──
-// Builds the list of candidate photos below, shuffles them, and drops
-// them into the scrolling row above "Follow Us". If a filename doesn't
-// exist yet, that image just quietly disappears (no broken icon).
-// To add real photos later, add more lines to the arrays below.
+// Checks which photos actually exist first, THEN builds the strip once
+// with only the real ones. (Previously it removed missing photos live,
+// which shrank the strip mid-scroll and caused a visible jump/cut —
+// this avoids that entirely.)
+// To add real photos later, add more lines to the sources list below.
 (function() {
   const track = document.getElementById('marqueeTrack');
   if (!track) return;
@@ -884,62 +885,67 @@ revealEls.forEach(el => revealObserver.observe(el));
     'images/work/lacrosse/lacrosse-5.jpg'
   ];
 
-  // Shuffle so the order looks a little different each time the page loads
-  for (let i = sources.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [sources[i], sources[j]] = [sources[j], sources[i]];
+  // Test each photo before touching the DOM at all
+  function checkImage(src) {
+    return new Promise(resolve => {
+      const test = new Image();
+      test.onload = () => resolve(src);
+      test.onerror = () => resolve(null);
+      test.src = src;
+    });
   }
 
-  // Duplicate the list so the strip loops seamlessly.
-  // If a photo file doesn't exist yet, the whole box is removed so you
-  // never see an empty gray placeholder in the row — only real photos show.
-  const items = [];
-  sources.concat(sources).forEach(src => {
-    const item = document.createElement('div');
-    item.className = 'marquee-item';
-    const img = document.createElement('img');
-    img.src = src;
-    img.alt = '';
-    img.loading = 'lazy';
-    img.onerror = function () { item.remove(); };
-    item.appendChild(img);
-    const tint = document.createElement('div');
-    tint.className = 'marquee-tint';
-    item.appendChild(tint);
-    track.appendChild(item);
-    items.push({ el: item, tint });
-  });
+  Promise.all(sources.map(checkImage)).then(results => {
+    let valid = results.filter(Boolean);
+    if (valid.length === 0) return;
 
-  // ── Center spotlight ──
-  // The photo dead-center of the screen is full color, its two closest
-  // neighbors fade to a 20% tint, and everything further out sits at a
-  // 30% tint. Reads every item's position first, then writes all the
-  // tint updates in a second pass (avoids layout thrashing, which is
-  // what was causing the choppiness), and only runs every other frame
-  // since the fade itself is smoothed by the CSS transition anyway.
-  let skip = false;
-  function updateTints() {
-    skip = !skip;
-    if (skip) { requestAnimationFrame(updateTints); return; }
-
-    const centerX = window.innerWidth / 2;
-    const updates = [];
-    for (const { el, tint } of items) {
-      if (!el.isConnected) continue;
-      const rect = el.getBoundingClientRect();
-      const itemCenter = rect.left + rect.width / 2;
-      const dist = Math.abs(itemCenter - centerX);
-      let opacity;
-      if (dist < rect.width / 2) opacity = '0';
-      else if (dist < rect.width * 1.5) opacity = '0.2';
-      else opacity = '0.3';
-      updates.push([tint, opacity]);
+    // Shuffle so the order looks a little different each time the page loads
+    for (let i = valid.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [valid[i], valid[j]] = [valid[j], valid[i]];
     }
-    updates.forEach(([tint, opacity]) => { tint.style.opacity = opacity; });
 
+    // Duplicate the list once, up front, so the strip's width is fixed
+    // and never changes again — that's what keeps the loop seamless.
+    const items = [];
+    valid.concat(valid).forEach(src => {
+      const item = document.createElement('div');
+      item.className = 'marquee-item';
+      const img = document.createElement('img');
+      img.src = src;
+      img.alt = '';
+      item.appendChild(img);
+      const tint = document.createElement('div');
+      tint.className = 'marquee-tint';
+      item.appendChild(tint);
+      track.appendChild(item);
+      items.push({ el: item, tint });
+    });
+
+    // ── Center spotlight ──
+    // The photo dead-center of the screen fades smoothly to full color,
+    // its two closest neighbors ease to a 20% tint, and everything
+    // further out sits at a 30% tint. Positions are all read first, then
+    // all the tint updates are written together, so this never fights
+    // with the browser's layout of the scrolling strip.
+    function updateTints() {
+      const centerX = window.innerWidth / 2;
+      const updates = [];
+      for (const { el, tint } of items) {
+        const rect = el.getBoundingClientRect();
+        const itemCenter = rect.left + rect.width / 2;
+        const dist = Math.abs(itemCenter - centerX);
+        let opacity;
+        if (dist < rect.width / 2) opacity = '0';
+        else if (dist < rect.width * 1.5) opacity = '0.2';
+        else opacity = '0.3';
+        updates.push([tint, opacity]);
+      }
+      updates.forEach(([tint, opacity]) => { tint.style.opacity = opacity; });
+      requestAnimationFrame(updateTints);
+    }
     requestAnimationFrame(updateTints);
-  }
-  requestAnimationFrame(updateTints);
+  });
 })();
 
 // ── HERO SLIDESHOW — slide transition with live touch drag ─────────
