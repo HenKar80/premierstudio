@@ -195,13 +195,12 @@ nav.scrolled{padding:1.2rem 3rem;}
 
 /* SERVICES */
 .services{padding:7rem 4rem;background:#0d0d0d;}
-.svc-grid{display:grid;grid-template-columns:repeat(3,1fr);margin-top:4rem;gap:16px;}
-.svc-card{padding:3rem 2.5rem;border-radius:8px;border:1px solid rgba(255,255,255,0.06);transition:background 0.3s;}
-
-.svc-card:hover{background:rgba(255,255,255,0.025);}
-.svc-num{font-family:'Bebas Neue',sans-serif;font-size:4.5rem;color:rgba(255,255,255,0.04);line-height:1;margin-bottom:1.5rem;}
+.svc-grid{display:grid;grid-template-columns:repeat(3,1fr);margin-top:4rem;gap:0;}
+.svc-card{padding:3rem 4rem;border-left:1px solid rgba(255,255,255,0.08);}
+.svc-card:first-child{border-left:none;padding-left:0;}
+.svc-card:last-child{padding-right:0;}
 .svc-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.6rem;font-weight:500;margin-bottom:1rem;}
-.svc-desc{font-size:0.83rem;color:var(--gray);line-height:1.75;margin-bottom:2rem;}
+.svc-desc{font-size:0.97rem;color:var(--gray);line-height:1.85;margin-bottom:2rem;max-width:40ch;}
 .svc-price{font-family:'Bebas Neue',sans-serif;font-size:1.9rem;letter-spacing:0.04em;}
 .svc-price small{font-family:'Plus Jakarta Sans',sans-serif;font-size:0.7rem;letter-spacing:0.12em;color:var(--gray);text-transform:uppercase;margin-left:0.4rem;}
 .svc-badge{display:inline-block;margin-top:1.5rem;font-size:0.6rem;letter-spacing:0.28em;text-transform:uppercase;border:1px solid rgba(255,255,255,0.12);padding:0.4rem 1rem;color:var(--gray);}
@@ -296,8 +295,9 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
 
   /* Services */
   .services{padding:5rem 2rem;}
-  .svc-grid{grid-template-columns:1fr;gap:12px;}
-  .svc-card{border-radius:8px;}
+  .svc-grid{grid-template-columns:1fr;gap:0;}
+  .svc-card{border-left:none;border-top:1px solid rgba(255,255,255,0.08);padding:2.5rem 0;}
+  .svc-card:first-child{border-top:none;}
 
   /* Contact */
   .contact{grid-template-columns:1fr;}
@@ -359,9 +359,9 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
 
   /* Services */
   .services{padding:4rem 1.25rem;}
-  .svc-grid{grid-template-columns:1fr;gap:14px;}
-  .svc-card{padding:2rem 1.5rem;border-radius:8px;}
-  .svc-num{font-size:3rem;}
+  .svc-grid{grid-template-columns:1fr;gap:0;}
+  .svc-card{padding:2rem 0;border-left:none;border-top:1px solid rgba(255,255,255,0.08);}
+  .svc-card:first-child{border-top:none;padding-top:0;}
 
   /* Contact */
   .contact{grid-template-columns:1fr;}
@@ -574,7 +574,6 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
   </div>
   <div class="svc-grid">
     <div class="svc-card reveal">
-      <div class="svc-num">01</div>
       <h3 class="svc-name">Individual</h3>
       <p class="svc-desc">A focused solo session built around you — your sport, your story. 30+ professionally edited photos delivered and ready to share.</p>
       <ul class="svc-list">
@@ -585,7 +584,6 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
       <div class="svc-price">$60 <small>/ session</small></div>
     </div>
     <div class="svc-card reveal reveal-delay-1">
-      <div class="svc-num">02</div>
       <h3 class="svc-name">Group</h3>
       <p class="svc-desc">Perfect for small groups, pairs, or friend sessions. Everyone gets their own edited photos — minimum 3 people.</p>
       <ul class="svc-list">
@@ -597,7 +595,6 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
       <div class="svc-badge">Min. 3 people</div>
     </div>
     <div class="svc-card reveal reveal-delay-2">
-      <div class="svc-num">03</div>
       <h3 class="svc-name">Team / Game</h3>
       <p class="svc-desc">Full team or game day coverage — from warmups to final play. Every player gets memorable shots to keep.</p>
       <ul class="svc-list">
