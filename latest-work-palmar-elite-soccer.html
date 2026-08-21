@@ -607,22 +607,32 @@ backToTop.addEventListener('click', () => {
      to push YouTube's top title bar out of view, and stays fully
      transparent until playback has actually begun, so the red play
      button never flashes on open or when switching videos.
-     The poster reveal only happens once BOTH a 1-second minimum has
-     passed AND the video has genuinely started playing — whichever
-     takes longer — so it never reveals a blank frame too early, and
-     never lingers longer than necessary once the video is ready. */
+     The poster reveal happens once a video is genuinely playing, but
+     never sooner than 1 second and never later than 2.5 seconds after
+     you click — so it always feels snappy and consistent, even on a
+     slow connection. */
   const lightbox = document.getElementById('videoLightbox');
   const lightboxClose = lightbox.querySelector('.lightbox-close');
   const lightboxPrev = lightbox.querySelector('.lightbox-prev');
   const lightboxNext = lightbox.querySelector('.lightbox-next');
   let currentIndex = 0;
   let lightboxPlayer = null;
-  let revealTimer = null;
+  let minTimer = null;
+  let maxTimer = null;
   let minTimeMet = false;
   let actuallyPlaying = false;
 
+  function revealLightboxNow() {
+    clearTimeout(minTimer);
+    clearTimeout(maxTimer);
+    lightbox.classList.add('playing');
+  }
   function tryRevealLightbox() {
-    if (minTimeMet && actuallyPlaying) lightbox.classList.add('playing');
+    if (minTimeMet && actuallyPlaying) revealLightboxNow();
+  }
+  function lightboxEmbedSrc(id) {
+    return 'https://www.youtube.com/embed/' + id +
+      '?enablejsapi=1&autoplay=1&mute=0&controls=0&modestbranding=1&rel=0&iv_load_policy=3&playsinline=1&disablekb=1';
   }
   function playIndex(index) {
     currentIndex = (index + videoIds.length) % videoIds.length;
@@ -630,8 +640,10 @@ backToTop.addEventListener('click', () => {
     lightbox.classList.remove('playing');
     minTimeMet = false;
     actuallyPlaying = false;
-    clearTimeout(revealTimer);
-    revealTimer = setTimeout(() => { minTimeMet = true; tryRevealLightbox(); }, 1000);
+    clearTimeout(minTimer);
+    clearTimeout(maxTimer);
+    minTimer = setTimeout(() => { minTimeMet = true; tryRevealLightbox(); }, 1000);
+    maxTimer = setTimeout(revealLightboxNow, 2500);
 
     if (lightboxPlayer && typeof lightboxPlayer.loadVideoById === 'function') {
       lightboxPlayer.loadVideoById(id);
@@ -640,14 +652,10 @@ backToTop.addEventListener('click', () => {
     }
   }
   function initLightboxPlayer(id) {
+    const frame = document.getElementById('videoLightboxFrame');
+    frame.src = lightboxEmbedSrc(id);
     lightboxPlayer = new YT.Player('videoLightboxFrame', {
-      videoId: id,
-      playerVars: {
-        autoplay: 1, mute: 0, controls: 0, modestbranding: 1, rel: 0,
-        iv_load_policy: 3, playsinline: 1, disablekb: 1, enablejsapi: 1
-      },
       events: {
-        onReady: function(e) { try { e.target.playVideo(); } catch (err) {} },
         onStateChange: function(e) {
           if (e.data === YT.PlayerState.PLAYING) {
             actuallyPlaying = true;
@@ -664,7 +672,8 @@ backToTop.addEventListener('click', () => {
     playIndex(index);
   }
   function closeLightbox() {
-    clearTimeout(revealTimer);
+    clearTimeout(minTimer);
+    clearTimeout(maxTimer);
     lightbox.classList.remove('open', 'playing');
     lightbox.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
@@ -694,15 +703,22 @@ backToTop.addEventListener('click', () => {
     tile._playPending = false;
     tile._minTimeMet = false;
     tile._actuallyPlaying = false;
-    clearTimeout(tile._revealTimer);
-    tile._revealTimer = null;
+    clearTimeout(tile._revealMinTimer);
+    clearTimeout(tile._revealMaxTimer);
+    tile._revealMinTimer = null;
+    tile._revealMaxTimer = null;
     const player = tile._ytPlayer;
     if (player && typeof player.pauseVideo === 'function') {
       try { player.pauseVideo(); } catch (e) {}
     }
   }
+  function revealTileNow(tile) {
+    clearTimeout(tile._revealMinTimer);
+    clearTimeout(tile._revealMaxTimer);
+    tile.classList.add('playing');
+  }
   function tryRevealTile(tile) {
-    if (tile._minTimeMet && tile._actuallyPlaying) tile.classList.add('playing');
+    if (tile._minTimeMet && tile._actuallyPlaying) revealTileNow(tile);
   }
   function startVideoTile(tile) {
     if (!tile._ytReady) { tile._playPending = true; return; }
@@ -715,11 +731,16 @@ backToTop.addEventListener('click', () => {
     } catch (e) {}
     tile._minTimeMet = false;
     tile._actuallyPlaying = false;
-    clearTimeout(tile._revealTimer);
-    tile._revealTimer = setTimeout(() => {
+    clearTimeout(tile._revealMinTimer);
+    clearTimeout(tile._revealMaxTimer);
+    // Reveal once actually playing, but never sooner than 1s and never
+    // later than 2.5s after tapping — so a slow connection can't leave
+    // the poster up indefinitely.
+    tile._revealMinTimer = setTimeout(() => {
       tile._minTimeMet = true;
       tryRevealTile(tile);
     }, 1000);
+    tile._revealMaxTimer = setTimeout(() => revealTileNow(tile), 2500);
   }
   function initVideoTilePlayer(tile, index) {
     const id = tile.getAttribute('data-yid');
