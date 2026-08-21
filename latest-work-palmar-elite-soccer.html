@@ -668,6 +668,11 @@ backToTop.addEventListener('click', () => {
       player.setVolume(100);
       player.playVideo();
     } catch (e) {}
+    clearTimeout(tile._revealTimer);
+    tile._revealTimer = setTimeout(() => {
+      tile.classList.add('playing');
+      tile._revealTimer = null;
+    }, 1000);
   }
   function initVideoTilePlayer(tile, index) {
     const id = tile.getAttribute('data-yid');
@@ -683,14 +688,6 @@ backToTop.addEventListener('click', () => {
         onReady: function() {
           tile._ytReady = true;
           if (tile._playPending) { tile._playPending = false; startVideoTile(tile); }
-        },
-        onStateChange: function(e) {
-          if (e.data === YT.PlayerState.PLAYING && !tile._revealTimer) {
-            tile._revealTimer = setTimeout(() => {
-              tile.classList.add('playing');
-              tile._revealTimer = null;
-            }, 1000);
-          }
         }
       }
     });
