@@ -97,10 +97,12 @@ nav.scrolled{padding:1.2rem 3rem;}
 }
 @media(max-width:640px){
   /* Mobile plays inline in the tile (no lightbox) — iframe is preloaded
-     via the YouTube IFrame API and only becomes interactive once it is
-     actually playing, so the poster/play icon stay on top until then. */
+     via the YouTube IFrame API and only becomes visible once it is
+     actually playing. It stays permanently un-clickable (pointer-events
+     stays none) so nobody can tap directly into YouTube's own player —
+     doing so triggers YouTube's own native pause icon overlay, which we
+     have no way to restyle or remove since it lives inside their iframe. */
   .video-frame{opacity:1;pointer-events:none;}
-  .video-tile.playing .video-frame{pointer-events:auto;}
   .video-tile.playing .video-poster{pointer-events:none;}
 }
 @media(max-width:900px){
@@ -114,7 +116,7 @@ nav.scrolled{padding:1.2rem 3rem;}
 .video-lightbox{position:fixed;inset:0;background:#000;z-index:300;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.3s ease;}
 .video-lightbox.open{opacity:1;pointer-events:auto;}
 .video-lightbox-frame-wrap{position:relative;width:min(90vw,1200px);aspect-ratio:16/9;overflow:hidden;background:#000;}
-.video-lightbox-frame{position:absolute;top:-60px;left:-1%;width:102%;height:calc(100% + 130px);border:0;display:block;opacity:0;transition:opacity 0.4s ease;}
+.video-lightbox-frame{position:absolute;top:-60px;left:-1%;width:102%;height:calc(100% + 130px);border:0;display:block;opacity:0;pointer-events:none;transition:opacity 0.4s ease;}
 .video-lightbox.playing .video-lightbox-frame{opacity:1;}
 @media(max-width:640px){
   .video-lightbox-frame-wrap{width:100vw;}
