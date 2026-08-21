@@ -603,7 +603,7 @@ backToTop.addEventListener('click', () => {
     lightbox.classList.remove('playing');
     clearTimeout(revealTimer);
     lightboxFrame.src = lightboxSrc(videoIds[currentIndex]);
-    revealTimer = setTimeout(() => { lightbox.classList.add('playing'); }, 550);
+    revealTimer = setTimeout(() => { lightbox.classList.add('playing'); }, 1000);
   }
   function openLightbox(index) {
     lightbox.classList.add('open');
@@ -652,6 +652,8 @@ backToTop.addEventListener('click', () => {
   function stopVideoTile(tile) {
     tile.classList.remove('playing');
     tile._playPending = false;
+    clearTimeout(tile._revealTimer);
+    tile._revealTimer = null;
     const player = tile._ytPlayer;
     if (player && typeof player.pauseVideo === 'function') {
       try { player.pauseVideo(); } catch (e) {}
@@ -683,7 +685,12 @@ backToTop.addEventListener('click', () => {
           if (tile._playPending) { tile._playPending = false; startVideoTile(tile); }
         },
         onStateChange: function(e) {
-          if (e.data === YT.PlayerState.PLAYING) tile.classList.add('playing');
+          if (e.data === YT.PlayerState.PLAYING && !tile._revealTimer) {
+            tile._revealTimer = setTimeout(() => {
+              tile.classList.add('playing');
+              tile._revealTimer = null;
+            }, 1000);
+          }
         }
       }
     });
