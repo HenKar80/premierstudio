@@ -312,12 +312,15 @@ Elite. Individual training built for players who want more.</p>
          VIDEO GRID
          To add a video: copy one .video-tile block below and swap
          data-yid for the real YouTube video ID (the part in the URL
-         after watch?v= or youtu.be/).
+         after watch?v= or youtu.be/). The poster image tries YouTube's
+         high-res thumbnail first (maxresdefault) and falls back to the
+         standard one (hqdefault) automatically if that size isn't
+         available for a given video — this avoids the pixelated look.
          ============================================================ -->
     <div class="view-panel" data-view="videos">
       <div class="video-grid" id="videoGrid">
         <div class="video-tile" data-yid="5Z6YIAUW_Is">
-          <img class="video-poster" src="https://img.youtube.com/vi/5Z6YIAUW_Is/hqdefault.jpg" alt="" loading="lazy">
+          <img class="video-poster" src="https://img.youtube.com/vi/5Z6YIAUW_Is/maxresdefault.jpg" onerror="this.onerror=null;this.src='https://img.youtube.com/vi/5Z6YIAUW_Is/hqdefault.jpg';" alt="" loading="lazy">
           <iframe class="video-frame" title="Palmar Elite Soccer video" allow="autoplay; encrypted-media" tabindex="-1"></iframe>
           <span class="video-play-icon" aria-hidden="true">
             <svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -326,8 +329,13 @@ Elite. Individual training built for players who want more.</p>
             </svg>
           </span>
         </div>
+        <!-- Video 2 is still hidden until a real video is ready. Its
+             cover is your Palmar Elite Soccer logo graphic for now —
+             once you have the real video, replace data-yid below and
+             swap the poster src back to the YouTube thumbnail pattern
+             used above (maxresdefault with the hqdefault fallback). -->
         <div class="video-tile" data-yid="REPLACE_WITH_YOUTUBE_ID_2" style="display:none;"> <!-- hidden for now — remove this style attribute to bring it back -->
-          <img class="video-poster" src="https://img.youtube.com/vi/REPLACE_WITH_YOUTUBE_ID_2/hqdefault.jpg" alt="" loading="lazy">
+          <img class="video-poster" src="images/work/clients/palmar-elite-soccer/video-2-cover.png" alt="" loading="lazy">
           <iframe class="video-frame" title="Palmar Elite Soccer video" allow="autoplay; encrypted-media" tabindex="-1"></iframe>
           <span class="video-play-icon" aria-hidden="true">
             <svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
