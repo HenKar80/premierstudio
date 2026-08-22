@@ -606,32 +606,16 @@ backToTop.addEventListener('click', () => {
 
   /* ── DESKTOP: fullscreen lightbox with prev/next ──────────────────
      The frame is cropped (overflow hidden + oversized/offset iframe)
-     to push YouTube's top title bar out of view, and stays fully
-     transparent until playback has actually begun, so the red play
-     button never flashes on open or when switching videos.
-     The poster reveal happens once a video is genuinely playing, but
-     never sooner than 1 second and never later than 2.5 seconds after
-     you click — so it always feels snappy and consistent, even on a
-     slow connection. */
+     to push YouTube's top title bar out of view. The poster/play icon
+     disappear the instant you click — no delay, no fade-hold — so the
+     video just starts in full color right away. */
   const lightbox = document.getElementById('videoLightbox');
   const lightboxClose = lightbox.querySelector('.lightbox-close');
   const lightboxPrev = lightbox.querySelector('.lightbox-prev');
   const lightboxNext = lightbox.querySelector('.lightbox-next');
   let currentIndex = 0;
   let lightboxPlayer = null;
-  let minTimer = null;
-  let maxTimer = null;
-  let minTimeMet = false;
-  let actuallyPlaying = false;
 
-  function revealLightboxNow() {
-    clearTimeout(minTimer);
-    clearTimeout(maxTimer);
-    lightbox.classList.add('playing');
-  }
-  function tryRevealLightbox() {
-    if (minTimeMet && actuallyPlaying) revealLightboxNow();
-  }
   function lightboxEmbedSrc(id) {
     return 'https://www.youtube.com/embed/' + id +
       '?enablejsapi=1&autoplay=1&mute=0&controls=0&modestbranding=1&rel=0&iv_load_policy=3&playsinline=1&disablekb=1';
@@ -639,13 +623,7 @@ backToTop.addEventListener('click', () => {
   function playIndex(index) {
     currentIndex = (index + videoIds.length) % videoIds.length;
     const id = videoIds[currentIndex];
-    lightbox.classList.remove('playing');
-    minTimeMet = false;
-    actuallyPlaying = false;
-    clearTimeout(minTimer);
-    clearTimeout(maxTimer);
-    minTimer = setTimeout(() => { minTimeMet = true; tryRevealLightbox(); }, 1000);
-    maxTimer = setTimeout(revealLightboxNow, 2500);
+    lightbox.classList.add('playing');
 
     if (lightboxPlayer && typeof lightboxPlayer.loadVideoById === 'function') {
       lightboxPlayer.loadVideoById(id);
@@ -656,16 +634,7 @@ backToTop.addEventListener('click', () => {
   function initLightboxPlayer(id) {
     const frame = document.getElementById('videoLightboxFrame');
     frame.src = lightboxEmbedSrc(id);
-    lightboxPlayer = new YT.Player('videoLightboxFrame', {
-      events: {
-        onStateChange: function(e) {
-          if (e.data === YT.PlayerState.PLAYING) {
-            actuallyPlaying = true;
-            tryRevealLightbox();
-          }
-        }
-      }
-    });
+    lightboxPlayer = new YT.Player('videoLightboxFrame', {});
   }
   function openLightbox(index) {
     lightbox.classList.add('open');
@@ -674,8 +643,6 @@ backToTop.addEventListener('click', () => {
     playIndex(index);
   }
   function closeLightbox() {
-    clearTimeout(minTimer);
-    clearTimeout(maxTimer);
     lightbox.classList.remove('open', 'playing');
     lightbox.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
@@ -698,29 +665,15 @@ backToTop.addEventListener('click', () => {
      Single tap starts the video right inside the tile via the
      YouTube IFrame Player API, which avoids the iOS Safari
      unmuted-autoplay-on-fresh-navigation problem that a plain src
-     reload runs into on mobile. Same "1 second minimum, but never
-     before it's actually playing" reveal logic as the desktop lightbox. */
+     reload runs into on mobile. The poster/play icon disappear the
+     instant you tap — no delay. */
   function stopVideoTile(tile) {
     tile.classList.remove('playing');
     tile._playPending = false;
-    tile._minTimeMet = false;
-    tile._actuallyPlaying = false;
-    clearTimeout(tile._revealMinTimer);
-    clearTimeout(tile._revealMaxTimer);
-    tile._revealMinTimer = null;
-    tile._revealMaxTimer = null;
     const player = tile._ytPlayer;
     if (player && typeof player.pauseVideo === 'function') {
       try { player.pauseVideo(); } catch (e) {}
     }
-  }
-  function revealTileNow(tile) {
-    clearTimeout(tile._revealMinTimer);
-    clearTimeout(tile._revealMaxTimer);
-    tile.classList.add('playing');
-  }
-  function tryRevealTile(tile) {
-    if (tile._minTimeMet && tile._actuallyPlaying) revealTileNow(tile);
   }
   function startVideoTile(tile) {
     if (!tile._ytReady) { tile._playPending = true; return; }
@@ -731,18 +684,7 @@ backToTop.addEventListener('click', () => {
       player.setVolume(100);
       player.playVideo();
     } catch (e) {}
-    tile._minTimeMet = false;
-    tile._actuallyPlaying = false;
-    clearTimeout(tile._revealMinTimer);
-    clearTimeout(tile._revealMaxTimer);
-    // Reveal once actually playing, but never sooner than 1s and never
-    // later than 2.5s after tapping — so a slow connection can't leave
-    // the poster up indefinitely.
-    tile._revealMinTimer = setTimeout(() => {
-      tile._minTimeMet = true;
-      tryRevealTile(tile);
-    }, 1000);
-    tile._revealMaxTimer = setTimeout(() => revealTileNow(tile), 2500);
+    tile.classList.add('playing');
   }
   function initVideoTilePlayer(tile, index) {
     const id = tile.getAttribute('data-yid');
@@ -758,12 +700,6 @@ backToTop.addEventListener('click', () => {
         onReady: function() {
           tile._ytReady = true;
           if (tile._playPending) { tile._playPending = false; startVideoTile(tile); }
-        },
-        onStateChange: function(e) {
-          if (e.data === YT.PlayerState.PLAYING) {
-            tile._actuallyPlaying = true;
-            tryRevealTile(tile);
-          }
         }
       }
     });
