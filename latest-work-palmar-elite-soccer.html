@@ -21,6 +21,13 @@ html{scroll-behavior:smooth;}
 body{background:var(--black);color:var(--white);font-family:'Plus Jakarta Sans',sans-serif;overflow-x:hidden;cursor:none;}
 .cursor{position:fixed;width:8px;height:8px;background:var(--white);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width 0.2s,height 0.2s;mix-blend-mode:difference;}
 .cursor.grow{width:36px;height:36px;}
+@media (hover:none), (pointer:coarse){
+  /* Touch devices don't have a real mouse hover, so this custom cursor
+     dot can get triggered by a tap and end up stuck on screen looking
+     like a big ball — just turn it off entirely for touch. */
+  .cursor{display:none !important;}
+  body{cursor:auto;}
+}
 
 /* NAV — same shell as the homepage */
 nav{position:fixed;top:0;left:0;right:0;z-index:260;display:flex;justify-content:space-between;align-items:center;padding:2rem 3rem;transition:padding 0.3s;background:var(--black);}
