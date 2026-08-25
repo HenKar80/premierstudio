@@ -793,23 +793,34 @@ document.querySelectorAll('.mobile-nav-link').forEach(link => {
 });
 
 // Services accordion (mobile only — arrow/collapse styling is scoped to the mobile breakpoint via CSS)
+// Only one card open at a time: opening one closes any other that's currently open.
+function closeSvcCard(card) {
+  const body = card.querySelector('.svc-body');
+  body.style.maxHeight = body.scrollHeight + 'px';
+  card.classList.remove('open');
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      body.style.maxHeight = '0px';
+    });
+  });
+}
+function openSvcCard(card) {
+  const body = card.querySelector('.svc-body');
+  card.classList.add('open');
+  body.style.maxHeight = body.scrollHeight + 'px';
+}
 document.querySelectorAll('.svc-card').forEach(card => {
   const head = card.querySelector('.svc-head');
   const body = card.querySelector('.svc-body');
   head.addEventListener('click', () => {
-    const isOpen = card.classList.contains('open');
-    if (isOpen) {
-      // closing: lock in the current rendered height, then collapse on the next frame so the transition animates
-      body.style.maxHeight = body.scrollHeight + 'px';
-      card.classList.remove('open');
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          body.style.maxHeight = '0px';
-        });
-      });
+    const wasOpen = card.classList.contains('open');
+    document.querySelectorAll('.svc-card.open').forEach(openCard => {
+      if (openCard !== card) closeSvcCard(openCard);
+    });
+    if (wasOpen) {
+      closeSvcCard(card);
     } else {
-      card.classList.add('open');
-      body.style.maxHeight = body.scrollHeight + 'px';
+      openSvcCard(card);
     }
   });
   body.addEventListener('transitionend', e => {
