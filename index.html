@@ -205,9 +205,11 @@ nav.scrolled{padding:1.2rem 3rem;}
 /* SERVICES */
 .services{padding:7rem 4rem;background:#0d0d0d;}
 .svc-grid{display:grid;grid-template-columns:repeat(3,1fr);margin-top:4rem;gap:0;}
-.svc-card{padding:3rem 4rem;border-left:1px solid rgba(255,255,255,0.08);}
-.svc-card:first-child{border-left:none;padding-left:0;}
-.svc-card:last-child{padding-right:0;}
+.svc-card{padding:3rem 4rem;border-left:1px solid rgba(255,255,255,0.08);border-top:1px solid rgba(255,255,255,0.08);}
+/* first item in each row of 3 gets no left border */
+.svc-card:nth-child(3n+1){border-left:none;}
+/* top row (first 3 cards) gets no top border */
+.svc-card:nth-child(-n+3){border-top:none;}
 .svc-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.6rem;font-weight:500;margin-bottom:1rem;}
 .svc-desc{font-size:0.97rem;color:var(--gray);line-height:1.85;margin-bottom:2rem;max-width:40ch;}
 .svc-price{font-family:'Bebas Neue',sans-serif;font-size:1.9rem;letter-spacing:0.04em;}
@@ -216,6 +218,8 @@ nav.scrolled{padding:1.2rem 3rem;}
 .svc-list{list-style:none;margin:0 0 2rem;display:flex;flex-direction:column;gap:0.6rem;}
 .svc-list li{font-size:0.8rem;color:var(--gray);padding-left:1rem;position:relative;line-height:1.5;}
 .svc-list li::before{content:'—';position:absolute;left:0;color:rgba(255,255,255,0.2);}
+.svc-note{margin-top:1.5rem;font-size:0.8rem;color:var(--gray);line-height:1.6;max-width:75ch;}
+.svc-note strong{color:rgba(255,255,255,0.6);font-weight:500;}
 
 /* CONTACT */
 .contact{display:grid;grid-template-columns:1fr 1fr;min-height:100vh;}
@@ -305,9 +309,12 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
 
   /* Services */
   .services{padding:5rem 2rem;}
-  .svc-grid{grid-template-columns:1fr;gap:0;}
-  .svc-card{border-left:none;border-top:1px solid rgba(255,255,255,0.08);padding:2.5rem 0;}
-  .svc-card:first-child{border-top:none;}
+  .svc-grid{grid-template-columns:1fr 1fr;}
+  .svc-card{padding:2.5rem 2rem;}
+  .svc-card:nth-child(3n+1){border-left:1px solid rgba(255,255,255,0.08);}
+  .svc-card:nth-child(2n+1){border-left:none;}
+  .svc-card:nth-child(-n+3){border-top:1px solid rgba(255,255,255,0.08);}
+  .svc-card:nth-child(-n+2){border-top:none;}
 
   /* Contact */
   .contact{grid-template-columns:1fr;}
@@ -373,8 +380,8 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
   /* Services */
   .services{padding:4rem 1.25rem;}
   .svc-grid{grid-template-columns:1fr;gap:0;}
-  .svc-card{padding:3rem 0;border-left:none;border-top:1px solid rgba(255,255,255,0.08);}
-  .svc-card:first-child{border-top:none;padding-top:0;}
+  .svc-card{border-left:none !important;border-top:1px solid rgba(255,255,255,0.08) !important;padding:2.5rem 0;}
+  .svc-card:first-child{border-top:none !important;padding-top:0;}
 
   /* Contact */
   .contact{grid-template-columns:1fr;}
@@ -587,38 +594,71 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
   </div>
   <div class="svc-grid">
     <div class="svc-card reveal">
-      <h3 class="svc-name">Individual</h3>
-      <p class="svc-desc">A focused solo session built around you — your sport, your story. 30+ professionally edited photos delivered and ready to share.</p>
+      <h3 class="svc-name">Individual - Game Day</h3>
+      <p class="svc-desc">Solo player coverage during a single match — every big moment captured just for you.</p>
       <ul class="svc-list">
-        <li>30+ edited photos</li>
+        <li>25+ edited photos</li>
         <li>Turnaround: 1–3 days</li>
         <li>Digital delivery</li>
       </ul>
-      <div class="svc-price">$60 <small>/ session</small></div>
+      <div class="svc-price">$60 <small>/ player</small></div>
     </div>
     <div class="svc-card reveal reveal-delay-1">
-      <h3 class="svc-name">Group</h3>
-      <p class="svc-desc">Perfect for small groups, pairs, or friend sessions. Everyone gets their own edited photos — minimum 3 people.</p>
+      <h3 class="svc-name">Small Group - Game Day</h3>
+      <p class="svc-desc">A few players covered together during a single match — great for siblings, close friends, or a small squad.</p>
       <ul class="svc-list">
-        <li>15+ edited photos per person</li>
+        <li>15+ edited photos per player</li>
         <li>Turnaround: 1–3 days</li>
         <li>Digital delivery</li>
       </ul>
-      <div class="svc-price">$25 <small>/ person</small></div>
-      <div class="svc-badge">Min. 3 people</div>
+      <div class="svc-price">$25 <small>/ player</small></div>
+      <div class="svc-badge">Min. 3 players</div>
     </div>
     <div class="svc-card reveal reveal-delay-2">
-      <h3 class="svc-name">Team / Game</h3>
-      <p class="svc-desc">Full team or game day coverage — from warmups to final play. Every player gets memorable shots to keep.</p>
+      <h3 class="svc-name">Team - Game Day</h3>
+      <p class="svc-desc">Every player on the roster covered for one full game — from warmups to the final whistle.</p>
       <ul class="svc-list">
         <li>10+ edited photos per player</li>
-        <li>Turnaround: 2–5 days</li>
+        <li>Turnaround: 3–5 days</li>
         <li>Digital delivery</li>
       </ul>
       <div class="svc-price">$400 <small>/ team</small></div>
       <div class="svc-badge">Best Value</div>
     </div>
+    <div class="svc-card reveal">
+      <h3 class="svc-name">Training Session</h3>
+      <p class="svc-desc">Session built around skill work and drills — works for one athlete or the whole squad. Team sessions capture the best moments of practice.</p>
+      <ul class="svc-list">
+        <li>1-hour session</li>
+        <li>25+ edited photos</li>
+        <li>Turnaround: 1–3 days</li>
+        <li>Digital delivery</li>
+      </ul>
+      <div class="svc-price">$150 <small>/ session</small></div>
+    </div>
+    <div class="svc-card reveal reveal-delay-1">
+      <h3 class="svc-name">Full Season</h3>
+      <p class="svc-desc">Book your team's entire home schedule upfront at $320 per game — 20% off the per-game rate, billed as one season package.</p>
+      <ul class="svc-list">
+        <li>10+ edited photos per player, per game</li>
+        <li>Turnaround: 2–5 days per game</li>
+        <li>Digital delivery</li>
+      </ul>
+      <div class="svc-price">$320 <small>/ game, billed per season</small></div>
+      <div class="svc-badge">Best for Loyal Clubs</div>
+    </div>
+    <div class="svc-card reveal reveal-delay-2">
+      <h3 class="svc-name">International Club Coverage</h3>
+      <p class="svc-desc">I travel to any club, anywhere in the world — covering both practice sessions and full games.</p>
+      <ul class="svc-list">
+        <li>Photography coverage (practice + game day)</li>
+        <li>Travel arrangements discussed per trip</li>
+        <li>Digital delivery</li>
+      </ul>
+      <div class="svc-price">$800–1,000 <small>/ day</small></div>
+    </div>
   </div>
+  <p class="svc-note"><strong>A note on locations —</strong> all pricing covers Sarasota and Manatee counties. Locations outside these areas may include an additional travel fee, except for International Club Coverage, which is priced separately.</p>
 </section>
 
 <section class="contact" id="contact">
