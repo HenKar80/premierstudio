@@ -210,7 +210,9 @@ nav.scrolled{padding:1.2rem 3rem;}
 .svc-card:nth-child(3n+1){border-left:none;}
 /* top row (first 3 cards) gets no top border */
 .svc-card:nth-child(-n+3){border-top:none;}
+.svc-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;}
 .svc-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.6rem;font-weight:500;margin-bottom:1rem;}
+.svc-arrow{display:none;flex-shrink:0;font-size:0.9rem;color:var(--gray);transition:transform 0.3s ease;}
 .svc-desc{font-size:0.97rem;color:var(--gray);line-height:1.85;margin-bottom:2rem;max-width:40ch;}
 .svc-price{font-family:'Bebas Neue',sans-serif;font-size:1.9rem;letter-spacing:0.04em;}
 .svc-price small{font-family:'Plus Jakarta Sans',sans-serif;font-size:0.7rem;letter-spacing:0.12em;color:var(--gray);text-transform:uppercase;margin-left:0.4rem;}
@@ -377,11 +379,18 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
   .about-body{max-width:100%;}
   .about-sig{font-size:1.8rem;}
 
-  /* Services */
+  /* Services — accordion */
   .services{padding:4rem 1.25rem;}
   .svc-grid{grid-template-columns:1fr;gap:0;}
-  .svc-card{border-left:none !important;border-top:1px solid rgba(255,255,255,0.08) !important;padding:2.5rem 0;}
+  .svc-card{border-left:none !important;border-top:1px solid rgba(255,255,255,0.08) !important;padding:1.6rem 0;}
   .svc-card:first-child{border-top:none !important;padding-top:0;}
+  .svc-head{cursor:pointer;}
+  .svc-name{margin-bottom:0;}
+  .svc-arrow{display:inline-block;}
+  .svc-card.open .svc-arrow{transform:rotate(180deg);}
+  .svc-body{max-height:0;opacity:0;overflow:hidden;transition:max-height 0.5s cubic-bezier(0.65,0,0.35,1),opacity 0.35s ease;}
+  .svc-card.open .svc-body{opacity:1;}
+  .svc-body .svc-desc{margin-top:1.4rem;}
 
   /* Contact */
   .contact{grid-template-columns:1fr;}
@@ -594,68 +603,98 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
   </div>
   <div class="svc-grid">
     <div class="svc-card reveal">
-      <h3 class="svc-name">Individual - Game Day</h3>
-      <p class="svc-desc">Solo player coverage during a single match — every big moment captured just for you.</p>
-      <ul class="svc-list">
-        <li>25+ edited photos</li>
-        <li>Turnaround: 1–3 days</li>
-        <li>Digital delivery</li>
-      </ul>
-      <div class="svc-price">$60 <small>/ player</small></div>
+      <div class="svc-head">
+        <h3 class="svc-name">Individual - Game Day</h3>
+        <span class="svc-arrow">&#9662;</span>
+      </div>
+      <div class="svc-body">
+        <p class="svc-desc">Solo player coverage during a single match — every big moment captured just for you.</p>
+        <ul class="svc-list">
+          <li>25+ edited photos</li>
+          <li>Turnaround: 1–3 days</li>
+          <li>Digital delivery</li>
+        </ul>
+        <div class="svc-price">$60 <small>/ player</small></div>
+      </div>
     </div>
     <div class="svc-card reveal reveal-delay-1">
-      <h3 class="svc-name">Small Group - Game Day</h3>
-      <p class="svc-desc">A few players covered together during a single match — great for siblings, close friends, or a small squad.</p>
-      <ul class="svc-list">
-        <li>15+ edited photos per player</li>
-        <li>Turnaround: 1–3 days</li>
-        <li>Digital delivery</li>
-      </ul>
-      <div class="svc-price">$25 <small>/ player</small></div>
-      <div class="svc-badge">Min. 3 players</div>
+      <div class="svc-head">
+        <h3 class="svc-name">Small Group - Game Day</h3>
+        <span class="svc-arrow">&#9662;</span>
+      </div>
+      <div class="svc-body">
+        <p class="svc-desc">A few players covered together during a single match — great for siblings, close friends, or a small squad.</p>
+        <ul class="svc-list">
+          <li>15+ edited photos per player</li>
+          <li>Turnaround: 1–3 days</li>
+          <li>Digital delivery</li>
+        </ul>
+        <div class="svc-price">$25 <small>/ player</small></div>
+        <div class="svc-badge">Min. 3 players</div>
+      </div>
     </div>
     <div class="svc-card reveal reveal-delay-2">
-      <h3 class="svc-name">Team - Game Day</h3>
-      <p class="svc-desc">Every player on the roster covered for one full game — from warmups to the final whistle.</p>
-      <ul class="svc-list">
-        <li>10+ edited photos per player</li>
-        <li>Turnaround: 3–5 days</li>
-        <li>Digital delivery</li>
-      </ul>
-      <div class="svc-price">$400 <small>/ team</small></div>
-      <div class="svc-badge">Best Value</div>
+      <div class="svc-head">
+        <h3 class="svc-name">Team - Game Day</h3>
+        <span class="svc-arrow">&#9662;</span>
+      </div>
+      <div class="svc-body">
+        <p class="svc-desc">Every player on the roster covered for one full game — from warmups to the final whistle.</p>
+        <ul class="svc-list">
+          <li>10+ edited photos per player</li>
+          <li>Turnaround: 3–5 days</li>
+          <li>Digital delivery</li>
+        </ul>
+        <div class="svc-price">$400 <small>/ team</small></div>
+        <div class="svc-badge">Best Value</div>
+      </div>
     </div>
     <div class="svc-card reveal">
-      <h3 class="svc-name">Training Session</h3>
-      <p class="svc-desc">Session built around skill work and drills — works for one athlete or the whole squad. Team sessions capture the best moments of practice.</p>
-      <ul class="svc-list">
-        <li>1-hour session</li>
-        <li>25+ edited photos</li>
-        <li>Turnaround: 1–3 days</li>
-        <li>Digital delivery</li>
-      </ul>
-      <div class="svc-price">$150 <small>/ session</small></div>
+      <div class="svc-head">
+        <h3 class="svc-name">Training Session</h3>
+        <span class="svc-arrow">&#9662;</span>
+      </div>
+      <div class="svc-body">
+        <p class="svc-desc">Session built around skill work and drills — works for one athlete or the whole squad. Team sessions capture the best moments of practice.</p>
+        <ul class="svc-list">
+          <li>1-hour session</li>
+          <li>25+ edited photos</li>
+          <li>Turnaround: 1–3 days</li>
+          <li>Digital delivery</li>
+        </ul>
+        <div class="svc-price">$150 <small>/ session</small></div>
+      </div>
     </div>
     <div class="svc-card reveal reveal-delay-1">
-      <h3 class="svc-name">Full Season</h3>
-      <p class="svc-desc">Book your team's entire home schedule upfront at $320 per game — 20% off the per-game rate, billed as one season package.</p>
-      <ul class="svc-list">
-        <li>10+ edited photos per player, per game</li>
-        <li>Turnaround: 2–5 days per game</li>
-        <li>Digital delivery</li>
-      </ul>
-      <div class="svc-price">$320 <small>/ game, billed per season</small></div>
-      <div class="svc-badge">Best for Loyal Clubs</div>
+      <div class="svc-head">
+        <h3 class="svc-name">Full Season</h3>
+        <span class="svc-arrow">&#9662;</span>
+      </div>
+      <div class="svc-body">
+        <p class="svc-desc">Book your team's entire home schedule upfront at $320 per game — 20% off the per-game rate, billed as one season package.</p>
+        <ul class="svc-list">
+          <li>10+ edited photos per player, per game</li>
+          <li>Turnaround: 2–5 days per game</li>
+          <li>Digital delivery</li>
+        </ul>
+        <div class="svc-price">$320 <small>/ game, billed per season</small></div>
+        <div class="svc-badge">Best for Loyal Clubs</div>
+      </div>
     </div>
     <div class="svc-card reveal reveal-delay-2">
-      <h3 class="svc-name">International Club Coverage</h3>
-      <p class="svc-desc">I travel to any club, anywhere in the world — covering both practice sessions and full games.</p>
-      <ul class="svc-list">
-        <li>Photography coverage (practice + game day)</li>
-        <li>Travel arrangements discussed per trip</li>
-        <li>Digital delivery</li>
-      </ul>
-      <div class="svc-price">$800–1,000 <small>/ day</small></div>
+      <div class="svc-head">
+        <h3 class="svc-name">International Club Coverage</h3>
+        <span class="svc-arrow">&#9662;</span>
+      </div>
+      <div class="svc-body">
+        <p class="svc-desc">I travel to any club, anywhere in the world — covering both practice sessions and full games.</p>
+        <ul class="svc-list">
+          <li>Photography coverage (practice + game day)</li>
+          <li>Travel arrangements discussed per trip</li>
+          <li>Digital delivery</li>
+        </ul>
+        <div class="svc-price">$800–1,000 <small>/ day</small></div>
+      </div>
     </div>
   </div>
   <p class="svc-note"><strong>A note on locations —</strong> all pricing covers Sarasota and Manatee counties. Locations outside these areas may include an additional travel fee, except for International Club Coverage, which is priced separately.</p>
@@ -750,6 +789,34 @@ document.querySelectorAll('.mobile-nav-link').forEach(link => {
     hamburger.classList.remove('open');
     mobileMenu.classList.remove('open');
     document.body.style.overflow = '';
+  });
+});
+
+// Services accordion (mobile only — arrow/collapse styling is scoped to the mobile breakpoint via CSS)
+document.querySelectorAll('.svc-card').forEach(card => {
+  const head = card.querySelector('.svc-head');
+  const body = card.querySelector('.svc-body');
+  head.addEventListener('click', () => {
+    const isOpen = card.classList.contains('open');
+    if (isOpen) {
+      // closing: lock in the current rendered height, then collapse on the next frame so the transition animates
+      body.style.maxHeight = body.scrollHeight + 'px';
+      card.classList.remove('open');
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          body.style.maxHeight = '0px';
+        });
+      });
+    } else {
+      card.classList.add('open');
+      body.style.maxHeight = body.scrollHeight + 'px';
+    }
+  });
+  body.addEventListener('transitionend', e => {
+    if (e.propertyName === 'max-height' && card.classList.contains('open')) {
+      // let content reflow (e.g. orientation change) without being capped by a stale px value
+      body.style.maxHeight = 'none';
+    }
   });
 });
 
