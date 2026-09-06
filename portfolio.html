@@ -259,17 +259,16 @@ window.addEventListener('scroll', () => {
 });
 
 // ── PORTFOLIO MOSAIC + SORT + LIGHTBOX ──────────────────────────────
-// Same mosaic look as the homepage Portfolio section, but here it
-// shows the FULL library (not just a random sample), and the
-// "All / Soccer / Football / Lacrosse" tabs filter which set is on
-// screen. Uses 4 columns on tablet/desktop, 3 on mobile so the same
-// look carries down to small screens. Photos are checked first so only
-// ones that actually exist get used — that way there's never an empty
-// gray box or an empty black gap for a missing file, and if a filtered
-// set has fewer photos than there are columns, only that many columns
-// are drawn so nothing leaves blank space; any leftover partial row
-// fills in from the left. Clicking any photo opens a lightbox instead
-// of leaving the page.
+// Same mosaic look as the homepage Portfolio section — including the
+// 2-row cap and the alternating scroll parallax — but here the
+// "All / Soccer / Football / Lacrosse" tabs filter which set of
+// photos is shown. Uses 4 columns on tablet/desktop, 3 on mobile.
+// Photos are checked first so only ones that actually exist get used —
+// that way there's never an empty gray box or an empty black gap for a
+// missing file, and if a filtered set has fewer photos than there are
+// columns, only that many columns are drawn so nothing leaves blank
+// space; any leftover partial row fills in from the left. Clicking any
+// photo opens a lightbox instead of leaving the page.
 // To add more photos, just add more lines to the `sources` list below
 // — no HTML editing needed.
 (function() {
@@ -317,6 +316,8 @@ window.addEventListener('scroll', () => {
 
   const isMobileLayout = window.innerWidth <= 600;
   const COLS = isMobileLayout ? 3 : 4; // 3 columns on mobile, 4 on tablet/desktop
+  const ROWS = 2;                      // 2 photos tall per column, same as the homepage
+  const COL_SPEEDS = [0.11, -0.13, 0.09, -0.12]; // alternating direction: col 1 & 3 drift down as you scroll, col 2 & 4 drift up
 
   function shuffle(arr) {
     const a = arr.slice();
@@ -345,14 +346,19 @@ window.addEventListener('scroll', () => {
     const masterOrder = shuffle(validSources);
 
     let cols = [];
-    let currentList = masterOrder; // whatever is currently on screen, for the lightbox to page through
+    // Cap each view to 2 rows tall, same as the homepage mosaic —
+    // whatever the current filter is, only the first COLS*ROWS photos
+    // in the shuffled order are shown, and the lightbox pages through
+    // just that visible set.
+    let currentList = masterOrder.slice(0, COLS * ROWS);
 
     function buildGrid(list) {
       grid.innerHTML = '';
       cols = [];
       // Only draw as many columns as there are photos to fill them —
       // that's what prevents an empty column of black space when a
-      // filtered set (e.g. Lacrosse) has fewer than 4 photos.
+      // filtered set (e.g. Lacrosse) has fewer than the usual number
+      // of photos.
       const colsUsed = Math.min(COLS, list.length);
       for (let c = 0; c < colsUsed; c++) {
         const col = document.createElement('div');
@@ -380,6 +386,8 @@ window.addEventListener('scroll', () => {
 
         cols[i % colsUsed].appendChild(tile);
       });
+
+      updateParallax();
     }
 
     // ── Sort tabs ──
@@ -389,10 +397,44 @@ window.addEventListener('scroll', () => {
         tabs.forEach(t => t.classList.remove('active'));
         tab.classList.add('active');
         const filter = tab.dataset.filter;
-        currentList = filter === 'all' ? masterOrder : masterOrder.filter(item => item.sport === filter);
+        const filtered = filter === 'all' ? masterOrder : masterOrder.filter(item => item.sport === filter);
+        currentList = filtered.slice(0, COLS * ROWS);
         buildGrid(currentList);
       });
     });
+
+    // ── Scroll parallax — same effect as the homepage mosaic: each
+    // column drifts at its own speed as you scroll, alternating
+    // direction. Skipped on mobile (stacked layout) and for anyone
+    // with "reduce motion" turned on.
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let ticking = false;
+    const HEADER_GAP = 24; // px of buffer to always keep between a column and the heading above it
+    function updateParallax() {
+      if (reduceMotion) return;
+      if (window.innerWidth > 640) {
+        const rect = grid.getBoundingClientRect();
+        const vh = window.innerHeight;
+        const offset = vh / 2 - (rect.top + rect.height / 2);
+        cols.forEach((col, i) => {
+          let y = offset * COL_SPEEDS[i % COL_SPEEDS.length];
+          const maxUp = Math.max(parseFloat(getComputedStyle(col).marginTop) - HEADER_GAP, 0);
+          if (y < -maxUp) y = -maxUp;
+          col.style.transform = `translateY(${y}px)`;
+        });
+      } else {
+        cols.forEach(col => { col.style.transform = ''; });
+      }
+      ticking = false;
+    }
+    if (!reduceMotion) {
+      window.addEventListener('scroll', () => {
+        if (!ticking) { ticking = true; requestAnimationFrame(updateParallax); }
+      }, { passive: true });
+      window.addEventListener('resize', () => {
+        if (!ticking) { ticking = true; requestAnimationFrame(updateParallax); }
+      });
+    }
 
     // ── Lightbox ──
     const lightbox  = document.getElementById('lightbox');
@@ -463,11 +505,18 @@ window.addEventListener('scroll', () => {
     buildGrid(currentList);
 
     // If we arrived here from a photo click on the homepage mosaic, open
-    // that exact photo in the lightbox right away, over the full "All"
-    // grid — closing it reveals the whole portfolio behind it.
+    // that exact photo in the lightbox right away. It might not be one
+    // of the (capped) tiles currently on screen, so search the full
+    // shuffled library for it — if found outside the visible set,
+    // browse that full set in the lightbox instead so prev/next still
+    // works; closing it reveals the capped "All" grid behind it.
     const requestedPhoto = new URLSearchParams(window.location.search).get('photo');
     if (requestedPhoto) {
-      const idx = currentList.findIndex(item => item.src === requestedPhoto);
+      let idx = currentList.findIndex(item => item.src === requestedPhoto);
+      if (idx === -1) {
+        idx = masterOrder.findIndex(item => item.src === requestedPhoto);
+        if (idx > -1) currentList = masterOrder;
+      }
       if (idx > -1) openLightbox(idx);
     }
   });
