@@ -197,7 +197,8 @@ nav.scrolled{padding:1.2rem 3rem;}
 .about-content{padding:7rem 5rem;display:flex;flex-direction:column;justify-content:center;background:var(--white);color:var(--black);}
 .about-content .sec-tag{color:#999;}
 .about-content .sec-title{color:var(--black);}
-.about-body{margin-top:2rem;font-size:0.97rem;line-height:1.85;color:#444;max-width:420px;}
+.about-inner{max-width:520px;margin:0 auto;display:flex;flex-direction:column;align-items:flex-start;}
+.about-body{margin-top:2rem;font-size:0.97rem;line-height:1.85;color:#444;}
 .about-body p+p{margin-top:1.2rem;}
 .about-sig{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.8rem;font-style:normal;font-weight:400;margin-top:3rem;color:var(--black);}
 .btn-solid{display:inline-block;margin-top:2.5rem;padding:1rem 2.5rem;background:var(--black);color:var(--white);font-family:'Plus Jakarta Sans',sans-serif;font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;text-decoration:none;transition:background 0.3s;width:auto;align-self:flex-start;}
@@ -376,7 +377,7 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
   .about{grid-template-columns:1fr;}
   .about-visual{min-height:70vw;}
   .about-content{padding:3rem 1.5rem;}
-  .about-body{max-width:100%;}
+  .about-inner{max-width:100%;}
   .about-sig{font-size:1.8rem;}
 
   /* Services — accordion */
@@ -582,15 +583,17 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
     <img src="images/about/nate.jpg" alt="Athlete portrait">
   </div>
   <div class="about-content">
-    <span class="sec-tag">About</span>
-    <h2 class="sec-title reveal">Telling Stories<br>with Visuals</h2>
-    <div class="about-body reveal reveal-delay-1">
-      <p>We are a sports photography studio based in Lakewood Ranch, Florida — built around one goal: delivering high-quality imagery that athletes, teams, and programs are proud to put their name on.</p>
-      <p>Photography has always been our passion. As a family business, we take pride in every assignment and hold our work to a high standard.</p>
-      <p>We deliver top-quality imagery for game-day coverage, athlete promotion, and social media content that actually performs. We cover warm-ups, sideline tactics, team huddles, pregame energy, and official team photos.</p>
-	  <p>We proudly serve Lakewood Ranch, Sarasota, and Bradenton — and are available worldwide.</p>
+    <div class="about-inner">
+      <span class="sec-tag">About</span>
+      <h2 class="sec-title reveal">Telling Stories<br>with Visuals</h2>
+      <div class="about-body reveal reveal-delay-1">
+        <p>We are a sports photography studio based in Lakewood Ranch, Florida — built around one goal: delivering high-quality imagery that athletes, teams, and programs are proud to put their name on.</p>
+        <p>Photography has always been our passion. As a family business, we take pride in every assignment and hold our work to a high standard.</p>
+        <p>We deliver top-quality imagery for game-day coverage, athlete promotion, and social media content that actually performs. We cover warm-ups, sideline tactics, team huddles, pregame energy, and official team photos.</p>
+        <p>We proudly serve Lakewood Ranch, Sarasota, and Bradenton — and are available worldwide.</p>
+      </div>
+      <a href="#contact" class="btn-solid">Work Together</a>
     </div>
-    <a href="#contact" class="btn-solid">Work Together</a>
   </div>
 </section>
 
