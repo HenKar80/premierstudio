@@ -101,6 +101,14 @@ nav.scrolled{padding:1.2rem 3rem;}
 .lb-next{right:2rem;}
 .lb-counter{position:fixed;bottom:2.5rem;left:50%;transform:translateX(-50%);font-size:0.62rem;letter-spacing:0.28em;text-transform:uppercase;color:rgba(255,255,255,0.35);}
 
+/* CTA — "Have a project in mind? / Let's talk" */
+.cta-section{padding:2rem 4rem 8rem;text-align:center;}
+.cta-tag{display:block;font-size:0.7rem;letter-spacing:0.28em;text-transform:uppercase;color:var(--gray);margin-bottom:1.2rem;}
+.cta-link{display:inline-flex;align-items:center;gap:1.2rem;font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(2.2rem,6vw,4rem);font-weight:600;color:var(--white);text-decoration:none;transition:gap 0.3s ease,opacity 0.3s ease;}
+.cta-link:hover{gap:1.8rem;opacity:0.85;}
+.cta-arrow{display:inline-block;font-size:0.75em;transition:transform 0.3s ease;}
+.cta-link:hover .cta-arrow{transform:translateX(6px);}
+
 /* FOOTER */
 footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);padding:2.5rem 4rem;display:flex;justify-content:space-between;align-items:center;}
 .footer-logo{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:0.22em;}
@@ -115,6 +123,7 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
   .page-hero{padding:7rem 2rem 1.5rem;}
   .sort-tabs{padding:1.5rem 2rem 3rem;gap:1.8rem;}
   .gallery-section{padding:0 2rem 6rem;}
+  .cta-section{padding:1.5rem 2rem 6rem;}
   .sw-grid{grid-template-columns:1fr 1fr;gap:12px;}
   .sw-col{margin-top:0 !important;}
   footer{flex-direction:column;gap:1.5rem;text-align:center;padding:2rem;}
@@ -131,6 +140,7 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
   .page-hero-title{font-size:clamp(2.2rem,10vw,3rem);}
   .sort-tabs{padding:1.25rem 1.5rem 2.5rem;gap:1.4rem;}
   .gallery-section{padding:0 1.5rem 5rem;}
+  .cta-section{padding:1.25rem 1.5rem 5rem;}
   .sw-grid{grid-template-columns:repeat(3,1fr);gap:8px;}
   .sw-col{margin-top:0 !important;gap:8px;}
   .lb-prev{left:0.8rem;}
@@ -210,6 +220,12 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
   <button class="lb-arrow lb-next" id="lbNext">&#8594;</button>
   <div class="lb-counter" id="lbCounter"></div>
 </div>
+
+<!-- CTA -->
+<section class="cta-section">
+  <span class="cta-tag">Have a project in mind?</span>
+  <a href="index.html#contact" class="cta-link">Let's talk</a>
+</section>
 
 <!-- FOOTER -->
 <footer>
