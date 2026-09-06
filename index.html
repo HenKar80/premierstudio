@@ -387,8 +387,8 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
   .g-sport-label{font-size:2rem;}
   .g-overlay{background:linear-gradient(to top,rgba(0,0,0,0.25) 0%,rgba(0,0,0,0.0) 55%);}
   .g-view{color:rgba(255,255,255,0.75);}
-  .sw-grid{grid-template-columns:repeat(3,1fr);gap:8px;}
-  .sw-col{margin-top:0 !important;gap:8px;}
+  .sw-grid{grid-template-columns:repeat(2,1fr);gap:10px;}
+  .sw-col{margin-top:0 !important;gap:10px;}
 
   /* Instagram */
   .instagram{padding:3rem 1.25rem;}
@@ -981,7 +981,7 @@ revealEls.forEach(el => revealObserver.observe(el));
 // ── SELECTED WORK MOSAIC — pulls a random mix of soccer / football /
 // lacrosse photos into a staggered mosaic (4:5 photos, same ratio used
 // elsewhere on the site) under "The Portfolio" heading — 4 columns x 2
-// rows on tablet/desktop, 3 columns x 2 rows on mobile so the same
+// rows on tablet/desktop, 2 columns x 2 rows on mobile so the same
 // look carries down to small screens. Photos are checked first so only
 // ones that actually exist get used — that way there's never an empty
 // gray box OR an empty black gap left behind for a missing file. If
@@ -1040,7 +1040,7 @@ revealEls.forEach(el => revealObserver.observe(el));
   ];
 
   const isMobileLayout = window.innerWidth <= 600;
-  const COLS = isMobileLayout ? 3 : 4;   // 3 columns on mobile, 4 on tablet/desktop
+  const COLS = isMobileLayout ? 2 : 4;   // 2 columns on mobile, 4 on tablet/desktop
   const ROWS = 2;                        // 2 photos tall per column, on every screen size
   const TILE_COUNT = COLS * ROWS;        // total photos shown at once
   const TILE_ASPECT = '4/5';      // same ratio used elsewhere on the site
