@@ -1044,7 +1044,7 @@ revealEls.forEach(el => revealObserver.observe(el));
   const ROWS = 2;                        // 2 photos tall per column, on every screen size
   const TILE_COUNT = COLS * ROWS;        // total photos shown at once
   const TILE_ASPECT = '4/5';      // same ratio used elsewhere on the site
-  const COL_SPEEDS = [0.11, -0.13, 0.09, -0.12]; // alternating direction: col 1 & 3 drift down as you scroll, col 2 & 4 drift up
+  const COL_SPEEDS = [0.2, -0.13, 0.09, -0.12]; // alternating direction: col 1 & 3 drift down as you scroll, col 2 & 4 drift up (col 1 boosted so it's clearly noticeable even when it starts flush)
 
   // A fresh random height arrangement for the columns every time the
   // site loads. Same offset values used before, just dealt out to a
@@ -1129,6 +1129,7 @@ revealEls.forEach(el => revealObserver.observe(el));
     if (!reduceMotion) {
       let ticking = false;
       const HEADER_GAP = 24; // px of buffer to always keep between a column and the heading above it
+      const MIN_UP = 22;     // guaranteed minimum upward wiggle room, even for a column that starts flush against the heading
       function updateParallax() {
         const rect = grid.getBoundingClientRect();
         const vh = window.innerHeight;
@@ -1138,8 +1139,10 @@ revealEls.forEach(el => revealObserver.observe(el));
           let y = offset * COL_SPEEDS[i % COL_SPEEDS.length];
           // Never let a column drift up further than its own top
           // margin allows (minus a small safety gap) — that's what
-          // keeps it from rising into the heading above the grid.
-          const maxUp = Math.max(parseFloat(getComputedStyle(col).marginTop) - HEADER_GAP, 0);
+          // keeps it from rising into the heading above the grid. A
+          // small minimum is guaranteed either way, so a flush column
+          // still visibly moves instead of only ever drifting down.
+          const maxUp = Math.max(parseFloat(getComputedStyle(col).marginTop) - HEADER_GAP, MIN_UP);
           if (y < -maxUp) y = -maxUp;
           col.style.transform = `translateY(${y}px)`;
         });
