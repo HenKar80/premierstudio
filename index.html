@@ -61,8 +61,13 @@
 }
 html{scroll-behavior:smooth;scrollbar-gutter:stable;overscroll-behavior-x:none;}
 body{background:var(--black);color:var(--white);font-family:'Plus Jakarta Sans',sans-serif;overflow-x:hidden;overscroll-behavior-x:none;width:100%;max-width:100vw;cursor:none;}
-.cursor{position:fixed;width:8px;height:8px;background:var(--white);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width 0.2s,height 0.2s;mix-blend-mode:difference;}
+.cursor{position:fixed;width:8px;height:8px;background:var(--white);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width 0.3s ease,height 0.3s ease,background-color 0.3s ease;mix-blend-mode:difference;display:flex;align-items:center;justify-content:center;}
 .cursor.grow{width:36px;height:36px;}
+.cursor.cursor-eye{width:56px;height:56px;background:transparent;}
+.cursor-eye-icon{width:0;height:auto;opacity:0;transition:opacity 0.25s ease,width 0.25s ease;}
+.cursor.cursor-eye .cursor-eye-icon{width:38px;opacity:1;}
+.cursor-eye-icon path{fill:none;stroke:var(--white);stroke-width:1.4;}
+.cursor-eye-icon circle{fill:var(--white);}
 
 /* NAV */
 nav{position:fixed;top:0;left:0;right:0;width:100%;max-width:100vw;z-index:260;display:flex;justify-content:space-between;align-items:center;padding:2rem 3rem;transition:padding 0.3s;background:var(--black);}
@@ -160,6 +165,18 @@ nav.scrolled{padding:1.2rem 3rem;}
 .g-view{font-size:0.62rem;letter-spacing:0.28em;text-transform:uppercase;color:rgba(255,255,255,0.55);display:flex;align-items:center;gap:0.6rem;transition:color 0.3s,gap 0.3s;}
 .g-view::after{content:'→';transition:transform 0.3s;}
 .g-item:hover .g-view{color:rgba(255,255,255,0.9);gap:0.9rem;}
+
+/* SELECTED WORK — staggered mosaic pulling randomly from soccer/football/lacrosse */
+.sec-head-note{font-size:0.72rem;line-height:1.7;color:var(--gray);text-transform:uppercase;letter-spacing:0.1em;max-width:230px;text-align:right;}
+.sw-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;align-items:start;}
+.sw-col{display:flex;flex-direction:column;gap:16px;min-width:0;will-change:transform;}
+.sw-col:nth-child(1){margin-top:0;}
+.sw-col:nth-child(2){margin-top:clamp(70px,9vw,150px);}
+.sw-col:nth-child(3){margin-top:clamp(20px,3vw,60px);}
+.sw-col:nth-child(4){margin-top:clamp(40px,5vw,90px);}
+.sw-tile{position:relative;overflow:hidden;background:#3a3a3a;display:block;text-decoration:none;border-radius:4px;}
+.sw-tile img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.7s ease;}
+.sw-tile:hover img{transform:scale(1.05);}
 
 /* LATEST WORK — sized and spaced to match henrikkarlsson.com's
    "Selected Work" section exactly: same font-size scale, same
@@ -300,6 +317,10 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
   .portfolio{padding:5rem 2rem;}
   .sec-head{flex-direction:column;align-items:flex-start;gap:1.5rem;}
   .gallery{grid-template-columns:1fr 1fr 1fr;gap:12px;}
+  .sec-head-note{text-align:left;max-width:100%;}
+  .sw-grid{grid-template-columns:1fr 1fr;gap:12px;}
+  .sw-col{margin-top:0;}
+  .sw-col:nth-child(even){margin-top:50px;}
 
   /* Instagram */
   .instagram{padding:4rem 2rem;}
@@ -366,6 +387,8 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
   .g-sport-label{font-size:2rem;}
   .g-overlay{background:linear-gradient(to top,rgba(0,0,0,0.25) 0%,rgba(0,0,0,0.0) 55%);}
   .g-view{color:rgba(255,255,255,0.75);}
+  .sw-grid{grid-template-columns:1fr;gap:14px;}
+  .sw-col{margin-top:0 !important;gap:14px;}
 
   /* Instagram */
   .instagram{padding:3rem 1.25rem;}
@@ -408,7 +431,12 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
 </head>
 <body>
 
-<div class="cursor" id="cursor"></div>
+<div class="cursor" id="cursor">
+  <svg class="cursor-eye-icon" viewBox="0 0 32 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <path d="M1 10C1 10 6.5 2 16 2C25.5 2 31 10 31 10C31 10 25.5 18 16 18C6.5 18 1 10 1 10Z"/>
+    <circle cx="16" cy="10" r="4"/>
+  </svg>
+</div>
 
 <nav id="nav">
   <a href="index.html" class="logo">
@@ -467,10 +495,7 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
     <div class="hero-bl-brand">Sports Photography</div>
     <div class="hero-bl-loc">Lakewood Ranch, FL &nbsp;·&nbsp; Available Nationwide</div>
   </div>
-  <div class="hero-br">
-    <div class="hero-scroll-line">Scroll to explore</div>
-    <a href="#portfolio" class="hero-cta">View Portfolio</a>
-  </div>
+  <!-- hero-br (Scroll to explore / View Portfolio) removed — CSS kept in place if you want it back -->
   <div class="hero-dots" id="heroDots">
     <div class="hdot active"></div>
     <div class="hdot"></div>
@@ -502,35 +527,12 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
       <h2 class="sec-title">The <em>Portfolio</em></h2>
     </div>
   </div>
-  <div class="gallery" id="gallery">
-
-    <!-- ── SOCCER ── link href to your soccer gallery page ── -->
-    <a class="g-item reveal" href="soccer.html">
-      <img src="images/work/soccer/soccer-cover.jpg" alt="Soccer">
-      <div class="g-overlay">
-        <div class="g-sport-label">Soccer</div>
-        <div class="g-view">View Gallery</div>
-      </div>
-    </a>
-
-    <!-- ── FOOTBALL ── link href to your football gallery page ── -->
-    <a class="g-item reveal reveal-delay-1" href="football.html">
-      <img src="images/work/football/football-cover.jpg" alt="Football">
-      <div class="g-overlay">
-        <div class="g-sport-label">Football</div>
-        <div class="g-view">View Gallery</div>
-      </div>
-    </a>
-
-    <!-- ── LACROSSE ── link href to your lacrosse gallery page ── -->
-    <a class="g-item reveal reveal-delay-2" href="lacrosse.html">
-      <img src="images/work/lacrosse/lacrosse-1.jpg" alt="Lacrosse">
-      <div class="g-overlay">
-        <div class="g-sport-label">Lacrosse</div>
-        <div class="g-view">View Gallery</div>
-      </div>
-    </a>
-
+  <div class="sw-grid" id="swGrid">
+    <!-- Populated by JS below: a random mix of soccer, football, and
+         lacrosse photos is pulled in on every page load and arranged
+         into a staggered mosaic. Add new photos to the `sources` list
+         in the "SELECTED WORK MOSAIC" script near the bottom of the
+         page — no HTML editing needed here. -->
   </div>
 </section>
 
@@ -974,6 +976,183 @@ revealEls.forEach(el => revealObserver.observe(el));
     }, { passive: true });
     updateOnScroll();
   }
+})();
+
+// ── SELECTED WORK MOSAIC — pulls a random mix of soccer / football /
+// lacrosse photos into a staggered mosaic (4:5 photos, same ratio used
+// elsewhere on the site) under "The Portfolio" heading. Photos are
+// checked first so only ones that actually exist get used — that way
+// there's never an empty gray box OR an empty black gap left behind
+// for a missing file. If fewer than 4 columns' worth of photos are
+// available, only that many columns are drawn, so nothing ever leaves
+// blank space where a photo should be; any leftover partial row fills
+// in from the left. The 4 column height offsets are shuffled fresh on
+// every page load, so the columns land at a different height relative
+// to each other each visit. Columns also drift at slightly different
+// speeds as you scroll for a subtle parallax effect — alternating so
+// columns 1 & 3 move one way and columns 2 & 4 move the other.
+// To add more photos, just add more lines to the `sources` list below —
+// no HTML editing needed.
+(function() {
+  const grid = document.getElementById('swGrid');
+  if (!grid) return;
+
+  const sources = [
+    // Soccer
+    'images/work/soccer/soccer-1.jpg',
+    'images/work/soccer/soccer-2.jpg',
+    'images/work/soccer/soccer-3.jpg',
+    'images/work/soccer/soccer-4.jpg',
+    'images/work/soccer/soccer-5.jpg',
+    'images/work/soccer/soccer-6.jpg',
+    'images/work/soccer/soccer-7.jpg',
+    'images/work/soccer/soccer-8.jpg',
+    'images/work/soccer/soccer-9.jpg',
+    'images/work/soccer/soccer-10.jpg',
+    'images/work/soccer/soccer-11.jpg',
+    'images/work/soccer/soccer-12.jpg',
+    'images/work/soccer/soccer-13.jpg',
+    'images/work/soccer/soccer-14.jpg',
+    'images/work/soccer/soccer-15.jpg',
+    'images/work/soccer/soccer-16.jpg',
+    'images/work/soccer/soccer-17.jpg',
+    'images/work/soccer/soccer-18.jpg',
+    // Football
+    'images/work/football/football-1.jpg',
+    'images/work/football/football-2.jpg',
+    'images/work/football/football-3.jpg',
+    'images/work/football/football-4.jpg',
+    'images/work/football/football-5.jpg',
+    'images/work/football/football-6.jpg',
+    'images/work/football/football-7.jpg',
+    'images/work/football/football-8.jpg',
+    'images/work/football/football-9.jpg',
+    'images/work/football/football-10.jpg',
+    'images/work/football/football-11.jpg',
+    'images/work/football/football-12.jpg',
+    // Lacrosse — add more lines here as new lacrosse photos come in
+    'images/work/lacrosse/lacrosse-1.jpg',
+    'images/work/lacrosse/lacrosse-2.jpg',
+    'images/work/lacrosse/lacrosse-3.jpg'
+  ];
+
+  const COLS = 4;                 // max number of masonry columns on desktop
+  const ROWS = 2;                 // up to 2 photos tall per column
+  const TILE_COUNT = COLS * ROWS; // total photos shown at once
+  const TILE_ASPECT = '4/5';      // same ratio used elsewhere on the site
+  const COL_SPEEDS = [0.11, -0.13, 0.09, -0.12]; // alternating direction: col 1 & 3 drift down as you scroll, col 2 & 4 drift up
+
+  // A fresh random height arrangement for the columns every time the
+  // site loads. Same offset values used before, just dealt out to a
+  // different column each visit (only applied on desktop layout, where
+  // the multi-column mosaic actually renders).
+  const OFFSET_PRESETS = ['0px', 'clamp(70px, 9vw, 150px)', 'clamp(20px, 3vw, 60px)', 'clamp(40px, 5vw, 90px)'];
+  const shuffledOffsets = OFFSET_PRESETS.slice();
+  for (let i = shuffledOffsets.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffledOffsets[i], shuffledOffsets[j]] = [shuffledOffsets[j], shuffledOffsets[i]];
+  }
+  const isDesktopLayout = window.innerWidth > 900;
+
+  function linkFor(src) {
+    // Send to the full Portfolio page, deep-linked to this exact photo
+    // so it opens straight into the lightbox there.
+    return 'portfolio.html?photo=' + encodeURIComponent(src);
+  }
+
+  function checkImage(src) {
+    return new Promise(resolve => {
+      const test = new Image();
+      test.onload = () => resolve(src);
+      test.onerror = () => resolve(null);
+      test.src = src;
+    });
+  }
+
+  Promise.all(sources.map(checkImage)).then(results => {
+    let valid = results.filter(Boolean);
+    if (valid.length === 0) return;
+
+    // Shuffle — a different mix each time the page loads
+    for (let i = valid.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [valid[i], valid[j]] = [valid[j], valid[i]];
+    }
+    const picks = valid.slice(0, Math.min(TILE_COUNT, valid.length));
+
+    // Only draw as many columns as there are photos to fill them —
+    // that's what prevents a whole empty column of black space when
+    // fewer than 4 photos are available.
+    const colsUsed = Math.min(COLS, picks.length);
+
+    const cols = [];
+    for (let c = 0; c < colsUsed; c++) {
+      const col = document.createElement('div');
+      col.className = 'sw-col';
+      if (isDesktopLayout) col.style.marginTop = shuffledOffsets[c];
+      grid.appendChild(col);
+      cols.push(col);
+    }
+
+    // Fill left to right, row by row — any leftover partial row lands
+    // in the leftmost columns first instead of trailing off to the right.
+    picks.forEach((src, i) => {
+      const tile = document.createElement('a');
+      tile.className = 'sw-tile';
+      tile.href = linkFor(src);
+      tile.style.aspectRatio = TILE_ASPECT;
+      const img = document.createElement('img');
+      img.alt = '';
+      img.loading = 'lazy';
+      img.onerror = () => { tile.style.display = 'none'; };
+      img.src = src;
+      tile.appendChild(img);
+      // These tiles are added after the page's cursor-hover script already
+      // ran, so they need their own listeners to trigger the eye cursor.
+      if (cursor) {
+        tile.addEventListener('mouseenter', () => cursor.classList.add('cursor-eye'));
+        tile.addEventListener('mouseleave', () => cursor.classList.remove('cursor-eye'));
+      }
+      cols[i % colsUsed].appendChild(tile);
+    });
+
+    // ── Scroll parallax — each column drifts at its own speed so the
+    // mosaic feels like it's moving as you scroll past it. Skipped
+    // entirely on mobile (stacked single column) and for anyone who has
+    // "reduce motion" turned on.
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!reduceMotion) {
+      let ticking = false;
+      const HEADER_GAP = 24; // px of buffer to always keep between a column and the heading above it
+      function updateParallax() {
+        if (window.innerWidth > 640) {
+          const rect = grid.getBoundingClientRect();
+          const vh = window.innerHeight;
+          // How far the grid's center is from the viewport's center, in px
+          const offset = vh / 2 - (rect.top + rect.height / 2);
+          cols.forEach((col, i) => {
+            let y = offset * COL_SPEEDS[i % COL_SPEEDS.length];
+            // Never let a column drift up further than its own top
+            // margin allows (minus a small safety gap) — that's what
+            // keeps it from rising into the heading above the grid.
+            const maxUp = Math.max(parseFloat(getComputedStyle(col).marginTop) - HEADER_GAP, 0);
+            if (y < -maxUp) y = -maxUp;
+            col.style.transform = `translateY(${y}px)`;
+          });
+        } else {
+          cols.forEach(col => { col.style.transform = ''; });
+        }
+        ticking = false;
+      }
+      window.addEventListener('scroll', () => {
+        if (!ticking) { ticking = true; requestAnimationFrame(updateParallax); }
+      }, { passive: true });
+      window.addEventListener('resize', () => {
+        if (!ticking) { ticking = true; requestAnimationFrame(updateParallax); }
+      });
+      updateParallax();
+    }
+  });
 })();
 
 // ── MARQUEE — scrolling strip of soccer / football / lacrosse photos ──
