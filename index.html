@@ -393,7 +393,7 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
      flex container so it can be translated horizontally as one unit —
      row 1 drifts left, row 2 drifts right, as the section scrolls by. */
   .sw-row-mobile{display:flex;gap:10px;will-change:transform;}
-  .sw-row-mobile .sw-tile{flex:1 1 0;min-width:0;}
+  .sw-row-mobile .sw-tile{width:calc(50% - 5px);flex:0 0 auto;}
 
   /* Instagram */
   .instagram{padding:3rem 1.25rem;}
