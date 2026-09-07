@@ -387,8 +387,13 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
   .g-sport-label{font-size:2rem;}
   .g-overlay{background:linear-gradient(to top,rgba(0,0,0,0.25) 0%,rgba(0,0,0,0.0) 55%);}
   .g-view{color:rgba(255,255,255,0.75);}
-  .sw-grid{grid-template-columns:repeat(2,1fr);gap:10px;}
+  .sw-grid{display:flex;flex-direction:column;grid-template-columns:none;gap:10px;}
   .sw-col{margin-top:0 !important;gap:10px;}
+  /* Mobile-only row layout for the sliding effect: each row is its own
+     flex container so it can be translated horizontally as one unit —
+     row 1 drifts left, row 2 drifts right, as the section scrolls by. */
+  .sw-row-mobile{display:flex;gap:10px;will-change:transform;}
+  .sw-row-mobile .sw-tile{flex:1 1 0;min-width:0;}
 
   /* Instagram */
   .instagram{padding:3rem 1.25rem;}
@@ -990,7 +995,10 @@ revealEls.forEach(el => revealObserver.observe(el));
 // to each other each visit. Columns also drift at slightly different
 // speeds as you scroll for a subtle parallax effect on every screen
 // size — alternating so columns 1 & 3 move one way and columns 2 & 4
-// move the other.
+// move the other. On mobile only, the layout switches from columns to
+// two rows (top row of 2 photos, bottom row of 2 photos), and instead
+// of drifting vertically the rows slide horizontally in opposite
+// directions as you scroll — top row left, bottom row right.
 // To add more photos, just add more lines to the `sources` list below —
 // no HTML editing needed.
 (function() {
@@ -1086,18 +1094,9 @@ revealEls.forEach(el => revealObserver.observe(el));
     // fewer than 4 photos are available.
     const colsUsed = Math.min(COLS, picks.length);
 
-    const cols = [];
-    for (let c = 0; c < colsUsed; c++) {
-      const col = document.createElement('div');
-      col.className = 'sw-col';
-      if (isDesktopLayout) col.style.marginTop = shuffledOffsets[c];
-      grid.appendChild(col);
-      cols.push(col);
-    }
-
-    // Fill left to right, row by row — any leftover partial row lands
-    // in the leftmost columns first instead of trailing off to the right.
-    picks.forEach((src, i) => {
+    // Builds one photo tile <a> element — shared by both the mobile
+    // (row-based) and desktop/tablet (column-based) layouts below.
+    function makeTile(src) {
       const tile = document.createElement('a');
       tile.className = 'sw-tile';
       tile.href = linkFor(src);
@@ -1114,41 +1113,107 @@ revealEls.forEach(el => revealObserver.observe(el));
         tile.addEventListener('mouseenter', () => cursor.classList.add('cursor-eye'));
         tile.addEventListener('mouseleave', () => cursor.classList.remove('cursor-eye'));
       }
-      cols[i % colsUsed].appendChild(tile);
-    });
+      return tile;
+    }
 
-    // ── Scroll parallax — each column drifts at its own speed so the
-    // mosaic feels like it's moving as you scroll past it. Now runs on
-    // every screen size (mobile included, since mobile is a real
-    // multi-column grid rather than a single stacked column) — only
-    // skipped for anyone who has "reduce motion" turned on.
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (!reduceMotion) {
-      let ticking = false;
-      const HEADER_GAP = 24; // px of buffer to always keep between a column and the heading above it
-      function updateParallax() {
-        const rect = grid.getBoundingClientRect();
-        const vh = window.innerHeight;
-        // How far the grid's center is from the viewport's center, in px
-        const offset = vh / 2 - (rect.top + rect.height / 2);
-        cols.forEach((col, i) => {
-          let y = offset * COL_SPEEDS[i % COL_SPEEDS.length];
-          // Never let a column drift up further than its own top
-          // margin allows (minus a small safety gap) — that's what
-          // keeps it from rising into the heading above the grid.
-          const maxUp = Math.max(parseFloat(getComputedStyle(col).marginTop) - HEADER_GAP, 0);
-          if (y < -maxUp) y = -maxUp;
-          col.style.transform = `translateY(${y}px)`;
-        });
-        ticking = false;
+
+    if (isMobileLayout) {
+      // ── MOBILE: row-based layout — top row of photos, bottom row of
+      // photos, each row its own flex container so it can slide as one
+      // unit. Filled row by row (not round-robin) so the row a tile
+      // lands in matches what's on screen.
+      const rowsUsed = Math.max(1, Math.min(ROWS, Math.ceil(picks.length / colsUsed)));
+      const rows = [];
+      for (let r = 0; r < rowsUsed; r++) {
+        const row = document.createElement('div');
+        row.className = 'sw-row-mobile';
+        grid.appendChild(row);
+        rows.push(row);
       }
-      window.addEventListener('scroll', () => {
-        if (!ticking) { ticking = true; requestAnimationFrame(updateParallax); }
-      }, { passive: true });
-      window.addEventListener('resize', () => {
-        if (!ticking) { ticking = true; requestAnimationFrame(updateParallax); }
+      picks.forEach((src, i) => {
+        const rowIndex = Math.min(Math.floor(i / colsUsed), rowsUsed - 1);
+        rows[rowIndex].appendChild(makeTile(src));
       });
-      updateParallax();
+
+      // ── Scroll-linked horizontal slide — the top row drifts left and
+      // the bottom row drifts right as the section scrolls through view
+      // (same idea as the henrikkarlsson-style vertical column drift
+      // above, just turned 90° for a single-column mobile layout).
+      // Row speeds alternate direction; row 1 (top) moves opposite to
+      // row 2 (bottom).
+      const ROW_SPEEDS = [-0.18, 0.18];
+      const MAX_SHIFT = 46; // px — keeps the slide subtle rather than pushing tiles off-frame
+      if (!reduceMotion) {
+        let ticking = false;
+        function updateRowSlide() {
+          const rect = grid.getBoundingClientRect();
+          const vh = window.innerHeight;
+          const offset = vh / 2 - (rect.top + rect.height / 2);
+          rows.forEach((row, i) => {
+            let x = offset * ROW_SPEEDS[i % ROW_SPEEDS.length];
+            if (x > MAX_SHIFT) x = MAX_SHIFT;
+            if (x < -MAX_SHIFT) x = -MAX_SHIFT;
+            row.style.transform = `translateX(${x}px)`;
+          });
+          ticking = false;
+        }
+        window.addEventListener('scroll', () => {
+          if (!ticking) { ticking = true; requestAnimationFrame(updateRowSlide); }
+        }, { passive: true });
+        window.addEventListener('resize', () => {
+          if (!ticking) { ticking = true; requestAnimationFrame(updateRowSlide); }
+        });
+        updateRowSlide();
+      }
+    } else {
+      // ── TABLET/DESKTOP: existing column-based mosaic with vertical
+      // parallax drift.
+      const cols = [];
+      for (let c = 0; c < colsUsed; c++) {
+        const col = document.createElement('div');
+        col.className = 'sw-col';
+        if (isDesktopLayout) col.style.marginTop = shuffledOffsets[c];
+        grid.appendChild(col);
+        cols.push(col);
+      }
+
+      // Fill left to right, row by row — any leftover partial row lands
+      // in the leftmost columns first instead of trailing off to the right.
+      picks.forEach((src, i) => {
+        cols[i % colsUsed].appendChild(makeTile(src));
+      });
+
+      // ── Scroll parallax — each column drifts at its own speed so the
+      // mosaic feels like it's moving as you scroll past it. Only
+      // skipped for anyone who has "reduce motion" turned on.
+      if (!reduceMotion) {
+        let ticking = false;
+        const HEADER_GAP = 24; // px of buffer to always keep between a column and the heading above it
+        function updateParallax() {
+          const rect = grid.getBoundingClientRect();
+          const vh = window.innerHeight;
+          // How far the grid's center is from the viewport's center, in px
+          const offset = vh / 2 - (rect.top + rect.height / 2);
+          cols.forEach((col, i) => {
+            let y = offset * COL_SPEEDS[i % COL_SPEEDS.length];
+            // Never let a column drift up further than its own top
+            // margin allows (minus a small safety gap) — that's what
+            // keeps it from rising into the heading above the grid.
+            const maxUp = Math.max(parseFloat(getComputedStyle(col).marginTop) - HEADER_GAP, 0);
+            if (y < -maxUp) y = -maxUp;
+            col.style.transform = `translateY(${y}px)`;
+          });
+          ticking = false;
+        }
+        window.addEventListener('scroll', () => {
+          if (!ticking) { ticking = true; requestAnimationFrame(updateParallax); }
+        }, { passive: true });
+        window.addEventListener('resize', () => {
+          if (!ticking) { ticking = true; requestAnimationFrame(updateParallax); }
+        });
+        updateParallax();
+      }
     }
   });
 })();
