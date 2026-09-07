@@ -387,7 +387,7 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
   .g-sport-label{font-size:2rem;}
   .g-overlay{background:linear-gradient(to top,rgba(0,0,0,0.25) 0%,rgba(0,0,0,0.0) 55%);}
   .g-view{color:rgba(255,255,255,0.75);}
-  .sw-grid{grid-template-columns:repeat(2,1fr);gap:10px;}
+  .sw-grid{grid-template-columns:repeat(3,1fr);gap:8px;}
   .sw-col{margin-top:0 !important;gap:10px;}
 
   /* Instagram */
@@ -990,7 +990,11 @@ revealEls.forEach(el => revealObserver.observe(el));
 // to each other each visit. Columns also drift at slightly different
 // speeds as you scroll for a subtle parallax effect on every screen
 // size — alternating so columns 1 & 3 move one way and columns 2 & 4
-// move the other.
+// move the other. On mobile only, the vertical column drift is swapped
+// for a horizontal one: the top row of 3 photos slides left and the
+// bottom row of 3 photos slides right as you scroll, straight (no
+// tilt) — the slide range is big enough that the outer photo in each
+// row actually exits the screen at the peak of the effect.
 // To add more photos, just add more lines to the `sources` list below —
 // no HTML editing needed.
 (function() {
@@ -1037,7 +1041,7 @@ revealEls.forEach(el => revealObserver.observe(el));
   ];
 
   const isMobileLayout = window.innerWidth <= 600;
-  const COLS = isMobileLayout ? 2 : 4;   // 2 columns on mobile, 4 on tablet/desktop
+  const COLS = isMobileLayout ? 3 : 4;   // 3 columns on mobile (so the row overflows and slides off-frame), 4 on tablet/desktop
   const ROWS = 2;                        // 2 photos tall per column, on every screen size
   const TILE_COUNT = COLS * ROWS;        // total photos shown at once
   const TILE_ASPECT = '4/5';      // same ratio used elsewhere on the site
@@ -1086,18 +1090,9 @@ revealEls.forEach(el => revealObserver.observe(el));
     // fewer than 4 photos are available.
     const colsUsed = Math.min(COLS, picks.length);
 
-    const cols = [];
-    for (let c = 0; c < colsUsed; c++) {
-      const col = document.createElement('div');
-      col.className = 'sw-col';
-      if (isDesktopLayout) col.style.marginTop = shuffledOffsets[c];
-      grid.appendChild(col);
-      cols.push(col);
-    }
-
-    // Fill left to right, row by row — any leftover partial row lands
-    // in the leftmost columns first instead of trailing off to the right.
-    picks.forEach((src, i) => {
+    // Builds one photo tile <a> element — shared by both the mobile
+    // (row-based) and desktop/tablet (column-based) layouts below.
+    function makeTile(src) {
       const tile = document.createElement('a');
       tile.className = 'sw-tile';
       tile.href = linkFor(src);
@@ -1114,32 +1109,70 @@ revealEls.forEach(el => revealObserver.observe(el));
         tile.addEventListener('mouseenter', () => cursor.classList.add('cursor-eye'));
         tile.addEventListener('mouseleave', () => cursor.classList.remove('cursor-eye'));
       }
+      return tile;
+    }
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // ── Build the mosaic: identical column-based DOM/CSS on every
+    // screen size (this is the exact structure and tile sizing that
+    // was already working well) — only the scroll effect differs by
+    // screen size, applied further down.
+    const cols = [];
+    for (let c = 0; c < colsUsed; c++) {
+      const col = document.createElement('div');
+      col.className = 'sw-col';
+      if (isDesktopLayout) col.style.marginTop = shuffledOffsets[c];
+      grid.appendChild(col);
+      cols.push(col);
+    }
+
+    // Fill left to right, row by row — any leftover partial row lands
+    // in the leftmost columns first instead of trailing off to the right.
+    // Each tile also remembers which row it landed in (0 = top, 1 =
+    // bottom), used by the mobile row-slide effect below.
+    const tiles = [];
+    picks.forEach((src, i) => {
+      const tile = makeTile(src);
       cols[i % colsUsed].appendChild(tile);
+      tiles.push({ el: tile, row: Math.floor(i / colsUsed) });
     });
 
-    // ── Scroll parallax — each column drifts at its own speed so the
-    // mosaic feels like it's moving as you scroll past it. Now runs on
-    // every screen size (mobile included, since mobile is a real
-    // multi-column grid rather than a single stacked column) — only
-    // skipped for anyone who has "reduce motion" turned on.
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (!reduceMotion) {
       let ticking = false;
       const HEADER_GAP = 24; // px of buffer to always keep between a column and the heading above it
+      // Mobile: top-row photos slide left, bottom-row photos slide
+      // right as the section scrolls through view.
+      const ROW_SPEEDS = [-0.24, 0.24];
+      const MAX_SHIFT = 110; // px — big enough that the edge photo in each row actually exits the screen
+
       function updateParallax() {
         const rect = grid.getBoundingClientRect();
         const vh = window.innerHeight;
         // How far the grid's center is from the viewport's center, in px
         const offset = vh / 2 - (rect.top + rect.height / 2);
-        cols.forEach((col, i) => {
-          let y = offset * COL_SPEEDS[i % COL_SPEEDS.length];
-          // Never let a column drift up further than its own top
-          // margin allows (minus a small safety gap) — that's what
-          // keeps it from rising into the heading above the grid.
-          const maxUp = Math.max(parseFloat(getComputedStyle(col).marginTop) - HEADER_GAP, 0);
-          if (y < -maxUp) y = -maxUp;
-          col.style.transform = `translateY(${y}px)`;
-        });
+
+        if (isMobileLayout) {
+          tiles.forEach(t => {
+            let x = offset * ROW_SPEEDS[t.row % ROW_SPEEDS.length];
+            if (x > MAX_SHIFT) x = MAX_SHIFT;
+            if (x < -MAX_SHIFT) x = -MAX_SHIFT;
+            t.el.style.transform = `translateX(${x}px)`;
+          });
+        } else {
+          // Tablet/desktop: each column drifts vertically at its own
+          // speed so the mosaic feels like it's moving as you scroll
+          // past it.
+          cols.forEach((col, i) => {
+            let y = offset * COL_SPEEDS[i % COL_SPEEDS.length];
+            // Never let a column drift up further than its own top
+            // margin allows (minus a small safety gap) — that's what
+            // keeps it from rising into the heading above the grid.
+            const maxUp = Math.max(parseFloat(getComputedStyle(col).marginTop) - HEADER_GAP, 0);
+            if (y < -maxUp) y = -maxUp;
+            col.style.transform = `translateY(${y}px)`;
+          });
+        }
         ticking = false;
       }
       window.addEventListener('scroll', () => {
