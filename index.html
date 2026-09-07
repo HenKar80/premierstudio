@@ -387,7 +387,7 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
   .g-sport-label{font-size:2rem;}
   .g-overlay{background:linear-gradient(to top,rgba(0,0,0,0.25) 0%,rgba(0,0,0,0.0) 55%);}
   .g-view{color:rgba(255,255,255,0.75);}
-  .sw-grid{grid-template-columns:repeat(3,1fr);gap:8px;}
+  .sw-grid{grid-template-columns:40vw 40vw 40vw;gap:8px;}
   .sw-col{margin-top:0 !important;gap:10px;}
 
   /* Instagram */
@@ -993,8 +993,9 @@ revealEls.forEach(el => revealObserver.observe(el));
 // move the other. On mobile only, the vertical column drift is swapped
 // for a horizontal one: the top row of 3 photos slides left and the
 // bottom row of 3 photos slides right as you scroll, straight (no
-// tilt) — the slide range is big enough that the outer photo in each
-// row actually exits the screen at the peak of the effect.
+// tilt). Photos are sized bigger than an even 3-up split (40vw each),
+// so only 2 sit fully on screen at rest and the 3rd peeks off the
+// right edge — the slide then carries it fully into (and out of) view.
 // To add more photos, just add more lines to the `sources` list below —
 // no HTML editing needed.
 (function() {
