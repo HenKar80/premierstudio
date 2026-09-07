@@ -999,11 +999,12 @@ revealEls.forEach(el => revealObserver.observe(el));
 // move the other. On mobile only, the vertical column drift is swapped
 // for a horizontal one: the top row of photos slides left and the
 // bottom row slides right as you scroll, straight (no tilt). On
-// mobile, 4 photos sit in each row but only 3 show at rest — the 4th
-// is clipped off one edge by the mosaic's own overflow:hidden — and
-// the reveal starts the moment the top of the mosaic appears at the
-// bottom of the screen, eased in smoothly rather than snapping 1:1
-// with the scroll position.
+// mobile, more photos sit in each row than fit — 3 visible at rest,
+// the rest clipped off one edge by the mosaic's own overflow:hidden —
+// and they reveal one after another as you keep scrolling, at a
+// steady, consistent speed (a touch of per-frame smoothing takes the
+// edge off, but the motion tracks the scroll linearly rather than
+// speeding up or slowing down through the middle).
 // To add more photos, just add more lines to the `sources` list below —
 // no HTML editing needed.
 (function() {
@@ -1188,12 +1189,8 @@ revealEls.forEach(el => revealObserver.observe(el));
         // one-off scroll event), scrolling back up unwinds it exactly
         // the same way.
         const maxHiddenCount = Math.max(1, colsUsed - VISIBLE_COUNT); // how many photos need to be revealed
-        const REVEAL_RANGE = 280 * maxHiddenCount; // more hidden photos = more scrolling to reveal them all
+        const REVEAL_RANGE = 420 * maxHiddenCount; // more hidden photos = more scrolling to reveal them all
         const EASE = 0.14; // per-frame trailing smoothness
-
-        function easeInOutCubic(t) {
-          return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-        }
 
         function frame() {
           const rect = grid.getBoundingClientRect();
@@ -1202,10 +1199,9 @@ revealEls.forEach(el => revealObserver.observe(el));
           let progress = scrolledIn / REVEAL_RANGE;
           if (progress < 0) progress = 0;
           if (progress > 1) progress = 1;
-          const eased = easeInOutCubic(progress);
 
           rowData.forEach(rd => {
-            const target = rd.dir === -1 ? -eased * rd.shift : -rd.shift + eased * rd.shift;
+            const target = rd.dir === -1 ? -progress * rd.shift : -rd.shift + progress * rd.shift;
             rd.current += (target - rd.current) * EASE;
             rd.inner.style.transform = `translateX(${rd.current.toFixed(2)}px)`;
           });
