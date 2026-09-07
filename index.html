@@ -155,9 +155,8 @@ nav.scrolled{padding:1.2rem 3rem;}
 .sec-tag{font-size:0.65rem;letter-spacing:0.32em;text-transform:uppercase;color:var(--gray);display:block;margin-bottom:0.7rem;}
 .sec-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(2rem,3.8vw,3.2rem);font-weight:500;line-height:1.05;letter-spacing:-0.02em;}
 .sec-title em{font-style:normal;}
-.sec-title-link{display:inline-flex;align-items:baseline;gap:0.5rem;color:inherit;text-decoration:none;}
-.sec-title-arrow{display:inline-block;font-size:0.55em;transition:transform 0.3s ease;}
-.sec-title-link:hover .sec-title-arrow{transform:translateX(8px);}
+.sec-title-link{display:inline;color:inherit;text-decoration:none;}
+.sec-title-arrow{display:none;}
 .gallery{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
 .g-item{position:relative;overflow:hidden;background:#111;aspect-ratio:4/5;display:block;text-decoration:none;border-radius:4px;}
 .g-item img{width:100%;height:100%;object-fit:cover;filter:none;transition:transform 0.7s;display:block;}
@@ -184,7 +183,7 @@ nav.scrolled{padding:1.2rem 3rem;}
 /* LATEST WORK — sized and spaced to match henrikkarlsson.com's
    "Selected Work" section exactly: same font-size scale, same
    generous padding, no divider lines between rows. */
-.latest-work{padding:clamp(90px,10vw,150px) clamp(24px,6vw,64px) clamp(120px,14vw,200px);background:var(--black);position:relative;overflow:hidden;}
+.latest-work{padding:clamp(120px,14vw,200px) clamp(24px,6vw,64px);background:var(--black);position:relative;overflow:hidden;}
 .lw-eyebrow{display:block;font-size:14px;letter-spacing:0.18em;text-transform:uppercase;color:var(--gray);font-weight:500;margin-bottom:clamp(40px,6vw,88px);}
 .lw-list{max-width:1680px;margin:0 auto;}
 .lw-row{display:block;width:100%;}
@@ -202,7 +201,7 @@ nav.scrolled{padding:1.2rem 3rem;}
 .lw-preview img{width:100%;height:100%;object-fit:cover;display:block;}
 .lw-preview::after{content:'';position:absolute;inset:0;background:rgba(0,0,0,0.2);pointer-events:none;}
 @media(max-width:640px){
-  .latest-work{padding-top:clamp(56px,9vw,90px);padding-bottom:clamp(80px,12vw,110px);}
+  .latest-work{padding-top:clamp(80px,12vw,110px);padding-bottom:clamp(80px,12vw,110px);}
   .lw-row-top{font-size:clamp(2.1rem,9.3vw,3.1rem);max-width:calc(100% - (clamp(96px,30vw,150px) / 2) - 16px);line-height:0.9;}
   .lw-tag{max-width:calc(100% - (clamp(96px,30vw,150px) / 2) - 16px);}
   .lw-tag-break{display:inline;}
@@ -390,6 +389,14 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
   .g-sport-label{font-size:2rem;}
   .g-overlay{background:linear-gradient(to top,rgba(0,0,0,0.25) 0%,rgba(0,0,0,0.0) 55%);}
   .g-view{color:rgba(255,255,255,0.75);}
+  /* "The Portfolio" heading links to portfolio.html with a little
+     arrow, mobile only. */
+  .sec-title-link{display:inline-flex;align-items:baseline;gap:0.5rem;}
+  .sec-title-arrow{display:inline-block;font-size:0.55em;position:relative;top:-2px;transition:transform 0.3s ease;}
+  .sec-title-link:active .sec-title-arrow,
+  .sec-title-link:hover .sec-title-arrow{transform:translateX(8px);}
+  /* Tighten the gap above Latest Work, mobile only. */
+  .latest-work{padding-top:clamp(56px,9vw,90px);}
   .sw-grid{display:flex;flex-direction:column;grid-template-columns:none;gap:10px;}
   .sw-col{margin-top:0 !important;gap:10px;}
   /* Mobile "peek" row: a fixed-width window (matches the normal 2-up
