@@ -394,7 +394,7 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
      at rest, the 3rd sits just past one edge, hidden by the window,
      until the scroll effect slides it into view. */
   .sw-row-window{width:100%;overflow:hidden;}
-  .sw-row-inner{display:grid;grid-template-columns:repeat(4,calc((100% - 20px)/3));gap:10px;will-change:transform;}
+  .sw-row-inner{display:grid;grid-template-columns:repeat(5,calc((100% - 20px)/3));gap:10px;will-change:transform;}
 
   /* Instagram */
   .instagram{padding:3rem 1.25rem;}
@@ -1050,7 +1050,7 @@ revealEls.forEach(el => revealObserver.observe(el));
   ];
 
   const isMobileLayout = window.innerWidth <= 600;
-  const COLS = isMobileLayout ? 4 : 4;   // mobile: 4 photos per row (3 visible + 1 hidden peek), desktop: 4 columns
+  const COLS = isMobileLayout ? 5 : 4;   // mobile: 5 photos per row (3 visible + 2 hidden, revealed as you scroll), desktop: 4 columns
   const ROWS = 2;                        // 2 photos tall per column, on every screen size
   const TILE_COUNT = COLS * ROWS;        // total photos shown at once
   const TILE_ASPECT = '4/5';      // same ratio used elsewhere on the site
@@ -1125,12 +1125,14 @@ revealEls.forEach(el => revealObserver.observe(el));
 
     if (isMobileLayout) {
       // ── MOBILE: each row is a fixed-width "window" (sized so 3
-      // photos fill it exactly) with overflow hidden. Inside it, 4
-      // photos sit side by side — 3 visible at rest, the 4th pushed
-      // just past one edge, invisible until the scroll effect reveals
-      // it. Top row's hidden photo sits on the right (row slides left
-      // to reveal it); bottom row's hidden photo sits on the left (row
-      // slides right to reveal it).
+      // photos fill it exactly) with overflow hidden. Inside it, more
+      // photos sit side by side than fit — 3 visible at rest, the rest
+      // waiting just past one edge — and scrolling reveals them one at
+      // a time, like a filmstrip sliding through. Top row's hidden
+      // photos sit on the right (row slides left to reveal them, in
+      // order); bottom row's hidden photos sit on the left (row slides
+      // right to reveal them, in order).
+      const VISIBLE_COUNT = 3;
       const rowsUsed = Math.max(1, Math.ceil(picks.length / colsUsed));
       const rowData = []; // { inner, shift, dir, current }
 
@@ -1142,9 +1144,9 @@ revealEls.forEach(el => revealObserver.observe(el));
         win.className = 'sw-row-window';
         grid.appendChild(win);
 
-        if (rowPicks.length < colsUsed) {
+        if (rowPicks.length <= VISIBLE_COUNT) {
           // Not enough photos for the peek effect on this row — just
-          // show what's there, no hidden extra, no slide.
+          // show what's there, no hidden extras, no slide.
           const plain = document.createElement('div');
           plain.style.display = 'grid';
           plain.style.gridTemplateColumns = `repeat(${rowPicks.length}, 1fr)`;
@@ -1155,14 +1157,15 @@ revealEls.forEach(el => revealObserver.observe(el));
         }
 
         const dir = r % 2 === 0 ? -1 : 1; // top rows: -1 (slide left), alternate rows: +1 (slide right)
-        // Put the hidden "extra" photo (the last one in the row's pick
-        // list) on the side it will slide in from: last in DOM order
-        // for a left-sliding row (hidden photo starts just off the
-        // right edge), first in DOM order for a right-sliding row
-        // (hidden photo starts just off the left edge).
-        const visible = rowPicks.slice(0, -1);
-        const hidden = rowPicks[rowPicks.length - 1];
-        const ordered = dir === -1 ? [...visible, hidden] : [hidden, ...visible];
+        const visible = rowPicks.slice(0, VISIBLE_COUNT);
+        const hidden = rowPicks.slice(VISIBLE_COUNT);
+        // Left-sliding row: visible group first, hidden photos queued
+        // after in order (revealed one by one from the right). Right-
+        // sliding row: hidden photos queued before, nearest-first, so
+        // the first one to reveal sits right next to the visible group.
+        const ordered = dir === -1
+          ? [...visible, ...hidden]
+          : [...hidden.slice().reverse(), ...visible];
 
         const inner = document.createElement('div');
         inner.className = 'sw-row-inner';
@@ -1170,21 +1173,27 @@ revealEls.forEach(el => revealObserver.observe(el));
         win.appendChild(inner);
 
         const firstTile = inner.firstElementChild;
-        const shift = firstTile.getBoundingClientRect().width + 10; // tile width + the 10px gap
-        rowData.push({ inner, shift, dir, current: dir === -1 ? 0 : -shift });
+        const stepShift = firstTile.getBoundingClientRect().width + 10; // one tile width + the 10px gap
+        const totalShift = stepShift * hidden.length; // full distance to reveal every hidden photo
+        rowData.push({ inner, shift: totalShift, dir, current: dir === -1 ? 0 : -totalShift });
       }
 
       if (!reduceMotion) {
-        // Trigger point: progress starts at 0 the moment the mosaic's
-        // top edge first appears at the bottom of the screen, and
-        // reaches 1 after REVEAL_RANGE px of further scrolling — so the
-        // reveal begins right as you start to see the top of the
-        // photos, not once they're already centered.
-        const REVEAL_RANGE = 320;
-        // Eased toward its target every frame (rather than snapping
-        // straight to the scroll position) for a smooth, slightly
-        // trailing motion instead of a mechanical 1:1 scrub.
-        const EASE = 0.14;
+        // Trigger point: progress starts the moment the mosaic's top
+        // edge first appears at the bottom of the screen, and finishes
+        // after REVEAL_RANGE px of further scrolling — scaled to the
+        // number of hidden photos so adding more photos naturally makes
+        // the effect play out over more scrolling. Fully reversible:
+        // since this reads the live scroll position every frame (not a
+        // one-off scroll event), scrolling back up unwinds it exactly
+        // the same way.
+        const maxHiddenCount = Math.max(1, colsUsed - VISIBLE_COUNT); // how many photos need to be revealed
+        const REVEAL_RANGE = 280 * maxHiddenCount; // more hidden photos = more scrolling to reveal them all
+        const EASE = 0.14; // per-frame trailing smoothness
+
+        function easeInOutCubic(t) {
+          return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+        }
 
         function frame() {
           const rect = grid.getBoundingClientRect();
@@ -1193,9 +1202,10 @@ revealEls.forEach(el => revealObserver.observe(el));
           let progress = scrolledIn / REVEAL_RANGE;
           if (progress < 0) progress = 0;
           if (progress > 1) progress = 1;
+          const eased = easeInOutCubic(progress);
 
           rowData.forEach(rd => {
-            const target = rd.dir === -1 ? -progress * rd.shift : -rd.shift + progress * rd.shift;
+            const target = rd.dir === -1 ? -eased * rd.shift : -rd.shift + eased * rd.shift;
             rd.current += (target - rd.current) * EASE;
             rd.inner.style.transform = `translateX(${rd.current.toFixed(2)}px)`;
           });
