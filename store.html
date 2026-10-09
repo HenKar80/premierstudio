@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sports Lightroom Presets | Premier Studio FL</title>
+<meta name="description" content="Lightroom presets for sports photography by Premier Studio FL. Day One, Early Bird, Neutral Day, Stadium Lights and Noir.">
+<link rel="canonical" href="https://premierstudiofl.com/store.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300..700&family=Bebas+Neue&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="images/store/compare.css">
+<style>
+
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --black:#080808;
+  --white:#f2f0eb;
+  --gray:#888;
+  --light-gray:#e8e6e0;
+  --dim:rgba(255,255,255,0.45);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--black);color:var(--white);font-family:'Plus Jakarta Sans',sans-serif;overflow-x:hidden;cursor:none;}
+.cursor{position:fixed;width:8px;height:8px;background:var(--white);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width 0.2s,height 0.2s;mix-blend-mode:difference;}
+.cursor.grow{width:36px;height:36px;}
+@media (hover:none), (pointer:coarse){
+  /* Touch devices don't have a real mouse hover, so this custom cursor
+     dot can get triggered by a tap and end up stuck on screen looking
+     like a big ball — just turn it off entirely for touch. */
+  .cursor{display:none !important;}
+  body{cursor:auto;}
+}
+
+/* NAV — same shell as the homepage */
+nav{position:fixed;top:0;left:0;right:0;width:100%;max-width:100vw;z-index:260;display:flex;justify-content:space-between;align-items:center;padding:2rem 3rem;transition:padding 0.3s;background:var(--black);}
+nav.scrolled{padding:1.2rem 3rem;}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:0.25em;color:var(--white);text-decoration:none;}
+.nav-links{display:flex;gap:2.5rem;list-style:none;align-items:center;}
+.nav-links a{color:var(--white);text-decoration:none;font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;opacity:0.6;transition:opacity 0.2s;}
+.nav-links a:hover{opacity:1;}
+.nav-book{border:1px solid rgba(255,255,255,0.4);padding:0.55rem 1.5rem;font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--white);text-decoration:none;transition:background 0.3s;opacity:1 !important;}
+.nav-book:hover{background:rgba(255,255,255,0.12);}
+.hamburger{display:none;background:none;border:none;cursor:pointer;padding:4px;z-index:300;position:relative;line-height:0;}
+.hamburger svg{display:block;width:24px;height:18px;overflow:visible;}
+.hamburger .bar{stroke:var(--white);stroke-width:1.5;stroke-linecap:round;transition:transform 0.35s ease,opacity 0.25s ease;transform-origin:center;}
+.hamburger .bar1{transform:translateY(0);transform-origin:12px 1px;}
+.hamburger .bar2{opacity:1;}
+.hamburger .bar3{transform:translateY(0);transform-origin:12px 17px;}
+.hamburger.open .bar1{transform:translateY(8px) rotate(45deg);}
+.hamburger.open .bar2{opacity:0;}
+.hamburger.open .bar3{transform:translateY(-8px) rotate(-45deg);}
+.mobile-menu{display:none;position:fixed;inset:0;background:var(--black);z-index:250;flex-direction:column;align-items:center;justify-content:center;gap:2.5rem;opacity:0;transition:opacity 0.3s;pointer-events:none;}
+.mobile-menu.open{opacity:1;pointer-events:all;}
+.mobile-menu a{font-family:'Plus Jakarta Sans',sans-serif;font-size:2.4rem;font-weight:500;color:var(--white);text-decoration:none;letter-spacing:0.05em;}
+.mobile-menu a.book-link{font-family:'Plus Jakarta Sans',sans-serif;font-size:0.8rem;letter-spacing:0.25em;text-transform:uppercase;border:1px solid rgba(255,255,255,0.3);padding:0.9rem 2.5rem;margin-top:1rem;}
+@media(max-width:768px){
+  .nav-links{display:none;}
+  .hamburger{display:block;}
+  .mobile-menu{display:flex;}
+}
+
+/* SCROLL REVEAL — same fade-up used across the site */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity 0.7s ease,transform 0.7s ease;}
+.reveal.in-view{opacity:1;transform:translateY(0);}
+.reveal-delay-1{transition-delay:0.1s;}
+.reveal-delay-2{transition-delay:0.2s;}
+.reveal-delay-3{transition-delay:0.3s;}
+
+/* CASE HEADER — sizing matches henrikkarlsson.com's case-study pages */
+.case-hero{max-width:1680px;margin:0 auto;padding:clamp(140px,17vw,190px) clamp(24px,6vw,64px) clamp(48px,6vw,72px);}
+.case-back{position:relative;display:inline-block;font-size:14px;letter-spacing:0.02em;color:var(--gray);text-decoration:none;margin-bottom:clamp(40px,6vw,72px);padding-bottom:4px;transition:color 0.35s ease;}
+.case-back::after{content:'';position:absolute;left:0;bottom:0;width:0%;height:1px;background:var(--white);transition:width 0.4s ease;}
+.case-back:hover{color:var(--white);}
+.case-back:hover::after{width:100%;}
+.eyebrow{display:block;font-size:14px;letter-spacing:0.18em;text-transform:uppercase;color:var(--gray);font-weight:500;margin-bottom:1rem;}
+.case-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(2.5rem,6.5vw,6rem);font-weight:500;letter-spacing:-0.01em;line-height:0.95;margin-bottom:clamp(20px,3vw,32px);}
+.case-desc{font-size:clamp(1.125rem,1vw,1.375rem);line-height:1.5;color:var(--dim);max-width:640px;}
+
+
+/* Turn off joined letter pairs (fi, fl) in Plus Jakarta Sans */
+body{font-variant-ligatures:no-common-ligatures;font-feature-settings:"liga" 0,"clig" 0;}
+
+/* Keep hyphenated words together at line ends */
+.nowrap{white-space:nowrap;}
+p,h1,h2{hyphens:manual;}
+
+/* STORE — intro copy */
+.store-lead{font-size:1.6rem;font-weight:500;line-height:1.25;color:var(--white);margin-bottom:1rem;text-wrap:balance;}
+.store-intro .case-desc{font-size:0.97rem;line-height:1.85;}
+.store-intro .case-desc + .case-desc{margin-top:1.2rem;}
+@media(min-width:1400px){.store-intro .case-desc{max-width:820px;}}
+
+/* STORE — presets included list (right of headline) */
+.store-hero-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(340px,440px);gap:clamp(40px,6vw,120px);align-items:start;}
+.included-presets{padding-top:clamp(8px,1.2vw,18px);justify-self:start;width:max-content;max-width:100%;}
+.included-head{display:flex;align-items:center;gap:14px;margin-bottom:1.2rem;}
+.included-head .included-presets-title{margin-bottom:0;}
+.lr-icons{display:flex;gap:6px;margin-left:auto;}
+.lr-icons img{display:block;width:24px;height:24px;filter:invert(0.7);}
+.included-presets-title{font-size:0.65rem;letter-spacing:0.32em;text-transform:uppercase;color:var(--gray);font-weight:500;margin-bottom:1.2rem;}
+.included-presets ul{list-style:none;border-top:1px solid rgba(255,255,255,0.1);padding-top:1rem;display:grid;grid-template-rows:repeat(3,auto);grid-auto-flow:column;grid-auto-columns:max-content;column-gap:56px;}
+.included-presets li{font-size:1.05rem;font-weight:400;padding:0.8rem 0;opacity:0.8;}
+@media(max-width:900px){.store-hero-grid{grid-template-columns:1fr;gap:48px;}.included-presets{padding-top:0;width:100%;}.included-presets ul{display:flex;flex-wrap:wrap;column-gap:28px;row-gap:0;}}
+
+/* STORE — buy button, matches the site's outlined Book Now style */
+.buy-row{display:flex;flex-wrap:wrap;align-items:center;gap:1rem 2rem;margin-top:clamp(28px,3vw,40px);}
+.buy-btn{display:inline-flex;align-items:center;gap:1rem;font-size:0.8rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--white);text-decoration:none;border:1px solid rgba(255,255,255,0.3);padding:1rem 2.2rem;transition:background 0.25s,color 0.25s,border-color 0.25s;}
+.buy-btn{position:relative;}
+.cta-btn-wrap{margin-top:clamp(20px,2.5vw,32px);}
+.buy-btn-lg{font-size:0.88rem;padding:1.2rem 2.8rem;}
+.buy-snake{position:absolute;top:-1px;left:-1px;overflow:visible;pointer-events:none;}
+.buy-snake rect{fill:none;stroke:var(--white);stroke-width:1;opacity:0;shape-rendering:crispEdges;vector-effect:non-scaling-stroke;}
+.buy-btn:hover{background:var(--white);color:var(--black);border-color:var(--white);}
+.buy-btn .price{padding-left:1rem;border-left:1px solid currentColor;opacity:0.8;letter-spacing:0.1em;}
+.buy-btn:focus-visible{outline:2px solid var(--white);outline-offset:4px;}
+.buy-note{font-size:14px;color:var(--gray);}
+
+/* PRESET GRID */
+.store-work{max-width:1680px;margin:0 auto;padding:clamp(16px,3vw,32px) clamp(24px,6vw,64px) clamp(96px,11vw,160px);}
+.store-work .store-lead{margin-bottom:0.5rem;}
+.store-hint{font-size:14px;color:var(--gray);margin-bottom:clamp(20px,2.5vw,28px);}
+.store-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(64px,6vw,96px) clamp(32px,3.5vw,56px);}
+@media(max-width:1100px){.store-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+.preset-name{font-size:clamp(1.5rem,2vw,2rem);font-weight:500;letter-spacing:-0.01em;margin-top:1.2rem;}
+.preset-desc{font-size:1rem;line-height:1.55;color:var(--dim);max-width:46ch;margin-top:0.4rem;}
+.soon-tile{aspect-ratio:4/5;border-radius:4px;background:#161616;display:flex;align-items:center;justify-content:center;}
+.soon-tile span{font-size:12px;letter-spacing:0.22em;text-transform:uppercase;color:var(--gray);}
+.preset-soon .preset-name{color:rgba(242,240,235,0.5);}
+.cover-tile{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;border-radius:4px;background:#161616;}
+@media(max-width:800px){
+  .store-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:40px 14px;}
+  .preset-name{font-size:1.15rem;margin-top:0.8rem;}
+  .preset-desc{font-size:0.85rem;line-height:1.5;}
+  .store-grid .pcmp-knob{width:32px;height:32px;}
+  .store-grid .pcmp-knob svg{width:18px;height:18px;}
+  .store-grid .pcmp-tag{bottom:8px;padding:4px 6px;font-size:9px;letter-spacing:0.12em;}
+  .store-grid .pcmp-tag.b{left:8px}.store-grid .pcmp-tag.a{right:8px}
+}
+
+/* WHAT'S INCLUDED */
+.included{max-width:1680px;margin:0 auto;padding:0 clamp(24px,6vw,64px) clamp(96px,11vw,160px);}
+.included-list{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px;border-top:1px solid rgba(255,255,255,0.1);padding-top:clamp(24px,3vw,36px);}
+.included-list strong{display:block;font-weight:500;font-size:1.05rem;margin-bottom:0.4rem;}
+.included-list span{font-size:0.95rem;line-height:1.5;color:var(--dim);}
+@media(max-width:900px){.included-list{grid-template-columns:1fr 1fr;}}
+@media(max-width:520px){.included-list{grid-template-columns:1fr;}}
+
+/* SLIDER — dark theme to match the site */
+.pcmp{background:#161616;border-radius:4px;}
+.pcmp-knob{background:var(--white);color:var(--black);}
+.pcmp-tag{font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:500;letter-spacing:0.18em;text-transform:uppercase;background:rgba(8,8,8,0.6);color:var(--white);}
+.pcmp-tag.a{background:var(--white);color:var(--black);}
+.pcmp:has(input:focus-visible){outline-color:var(--white);}
+/* CLOSING CTA */
+.case-cta{max-width:1680px;margin:0 auto;padding:0 clamp(24px,6vw,64px) clamp(120px,14vw,160px);text-align:center;}
+.case-cta p{font-size:1rem;color:var(--gray);margin-bottom:1rem;}
+.case-cta-link{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(1.8rem,3.5vw,2.6rem);font-weight:500;color:var(--white);text-decoration:none;}
+.case-cta-link .arrow{display:inline-block;transition:transform 0.3s ease;}
+.case-cta-link:hover .arrow{transform:translateX(6px);}
+
+/* BACK TO TOP */
+.back-to-top{display:none;position:fixed;right:56px;bottom:56px;flex-direction:column;align-items:center;gap:10px;background:transparent;border:0;padding:0;cursor:pointer;color:var(--gray);z-index:50;opacity:0;pointer-events:none;transform:translateY(28px);transition:opacity 0.6s ease,transform 0.6s ease,color 0.35s ease;}
+@media(min-width:641px){
+  .back-to-top{display:flex;}
+}
+.back-to-top-arrow{font-size:14px;line-height:1;}
+.back-to-top-label{writing-mode:vertical-rl;font-size:14px;letter-spacing:0.02em;}
+.back-to-top:hover{color:var(--white);}
+.back-to-top.visible{opacity:1;pointer-events:auto;transform:translateY(0);}
+
+/* FOOTER — same as the homepage */
+footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);padding:2.5rem 4rem;display:flex;justify-content:space-between;align-items:center;}
+.footer-logo{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:0.22em;}
+.footer-links{display:flex;gap:2rem;}
+.footer-links a{font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--gray);text-decoration:none;transition:color 0.2s;}
+.footer-links a:hover{color:var(--white);}
+.footer-copy{font-size:0.68rem;color:rgba(255,255,255,0.25);}
+@media(max-width:640px){
+  footer{flex-direction:column;gap:1.2rem;padding:2rem;text-align:center;}
+}
+
+@media(max-width:640px){.footer-links{flex-wrap:wrap;justify-content:center;gap:1.2rem;}}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<nav id="nav">
+  <a href="index.html" class="logo">
+    <img src="images/logo/premierstudio-logo.svg" alt="Premier Studio" height="18">
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html#latest-work">Work</a></li>
+    <li><a href="index.html#about">About</a></li>
+    <li><a href="index.html#services">Services</a></li>
+    <li><a href="store.html" aria-current="page">Store</a></li>
+    <li><a href="index.html#contact" class="nav-book">Book Now</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" aria-label="Menu">
+    <svg viewBox="0 0 24 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <line class="bar bar1" x1="0" y1="1"  x2="24" y2="1"/>
+      <line class="bar bar2" x1="0" y1="9"  x2="24" y2="9"/>
+      <line class="bar bar3" x1="0" y1="17" x2="24" y2="17"/>
+    </svg>
+  </button>
+</nav>
+
+<!-- Mobile full-screen menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html#latest-work" class="mobile-nav-link">Work</a>
+  <a href="index.html#about" class="mobile-nav-link">About</a>
+  <a href="index.html#services" class="mobile-nav-link">Services</a>
+  <a href="store.html" class="mobile-nav-link">Store</a>
+  <a href="index.html#contact" class="mobile-nav-link book-link">Book Now</a>
+</div>
+
+
+<main id="main">
+
+  <section class="case-hero" aria-label="Store introduction">
+    <span class="eyebrow reveal">Store</span>
+    <div class="store-hero-grid">
+    <div class="store-hero-main">
+    <h1 class="case-title reveal">Sports Presets</h1>
+    <div class="store-intro reveal">
+      <p class="store-lead">Ready to take your sports photography to the next level?</p>
+      <p class="case-desc">These are the exact presets we use to edit our own photos, now available to you. Each one is built for real <span class="nowrap">game-day</span> conditions: bright midday sun, low evening light, overcast skies, night games under the lights and dramatic black and white.</p>
+      <p class="case-desc">Think of them as a strong foundation, not a magic button. Every camera, lens and field is a little different, so <span class="nowrap">fine-tune</span> the exposure and white balance, make them your own, and enjoy the process.</p>
+      <p class="case-desc">Premium Lightroom Presets for Adobe Lightroom, Lightroom Classic, and Lightroom Mobile.</p>
+    </div>
+    </div>
+    <aside class="included-presets reveal reveal-delay-1" aria-label="Presets included">
+      <div class="included-head">
+        <h2 class="included-presets-title">Presets Included</h2>
+        <div class="lr-icons">
+          <img src="images/store/icons/adobe-lightroom.png" alt="Adobe Lightroom" width="24" height="24">
+          <img src="images/store/icons/adobe-lightroom-cc.png" alt="Adobe Lightroom Classic" width="24" height="24">
+        </div>
+      </div>
+      <ul>
+        <li>Day One</li>
+        <li>Early Bird</li>
+        <li>Neutral Day</li>
+        <li>Stadium Lights</li>
+        <li>Noir</li>
+      </ul>
+      <div class="buy-row">
+        <a class="buy-btn" id="buyBtn" href="https://payhip.com/b/dFoDW" target="_blank" rel="noopener">Buy the pack <span class="price">$40</span><svg class="buy-snake" aria-hidden="true" focusable="false"></svg></a>
+      </div>
+    </aside>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PRESETS — to add one: copy an <article class="preset"> block,
+       add its folder inside images/store/, and update the paths.
+       ============================================================ -->
+  <section class="store-work" aria-label="The presets">
+    <h2 class="store-lead reveal">See them in action</h2>
+    <p class="store-hint reveal">Drag across each photo to compare.</p>
+    <div class="store-grid">
+      <!-- PLACEHOLDERS — when a new preset is ready, replace one of these
+           <article class="preset preset-soon"> blocks with a copy of a
+           preset block above and point it at the new folder. -->
+      <!-- PACK COVER -->
+      <article class="preset preset-cover reveal">
+        <img class="cover-tile" src="images/store/covers/sports-presets-cover-vol1-web.jpg" alt="Sports Presets Vol. 1 cover: 5 premium Lightroom presets for desktop and mobile" width="2061" height="2576">
+        <h2 class="preset-name">Sports Presets Vol. 1</h2>
+        <p class="preset-desc">Five looks for every game-day condition, from bright sun to night games. Desktop and mobile.</p>
+      </article>
+      <article class="preset reveal">
+        <div class="pcmp" data-name="Day One"
+             data-before="images/store/day-one/before-web.jpg" data-after="images/store/day-one/after-web.jpg"></div>
+        <h2 class="preset-name">Day One</h2>
+        <p class="preset-desc">Our signature look. Deeper greens, richer jersey color and natural skin tones, with the player popping off the background. Made for bright daytime games.</p>
+      </article>
+      <article class="preset reveal reveal-delay-1">
+        <div class="pcmp" data-name="Early Bird"
+             data-before="images/store/early-bird/before-web.jpg" data-after="images/store/early-bird/after-web.jpg"></div>
+        <h2 class="preset-name">Early Bird</h2>
+        <p class="preset-desc">Warm golden tones, soft highlights and muted turf. Made for low sun in the morning or late afternoon.</p>
+      </article>
+      <article class="preset reveal">
+        <div class="pcmp" data-name="Neutral Day"
+             data-before="images/store/neutral-day/before-web.jpg" data-after="images/store/neutral-day/after-web.jpg"></div>
+        <h2 class="preset-name">Neutral Day</h2>
+        <p class="preset-desc"><span class="nowrap">True-to-life</span> color with muted turf, added depth and crisp detail. Made for overcast skies and shaded fields.</p>
+      </article>
+      <article class="preset reveal reveal-delay-1">
+        <div class="pcmp" data-name="Stadium Lights"
+             data-before="images/store/stadium-lights/before-web.jpg" data-after="images/store/stadium-lights/after-web.jpg"></div>
+        <h2 class="preset-name">Stadium Lights</h2>
+        <p class="preset-desc">Controlled highlights, deep muted turf and a sharp player against a clean background. Made for night games and low light under the lights.</p>
+      </article>
+      <article class="preset reveal">
+        <div class="pcmp" data-name="Noir"
+             data-before="images/store/noir/before-web.jpg" data-after="images/store/noir/after-web.jpg"></div>
+        <h2 class="preset-name">Noir</h2>
+        <p class="preset-desc">Rich, <span class="nowrap">high-contrast</span> black and white with deep shadows and a subtle warm tone. Made for peak action, night games and dramatic moments.</p>
+      </article>
+
+    </div>
+  </section>
+
+  <section class="included" aria-label="What's included">
+    <span class="eyebrow reveal">What you get</span>
+    <ul class="included-list reveal">
+      <li><strong>5 Lightroom presets</strong><span>.xmp files for Lightroom Classic and Lightroom desktop.</span></li>
+      <li><strong>Mobile versions</strong><span>DNG files for the Lightroom mobile app.</span></li>
+      <li><strong>Install guide</strong><span>A short PDF for setup on desktop and phone.</span></li>
+      <li><strong>Instant download</strong><span>Your files are ready right after checkout.</span></li>
+    </ul>
+  </section>
+
+  <section class="case-cta" aria-label="Buy">
+    <p class="reveal">Five Premium Presets. One Download.</p>
+    <div class="reveal cta-btn-wrap">
+      <a class="buy-btn buy-btn-lg" href="https://payhip.com/b/dFoDW" target="_blank" rel="noopener">Buy the pack <span class="price">$40</span><svg class="buy-snake" aria-hidden="true" focusable="false"></svg></a>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="footer-logo">
+    <img src="images/logo/premierstudio-logo.svg" alt="Premier Studio" height="15">
+  </div>
+  <div class="footer-links">
+    <a href="index.html#latest-work">Work</a>
+    <a href="index.html#about">About</a>
+    <a href="index.html#services">Services</a>
+    <a href="store.html">Store</a>
+    <a href="index.html#contact">Contact</a>
+  </div>
+  <div class="footer-copy">© 2026 Premier Studio FL, LLC. All rights reserved.</div>
+</footer>
+
+<button class="back-to-top" id="backToTop" type="button">
+  <span class="back-to-top-arrow" aria-hidden="true">↑</span>
+  <span class="back-to-top-label">Up</span>
+</button>
+
+
+<script>
+
+// Hamburger menu
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobileMenu');
+hamburger.addEventListener('click', () => {
+  hamburger.classList.toggle('open');
+  mobileMenu.classList.toggle('open');
+  document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : '';
+});
+document.querySelectorAll('.mobile-nav-link').forEach(link => {
+  link.addEventListener('click', () => {
+    hamburger.classList.remove('open');
+    mobileMenu.classList.remove('open');
+    document.body.style.overflow = '';
+  });
+});
+
+// Custom cursor
+const cursor = document.getElementById('cursor');
+document.addEventListener('mousemove', e => {
+  cursor.style.left = e.clientX + 'px';
+  cursor.style.top = e.clientY + 'px';
+});
+document.querySelectorAll('a, button, .pcmp').forEach(el => {
+  el.addEventListener('mouseenter', () => cursor.classList.add('grow'));
+  el.addEventListener('mouseleave', () => cursor.classList.remove('grow'));
+});
+
+// Nav shrink on scroll
+window.addEventListener('scroll', () => {
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 60);
+});
+
+// Scroll reveal
+const revealEls = document.querySelectorAll('.reveal');
+const revealObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in-view'); revealObserver.unobserve(e.target); } });
+}, { threshold: 0.12 });
+revealEls.forEach(el => revealObserver.observe(el));
+
+// Back to top button
+const backToTop = document.getElementById('backToTop');
+window.addEventListener('scroll', () => {
+  backToTop.classList.toggle('visible', window.scrollY > 600);
+});
+backToTop.addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+
+// ── BUY BUTTONS: soft white line that travels around the border every 8s
+(function(){
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches || !Element.prototype.animate) return;
+  var NS='http://www.w3.org/2000/svg';
+  document.querySelectorAll('.buy-btn').forEach(function(btn){
+    var svg=btn.querySelector('.buy-snake'); if(!svg) return;
+    // Stacked dashes, longest and faintest first, so the line fades out at both ends
+    var LAYERS=[], MAX=36, rects=[];
+    for(var i=0;i<14;i++){ LAYERS.push([MAX-i*2.2, 0.09+i*0.012]); }
+    LAYERS.forEach(function(l){
+      var r=document.createElementNS(NS,'rect');
+      r.setAttribute('pathLength','100');
+      r.style.strokeDasharray=l[0]+' '+(100-l[0]);
+      r.dataset.shift=(MAX-l[0])/2;
+      r.dataset.op=l[1];
+      svg.appendChild(r); rects.push(r);
+    });
+    // The SVG sits exactly over the button's outer edge; the 1px stroke is centred on the border
+    function size(){
+      var w=btn.offsetWidth, h=btn.offsetHeight, b=btn.getBoundingClientRect();
+      if(b.width) { w=b.width; h=b.height; }
+      svg.setAttribute('width',w); svg.setAttribute('height',h);
+      svg.setAttribute('viewBox','0 0 '+w+' '+h);
+      svg.style.width=w+'px'; svg.style.height=h+'px';
+      rects.forEach(function(r){
+        r.setAttribute('x',0.5); r.setAttribute('y',0.5);
+        r.setAttribute('width',Math.max(w-1,0)); r.setAttribute('height',Math.max(h-1,0));
+      });
+    }
+    size(); window.addEventListener('resize',size);
+    if(window.ResizeObserver) new ResizeObserver(size).observe(btn);
+    if(document.fonts && document.fonts.ready) document.fonts.ready.then(size);
+    function run(){
+      if(!document.hidden){
+        size();
+        rects.forEach(function(r){
+          var s=-parseFloat(r.dataset.shift), o=parseFloat(r.dataset.op);
+          r.animate([
+            {strokeDashoffset:s,opacity:0},
+            {opacity:o,offset:0.12},
+            {opacity:o,offset:0.88},
+            {strokeDashoffset:s-100,opacity:0}
+          ],{duration:2600,easing:'cubic-bezier(0.65,0,0.35,1)'});
+        });
+      }
+      setTimeout(run, 8000);
+    }
+    setTimeout(run, 2500);
+  });
+})();
+</script>
+<script src="images/store/compare.js"></script>
+</body>
+</html>
