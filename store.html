@@ -523,5 +523,18 @@ backToTop.addEventListener('click', () => {
 })();
 </script>
 <script src="images/store/compare.js"></script>
+<script>
+// Slider labels: always BEFORE / AFTER (also in the fullscreen viewer)
+(function(){
+  function fix(root){
+    (root.querySelectorAll ? root : document).querySelectorAll('.pcmp-tag.a').forEach(function(t){ if(t.textContent!=='After') t.textContent='After'; });
+    (root.querySelectorAll ? root : document).querySelectorAll('.pcmp-tag.b').forEach(function(t){ if(t.textContent!=='Before') t.textContent='Before'; });
+  }
+  fix(document);
+  new MutationObserver(function(muts){
+    muts.forEach(function(m){ m.addedNodes.forEach(function(n){ if(n.nodeType===1) fix(n.parentNode||n); }); });
+  }).observe(document.body,{childList:true,subtree:true});
+})();
+</script>
 </body>
 </html>
