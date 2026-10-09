@@ -124,6 +124,13 @@ p,h1,h2{hyphens:manual;}
 .buy-btn .price{padding-left:1rem;border-left:1px solid currentColor;opacity:0.8;letter-spacing:0.1em;}
 .buy-btn:focus-visible{outline:2px solid var(--white);outline-offset:4px;}
 .buy-note{font-size:14px;color:var(--gray);}
+.cover-buy{margin-top:1.2rem;}
+@media(max-width:800px){
+  /* Two columns on phones: shrink the button so it fits under the cover */
+  .cover-buy{margin-top:0.9rem;}
+  .cover-buy .buy-btn{display:flex;width:100%;justify-content:center;gap:0.6rem;font-size:0.62rem;letter-spacing:0.14em;padding:0.8rem 0.5rem;white-space:nowrap;}
+  .cover-buy .buy-btn .price{padding-left:0.6rem;letter-spacing:0.06em;}
+}
 
 /* PRESET GRID */
 .store-work{max-width:1680px;margin:0 auto;padding:clamp(16px,3vw,32px) clamp(24px,6vw,64px) clamp(96px,11vw,160px);}
@@ -322,7 +329,9 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
       <article class="preset preset-cover reveal">
         <img class="cover-tile" src="images/store/covers/sports-presets-cover-vol1-web.jpg" alt="Sports Presets Vol 1 cover: 5 premium Lightroom presets for desktop and mobile" width="2061" height="2576">
         <h2 class="preset-name">Sports Presets Vol 1</h2>
-        <p class="preset-desc">Five looks for every game-day condition, from bright sun to night games. Desktop and mobile. Included: Day One, Early Bird, Neutral Day, Stadium Lights and Noir.</p>
+        <div class="cover-buy">
+          <a class="buy-btn" href="https://payhip.com/b/dFoDW" target="_blank" rel="noopener">Buy the pack <span class="price">$40</span><svg class="buy-snake" aria-hidden="true" focusable="false"></svg></a>
+        </div>
       </article>
       <article class="preset reveal">
         <div class="pcmp" data-name="Day One"
