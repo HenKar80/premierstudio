@@ -128,6 +128,8 @@ p,h1,h2{hyphens:manual;}
 @media(max-width:800px){
   /* Two columns on phones: shrink the button so it fits under the cover */
   .cover-buy{margin-top:0.9rem;}
+  /* "Vol 1" drops to its own line as a gray subheader */
+  .preset-cover .vol{display:block;margin-top:0.25rem;font-size:0.8rem;font-weight:500;letter-spacing:0.18em;text-transform:uppercase;color:var(--gray);}
   .cover-buy .buy-btn{display:flex;width:100%;justify-content:center;gap:0.6rem;font-size:0.62rem;letter-spacing:0.14em;padding:0.8rem 0.5rem;white-space:nowrap;}
   .cover-buy .buy-btn .price{padding-left:0.6rem;letter-spacing:0.06em;}
 }
@@ -328,7 +330,7 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
       <!-- PACK COVER -->
       <article class="preset preset-cover reveal">
         <img class="cover-tile" src="images/store/covers/sports-presets-cover-vol1-web.jpg" alt="Sports Presets Vol 1 cover: 5 premium Lightroom presets for desktop and mobile" width="2061" height="2576">
-        <h2 class="preset-name">Sports Presets Vol 1</h2>
+        <h2 class="preset-name">Sports Presets <span class="vol">Vol 1</span></h2>
         <div class="cover-buy">
           <a class="buy-btn" href="https://payhip.com/b/dFoDW" target="_blank" rel="noopener">Buy the pack <span class="price">$40</span><svg class="buy-snake" aria-hidden="true" focusable="false"></svg></a>
         </div>
