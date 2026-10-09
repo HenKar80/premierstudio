@@ -215,6 +215,17 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
   font:500 12px/1 'Plus Jakarta Sans',sans-serif !important;letter-spacing:0.22em;text-transform:uppercase;opacity:0.7;transition:opacity 0.2s;
 }
 .pcmp-overlay .pcmp-close:hover{opacity:1;}
+/* No focus outline around the photo in fullscreen (the viewer focuses the slider automatically) */
+.pcmp-overlay .pcmp,
+.pcmp-overlay .pcmp:has(input:focus),
+.pcmp-overlay .pcmp:has(input:focus-visible),
+.pcmp-overlay .pcmp input,
+.pcmp-overlay .pcmp-close,
+.pcmp-overlay:focus,
+.pcmp-overlay:focus-visible{outline:none !important;box-shadow:none !important;}
+/* Same after closing: focus jumps back to the corner button, so keep that clean too */
+.pcmp-fs:focus,.pcmp-fs:focus-visible{outline:none;}
+.pcmp,.pcmp *,.pcmp-overlay,.pcmp-overlay *{-webkit-tap-highlight-color:transparent;}
 .pcmp-overlay .pcmp-loading{font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;letter-spacing:0.05em;color:var(--gray);}
 @media(min-width:801px){
   .pcmp-overlay{--g:clamp(32px,4vw,64px);--top:88px;--bot:48px;}
