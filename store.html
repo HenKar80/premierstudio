@@ -89,6 +89,17 @@ p,h1,h2{hyphens:manual;}
 .store-intro .case-desc{font-size:0.97rem;line-height:1.85;}
 .store-intro .case-desc + .case-desc{margin-top:1.2rem;}
 @media(min-width:1400px){.store-intro .case-desc{max-width:820px;}}
+.store-more{margin-top:1.2rem;}
+
+/* READ MORE — mobile only; on larger screens all copy shows */
+.read-more{display:none;}
+@media(max-width:768px){
+  .read-more{display:inline-block;position:relative;margin-top:1rem;padding:0 0 4px;background:none;border:0;cursor:pointer;
+    font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;letter-spacing:0.22em;text-transform:uppercase;font-weight:500;color:var(--white);opacity:0.7;}
+  .read-more::after{content:'';position:absolute;left:0;bottom:0;width:100%;height:1px;background:currentColor;opacity:0.5;}
+  .store-more{display:none;}
+  .store-more.open{display:block;}
+}
 
 /* STORE — presets included list (right of headline) */
 .store-hero-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(340px,440px);gap:clamp(40px,6vw,120px);align-items:start;}
@@ -257,8 +268,11 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
     <div class="store-intro reveal">
       <p class="store-lead">Ready to take your sports photography to the next level?</p>
       <p class="case-desc">These are the exact presets we use to edit our own photos, now available to you. Each one is built for real <span class="nowrap">game-day</span> conditions: bright midday sun, low evening light, overcast skies, night games under the lights and dramatic black and white.</p>
+      <button class="read-more" id="readMore" type="button" aria-expanded="false" aria-controls="storeMore">Read more</button>
+      <div class="store-more" id="storeMore">
       <p class="case-desc">Think of them as a strong foundation, not a magic button. Every camera, lens and field is a little different, so <span class="nowrap">fine-tune</span> the exposure and white balance, make them your own, and enjoy the process.</p>
       <p class="case-desc">Premium Lightroom Presets for Adobe Lightroom, Lightroom Classic, and Lightroom Mobile.</p>
+      </div>
     </div>
     </div>
     <aside class="included-presets reveal reveal-delay-1" aria-label="Presets included">
@@ -296,9 +310,9 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
            preset block above and point it at the new folder. -->
       <!-- PACK COVER -->
       <article class="preset preset-cover reveal">
-        <img class="cover-tile" src="images/store/covers/sports-presets-cover-vol1-web.jpg" alt="Sports Presets Vol1 cover: 5 premium Lightroom presets for desktop and mobile" width="2061" height="2576">
-        <h2 class="preset-name">Sports Presets Vol1</h2>
-        <p class="preset-desc">Five looks for every game-day condition, from bright sun to night games. Desktop and mobile.</p>
+        <img class="cover-tile" src="images/store/covers/sports-presets-cover-vol1-web.jpg" alt="Sports Presets Vol 1 cover: 5 premium Lightroom presets for desktop and mobile" width="2061" height="2576">
+        <h2 class="preset-name">Sports Presets Vol 1</h2>
+        <p class="preset-desc">Five looks for every game-day condition, from bright sun to night games. Desktop and mobile. Day One, Early Bird, Neutral Day, Stadium Lights and Noir.</p>
       </article>
       <article class="preset reveal">
         <div class="pcmp" data-name="Day One"
@@ -472,6 +486,18 @@ backToTop.addEventListener('click', () => {
       setTimeout(run, 8000);
     }
     setTimeout(run, 2500);
+  });
+})();
+
+// ── READ MORE (mobile): reveal the rest of the intro, then offer "Read less" below it
+(function(){
+  var btn=document.getElementById('readMore'), more=document.getElementById('storeMore');
+  if(!btn||!more) return;
+  btn.addEventListener('click',function(){
+    var open=more.classList.toggle('open');
+    btn.setAttribute('aria-expanded',open);
+    btn.textContent=open?'Read less':'Read more';
+    if(open) more.after(btn); else more.before(btn);
   });
 })();
 
