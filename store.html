@@ -180,6 +180,37 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
 }
 
 @media(max-width:640px){.footer-links{flex-wrap:wrap;justify-content:center;gap:1.2rem;}}
+
+/* FULLSCREEN VIEWER — black, framed with margins, site typography */
+.pcmp-fs{background:rgba(8,8,8,0.55);}
+.pcmp-overlay{
+  --g:20px; --top:72px; --bot:32px;
+  background:var(--black) !important;cursor:auto;
+  padding:calc(var(--top) + env(safe-area-inset-top,0px)) var(--g) calc(var(--bot) + env(safe-area-inset-bottom,0px)) !important;
+}
+.pcmp-overlay::backdrop{background:var(--black);}
+.pcmp-overlay .pcmp{
+  width:min(100%, calc((100vh - var(--top) - var(--bot) - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)) * var(--ar,0.8))) !important;
+  height:auto !important;max-width:100% !important;max-height:none !important;
+  aspect-ratio:var(--ar,0.8);border-radius:4px;background:#161616;
+}
+@supports (height:100dvh){
+  .pcmp-overlay .pcmp{width:min(100%, calc((100dvh - var(--top) - var(--bot) - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)) * var(--ar,0.8))) !important;}
+}
+.pcmp-ov-name{position:absolute;top:calc(26px + env(safe-area-inset-top,0px));left:var(--g);font-size:12px;letter-spacing:0.22em;text-transform:uppercase;color:var(--gray);font-weight:500;}
+.pcmp-overlay .pcmp-close{
+  top:calc(16px + env(safe-area-inset-top,0px)) !important;right:var(--g) !important;
+  width:auto !important;height:auto !important;padding:10px 0 !important;border-radius:0 !important;
+  background:transparent !important;color:var(--white) !important;
+  font:500 12px/1 'Plus Jakarta Sans',sans-serif !important;letter-spacing:0.22em;text-transform:uppercase;opacity:0.7;transition:opacity 0.2s;
+}
+.pcmp-overlay .pcmp-close:hover{opacity:1;}
+.pcmp-overlay .pcmp-loading{font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;letter-spacing:0.05em;color:var(--gray);}
+@media(min-width:801px){
+  .pcmp-overlay{--g:clamp(32px,4vw,64px);--top:88px;--bot:48px;}
+  .pcmp-ov-name{top:calc(34px + env(safe-area-inset-top,0px));}
+  .pcmp-overlay .pcmp-close{top:calc(24px + env(safe-area-inset-top,0px)) !important;}
+}
 </style>
 </head>
 <body>
@@ -265,8 +296,8 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
            preset block above and point it at the new folder. -->
       <!-- PACK COVER -->
       <article class="preset preset-cover reveal">
-        <img class="cover-tile" src="images/store/covers/sports-presets-cover-vol1-web.jpg" alt="Sports Presets Vol. 1 cover: 5 premium Lightroom presets for desktop and mobile" width="2061" height="2576">
-        <h2 class="preset-name">Sports Presets Vol. 1</h2>
+        <img class="cover-tile" src="images/store/covers/sports-presets-cover-vol1-web.jpg" alt="Sports Presets Vol1 cover: 5 premium Lightroom presets for desktop and mobile" width="2061" height="2576">
+        <h2 class="preset-name">Sports Presets Vol1</h2>
         <p class="preset-desc">Five looks for every game-day condition, from bright sun to night games. Desktop and mobile.</p>
       </article>
       <article class="preset reveal">
@@ -442,6 +473,28 @@ backToTop.addEventListener('click', () => {
     }
     setTimeout(run, 2500);
   });
+})();
+
+// ── FULLSCREEN VIEWER: match the site look (photo shape, preset name, "Close")
+(function(){
+  var last=null;
+  document.addEventListener('click',function(e){
+    var b=e.target.closest && e.target.closest('.pcmp-fs');
+    if(b) last=b.closest('.pcmp');
+  },true);
+  new MutationObserver(function(muts){
+    muts.forEach(function(m){
+      m.addedNodes.forEach(function(ov){
+        if(!ov.classList || !ov.classList.contains('pcmp-overlay')) return;
+        var w=last && +last.dataset.w, h=last && +last.dataset.h;
+        ov.style.setProperty('--ar', (w && h) ? (w/h) : 0.8);
+        var c=ov.querySelector('.pcmp-close'); if(c) c.textContent='Close';
+        var n=document.createElement('span'); n.className='pcmp-ov-name';
+        n.textContent=(last && last.dataset.name) || '';
+        ov.appendChild(n);
+      });
+    });
+  }).observe(document.body,{childList:true});
 })();
 </script>
 <script src="images/store/compare.js"></script>
