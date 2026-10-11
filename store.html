@@ -14,9 +14,9 @@
 *{margin:0;padding:0;box-sizing:border-box;}
 :root{
   --black:#080808;
-  --white:#f2f0eb;
+  --white:#ffffff;
   --gray:#888;
-  --light-gray:#e8e6e0;
+  --light-gray:#ffffff;
   --dim:rgba(255,255,255,0.45);
 }
 html{scroll-behavior:smooth;}
@@ -117,7 +117,7 @@ p,h1,h2{hyphens:manual;}
 .lr-icons img{display:block;width:24px;height:24px;filter:invert(0.7);}
 .included-presets-title{font-size:0.65rem;letter-spacing:0.32em;text-transform:uppercase;color:var(--gray);font-weight:500;margin-bottom:1.2rem;}
 .included-presets ul{list-style:none;border-top:1px solid rgba(255,255,255,0.1);padding-top:1rem;display:grid;grid-template-rows:repeat(3,auto);grid-auto-flow:column;grid-auto-columns:max-content;column-gap:56px;}
-.included-presets li{font-size:1.05rem;font-weight:400;padding:0.8rem 0;opacity:0.8;}
+.included-presets li{font-size:1.05rem;font-weight:400;padding:0.8rem 0;}
 @media(max-width:900px){.store-hero-grid{grid-template-columns:1fr;gap:48px;}.included-presets{padding-top:0;width:100%;}.included-presets ul{display:flex;flex-wrap:wrap;column-gap:28px;row-gap:0;}}
 
 /* STORE — buy button, matches the site's outlined Book Now style */
@@ -129,7 +129,7 @@ p,h1,h2{hyphens:manual;}
 .buy-snake{position:absolute;top:-1px;left:-1px;overflow:visible;pointer-events:none;}
 .buy-snake rect{fill:none;stroke:var(--white);stroke-width:1;opacity:0;shape-rendering:crispEdges;vector-effect:non-scaling-stroke;}
 .buy-btn:hover{background:var(--white);color:var(--black);border-color:var(--white);}
-.buy-btn .price{padding-left:1rem;border-left:1px solid currentColor;opacity:0.8;letter-spacing:0.1em;}
+.buy-btn .price{padding-left:1rem;border-left:1px solid currentColor;letter-spacing:0.1em;}
 .buy-btn:focus-visible{outline:2px solid var(--white);outline-offset:4px;}
 .buy-note{font-size:14px;color:var(--gray);}
 .cover-buy{margin-top:1.2rem;}
@@ -229,9 +229,8 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
   top:calc(16px + env(safe-area-inset-top,0px)) !important;right:var(--g) !important;
   width:auto !important;height:auto !important;padding:10px 0 !important;border-radius:0 !important;
   background:transparent !important;color:var(--white) !important;
-  font:500 12px/1 'Plus Jakarta Sans',sans-serif !important;letter-spacing:0.22em;text-transform:uppercase;opacity:0.7;transition:opacity 0.2s;
+  font:500 12px/1 'Plus Jakarta Sans',sans-serif !important;letter-spacing:0.22em;text-transform:uppercase;
 }
-.pcmp-overlay .pcmp-close:hover{opacity:1;}
 /* No focus outline around the photo in fullscreen (the viewer focuses the slider automatically) */
 .pcmp-overlay .pcmp,
 .pcmp-overlay .pcmp:has(input:focus),
@@ -243,6 +242,8 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
 /* Same after closing: focus jumps back to the corner button, so keep that clean too */
 .pcmp-fs:focus,.pcmp-fs:focus-visible{outline:none;}
 .pcmp,.pcmp *,.pcmp-overlay,.pcmp-overlay *{-webkit-tap-highlight-color:transparent;}
+/* Fullscreen button: phones only, not on desktop/tablet */
+@media(min-width:769px){.pcmp-fs{display:none !important;}}
 .pcmp-overlay .pcmp-loading{font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;letter-spacing:0.05em;color:var(--gray);}
 @media(min-width:801px){
   .pcmp-overlay{--g:clamp(32px,4vw,64px);--top:88px;--bot:48px;}
