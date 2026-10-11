@@ -99,6 +99,9 @@ p,h1,h2{hyphens:manual;}
     font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;letter-spacing:0.22em;text-transform:uppercase;font-weight:700;color:var(--white);}
   .store-more{display:none;}
   .store-more.open{display:block;}
+  /* Rest of the first paragraph stays hidden until Read more is tapped */
+  .more-inline{display:none;}
+  .store-intro.open .more-inline{display:inline;}
 }
 
 /* STORE — presets included list (right of headline) */
@@ -287,7 +290,7 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
     <h1 class="case-title reveal">Sports Presets</h1>
     <div class="store-intro reveal">
       <p class="store-lead">Ready to take your sports photography to the next level?</p>
-      <p class="case-desc">These are the exact lightroom presets we use to edit our own photos, now available to you. Each one is built for real <span class="nowrap">game-day</span> conditions: bright midday sun, low evening light, overcast skies, night games under the lights and dramatic black and white.</p>
+      <p class="case-desc">These are the exact lightroom presets we use to edit our own photos, now available to you.<span class="more-inline"> Each one is built for real <span class="nowrap">game-day</span> conditions: bright midday sun, low evening light, overcast skies, night games under the lights and dramatic black and white.</span></p>
       <button class="read-more" id="readMore" type="button" aria-expanded="false" aria-controls="storeMore">Read more</button>
       <div class="store-more" id="storeMore">
       <p class="case-desc">Think of them as a strong foundation, not a magic button. Every camera, lens and field is a little different, so <span class="nowrap">fine-tune</span> the exposure and white balance, make them your own, and enjoy the process.</p>      </div>
@@ -515,6 +518,7 @@ backToTop.addEventListener('click', () => {
   if(!btn||!more) return;
   btn.addEventListener('click',function(){
     var open=more.classList.toggle('open');
+    var intro=more.closest('.store-intro'); if(intro) intro.classList.toggle('open',open);
     btn.setAttribute('aria-expanded',open);
     btn.textContent=open?'Read less':'Read more';
     if(open) more.after(btn); else more.before(btn);
