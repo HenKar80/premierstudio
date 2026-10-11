@@ -99,6 +99,8 @@ p,h1,h2{hyphens:manual;}
     font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;letter-spacing:0.22em;text-transform:uppercase;font-weight:700;color:var(--white);}
   .store-more{display:none;}
   .store-more.open{display:block;}
+  /* Presets Included sits below the before/after grid on phones */
+  .included-presets.moved{margin-top:64px;}
   /* Rest of the first paragraph stays hidden until Read more is tapped */
   .more-inline{display:none;}
   .store-intro.open .more-inline{display:inline;}
@@ -523,6 +525,19 @@ backToTop.addEventListener('click', () => {
     btn.textContent=open?'Read less':'Read more';
     if(open) more.after(btn); else more.before(btn);
   });
+})();
+
+// ── PRESETS INCLUDED (mobile): move the block below the before/after grid, and back on larger screens
+(function(){
+  var box=document.querySelector('.included-presets'), grid=document.querySelector('.store-grid');
+  if(!box||!grid) return;
+  var home=box.parentNode, next=box.nextSibling, mq=window.matchMedia('(max-width:768px)');
+  function place(){
+    if(mq.matches){ grid.after(box); box.classList.add('moved'); }
+    else { home.insertBefore(box,next); box.classList.remove('moved'); }
+  }
+  place();
+  if(mq.addEventListener) mq.addEventListener('change',place); else mq.addListener(place);
 })();
 
 // ── FULLSCREEN VIEWER: match the site look (photo shape, preset name, "Close")
