@@ -888,11 +888,23 @@ revealEls.forEach(el => revealObserver.observe(el));
   // To add more photos later, just bump this number to match how many
   // are in images/work/clients/palmar-elite-soccer/photos/
   const PALMAR_PHOTO_COUNT = 30;
+  // Numbers with no photo in the folder yet (img3, img19 and img30 are missing).
+  // Remove a number from this list once you upload that photo.
+  const PALMAR_MISSING = [3, 19, 30];
   const palmarLink = lwList.querySelector('a[href="latest-work-palmar-elite-soccer.html"]');
   if (palmarLink) {
-    const randomNum = Math.floor(Math.random() * PALMAR_PHOTO_COUNT) + 1;
+    const available = [];
+    for (let n = 1; n <= PALMAR_PHOTO_COUNT; n++) if (!PALMAR_MISSING.includes(n)) available.push(n);
+    const randomNum = available[Math.floor(Math.random() * available.length)];
     palmarLink.setAttribute('data-img', `images/work/clients/palmar-elite-soccer/photos/img${randomNum}.jpg`);
   }
+
+  // Safety net: if any preview photo ever fails to load, show the Palmar cover
+  // instead of an empty frame with a broken-image icon.
+  const LW_FALLBACK = 'images/work/soccer/soccer-cover.jpg';
+  lwPreviewImg.addEventListener('error', () => {
+    if (!lwPreviewImg.src.endsWith(LW_FALLBACK)) lwPreviewImg.src = LW_FALLBACK;
+  });
 
   function setActive(link) {
     lwList.classList.add('has-active');
