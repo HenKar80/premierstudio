@@ -443,6 +443,22 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
   .footer-links{flex-wrap:wrap;justify-content:center;gap:1.2rem;}
   .footer-copy{font-size:0.6rem;}
 }
+
+/* ── PRESETS BADGE — rotating circle text, fixed bottom-right, links to the store ── */
+/* mix-blend-mode:difference flips it white on dark sections and black on light ones */
+.preset-badge{mix-blend-mode:difference;position:fixed;right:clamp(16px,2.6vw,40px);bottom:clamp(16px,2.6vw,40px);width:118px;height:118px;z-index:70;display:block;color:var(--white);text-decoration:none;opacity:0;transform:translateY(16px);transition:opacity 0.8s ease,transform 0.8s ease;-webkit-tap-highlight-color:transparent;}
+.preset-badge.show{opacity:1;transform:translateY(0);}
+.preset-badge-ring{position:absolute;inset:0;width:100%;height:100%;overflow:visible;will-change:transform;}
+.preset-badge-ring text{fill:#ffffff;font-family:'Plus Jakarta Sans',sans-serif;font-size:31px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;}
+.preset-badge-core{position:absolute;left:50%;top:50%;width:44px;height:44px;transform:translate(-50%,-50%);display:grid;place-items:center;transition:transform 0.3s ease;}
+.preset-badge-core svg{width:25px;height:25px;}
+.preset-badge:hover .preset-badge-core,.preset-badge:focus-visible .preset-badge-core{transform:translate(-50%,-50%) translate(3px,-3px) scale(1.1);}
+.preset-badge:focus-visible{outline:none;}
+@media(max-width:600px){
+  .preset-badge{width:92px;height:92px;right:12px;bottom:12px;}
+  .preset-badge-core{width:26px;height:26px;}
+  .preset-badge-core svg{width:20px;height:20px;}
+}
 </style>
 </head>
 <body>
@@ -795,6 +811,17 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
   </div>
   <div class="footer-copy">© 2026 Premier Studio FL, LLC. All rights reserved.</div>
 </footer>
+
+<!-- PRESETS BADGE — spins with scroll (down = clockwise, up = counter-clockwise) -->
+<a class="preset-badge" id="presetBadge" href="store.html" aria-label="Shop Sports Presets Vol 1">
+  <svg class="preset-badge-ring" id="presetBadgeRing" viewBox="0 0 200 200" aria-hidden="true">
+    <defs><path id="presetBadgePath" d="M100,100 m-78,0 a78,78 0 1,1 156,0 a78,78 0 1,1 -156,0"/></defs>
+    <text><textPath href="#presetBadgePath" textLength="488" lengthAdjust="spacing">Sports Presets Vol 1&#160;&#160;</textPath></text>
+  </svg>
+  <span class="preset-badge-core" aria-hidden="true">
+    <svg viewBox="0 0 16 16" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l8-8M5.5 4h6.5v6.5"/></svg>
+  </span>
+</a>
 
 <script>
 // Hamburger menu
@@ -1636,6 +1663,38 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
     if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' }); }
   });
 });
+// ── PRESETS BADGE: rotate with scroll — down spins clockwise, up spins counter-clockwise
+(function(){
+  const badge = document.getElementById('presetBadge');
+  const ring = document.getElementById('presetBadgeRing');
+  if (!badge || !ring) return;
+  setTimeout(() => badge.classList.add('show'), 600);
+  // Always turning slowly; scrolling speeds it up. Scrolling down turns it
+  // clockwise, scrolling up turns it counter-clockwise, and it keeps
+  // drifting in whichever direction you last scrolled.
+  const IDLE = 14;      // degrees per second when nothing is happening
+  const BOOST = 0.35;   // extra degrees per pixel scrolled
+  let lastY = window.scrollY, dir = 1, boost = 0, angle = 0, lastT = performance.now();
+  window.addEventListener('scroll', () => {
+    const y = window.scrollY, d = y - lastY;
+    lastY = y;
+    if (d !== 0) dir = d > 0 ? 1 : -1;
+    boost += d * BOOST;
+  }, { passive: true });
+  (function tick(now){
+    const dt = Math.min((now - lastT) / 1000, 0.1); lastT = now;
+    const step = boost * 0.1;          // release the scroll boost smoothly
+    boost -= step;
+    angle = (angle + IDLE * dir * dt + step) % 360;
+    ring.style.transform = 'rotate(' + angle.toFixed(2) + 'deg)';
+    requestAnimationFrame(tick);
+  })(lastT);
+  // Hide while the phone menu is open
+  const menu = document.getElementById('mobileMenu');
+  if (menu) new MutationObserver(() => {
+    badge.style.visibility = menu.classList.contains('open') ? 'hidden' : '';
+  }).observe(menu, { attributes: true, attributeFilter: ['class'] });
+})();
 </script>
 </body>
 </html>
