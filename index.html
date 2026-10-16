@@ -813,6 +813,14 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
 </a>
 
 <script>
+// ── PHOTO VERSION (cache-buster) ──
+// Phones (iPhone Safari especially) hang on to old copies of photos for a
+// long time. Whenever you REPLACE an existing photo with a new version
+// under the same file name, change this value (e.g. to today's date) and
+// every visitor's browser will fetch fresh copies of all photos.
+const PHOTO_VERSION = '2026-10-16';
+function vsrc(src) { return src + '?v=' + PHOTO_VERSION; }
+
 // Hamburger menu
 const hamburger = document.getElementById('hamburger');
 const mobileMenu = document.getElementById('mobileMenu');
@@ -1086,6 +1094,11 @@ revealEls.forEach(el => revealObserver.observe(el));
     'images/work/football/football-10.jpg',
     'images/work/football/football-11.jpg',
     'images/work/football/football-12.jpg',
+    'images/work/football/football-13.jpg',
+    'images/work/football/football-14.jpg',
+    'images/work/football/football-15.jpg',
+    'images/work/football/football-16.jpg',
+    'images/work/football/football-17.jpg',
     // Lacrosse — add more lines here as new lacrosse photos come in
     'images/work/lacrosse/lacrosse-1.jpg',
     'images/work/lacrosse/lacrosse-2.jpg',
@@ -1122,7 +1135,7 @@ revealEls.forEach(el => revealObserver.observe(el));
       const test = new Image();
       test.onload = () => resolve(src);
       test.onerror = () => resolve(null);
-      test.src = src;
+      test.src = vsrc(src);
     });
   }
 
@@ -1153,7 +1166,7 @@ revealEls.forEach(el => revealObserver.observe(el));
       img.alt = '';
       img.loading = 'lazy';
       img.onerror = () => { tile.style.display = 'none'; };
-      img.src = src;
+      img.src = vsrc(src);
       tile.appendChild(img);
       // These tiles are added after the page's cursor-hover script already
       // ran, so they need their own listeners to trigger the eye cursor.
@@ -1338,7 +1351,12 @@ revealEls.forEach(el => revealObserver.observe(el));
     'images/work/football/football-9.jpg',
     'images/work/football/football-10.jpg',
     'images/work/football/football-11.jpg',
-    'images/work/football/football-12.jpg'
+    'images/work/football/football-12.jpg',
+    'images/work/football/football-13.jpg',
+    'images/work/football/football-14.jpg',
+    'images/work/football/football-15.jpg',
+    'images/work/football/football-16.jpg',
+    'images/work/football/football-17.jpg'
   ];
 
   // Test each photo before touching the DOM at all
@@ -1347,7 +1365,7 @@ revealEls.forEach(el => revealObserver.observe(el));
       const test = new Image();
       test.onload = () => resolve(src);
       test.onerror = () => resolve(null);
-      test.src = src;
+      test.src = vsrc(src);
     });
   }
 
@@ -1368,7 +1386,7 @@ revealEls.forEach(el => revealObserver.observe(el));
       const item = document.createElement('div');
       item.className = 'marquee-item';
       const img = document.createElement('img');
-      img.src = src;
+      img.src = vsrc(src);
       img.alt = '';
       item.appendChild(img);
       const tint = document.createElement('div');

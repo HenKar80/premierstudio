@@ -245,6 +245,14 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,0.05);paddi
 </footer>
 
 <script>
+// ── PHOTO VERSION (cache-buster) ──
+// Phones (iPhone Safari especially) hang on to old copies of photos for a
+// long time. Whenever you REPLACE an existing photo with a new version
+// under the same file name, change this value (e.g. to today's date) and
+// every visitor's browser will fetch fresh copies of all photos.
+const PHOTO_VERSION = '2026-10-16';
+function vsrc(src) { return src + '?v=' + PHOTO_VERSION; }
+
 // Hamburger
 const hamburger = document.getElementById('hamburger');
 const mobileMenu = document.getElementById('mobileMenu');
@@ -329,6 +337,11 @@ window.addEventListener('scroll', () => {
     { src: 'images/work/football/football-10.jpg', sport: 'football' },
     { src: 'images/work/football/football-11.jpg', sport: 'football' },
     { src: 'images/work/football/football-12.jpg', sport: 'football' },
+    { src: 'images/work/football/football-13.jpg', sport: 'football' },
+    { src: 'images/work/football/football-14.jpg', sport: 'football' },
+    { src: 'images/work/football/football-15.jpg', sport: 'football' },
+    { src: 'images/work/football/football-16.jpg', sport: 'football' },
+    { src: 'images/work/football/football-17.jpg', sport: 'football' },
     // Lacrosse — add more lines here as new lacrosse photos come in
     { src: 'images/work/lacrosse/lacrosse-1.jpg', sport: 'lacrosse' },
     { src: 'images/work/lacrosse/lacrosse-2.jpg', sport: 'lacrosse' },
@@ -352,7 +365,7 @@ window.addEventListener('scroll', () => {
       const test = new Image();
       test.onload = () => resolve(true);
       test.onerror = () => resolve(false);
-      test.src = src;
+      test.src = vsrc(src);
     });
   }
 
@@ -391,7 +404,7 @@ window.addEventListener('scroll', () => {
         const img = document.createElement('img');
         img.alt = item.sport.charAt(0).toUpperCase() + item.sport.slice(1) + ' photography by Premier Studio FL, Lakewood Ranch, FL';
         img.loading = 'lazy';
-        img.src = item.src;
+        img.src = vsrc(item.src);
         tile.appendChild(img);
 
         tile.addEventListener('click', e => { e.preventDefault(); openLightbox(i); });
@@ -422,7 +435,7 @@ window.addEventListener('scroll', () => {
 
     function openLightbox(idx) {
       currentIdx = idx;
-      lbImg.src = currentList[idx].src;
+      lbImg.src = vsrc(currentList[idx].src);
       lbImg.alt = '';
       lbCounter.textContent = `${idx + 1} / ${currentList.length}`;
       lightbox.classList.add('open');
@@ -438,7 +451,7 @@ window.addEventListener('scroll', () => {
       lbImg.style.opacity = '0';
       lbImg.style.transform = `translateX(${dir > 0 ? '50px' : '-50px'})`;
       setTimeout(() => {
-        lbImg.src = currentList[currentIdx].src;
+        lbImg.src = vsrc(currentList[currentIdx].src);
         lbCounter.textContent = `${currentIdx + 1} / ${currentList.length}`;
         lbImg.style.transition = 'opacity 0.22s ease, transform 0.28s cubic-bezier(0.25,0.46,0.45,0.94)';
         lbImg.style.opacity = '1';
